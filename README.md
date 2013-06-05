@@ -1,2 +1,2 @@
-# Builder: Support Utilities for Extbase and Fluid development
+# Builder: Extbase/Fluid Dev Support Utilities
 
