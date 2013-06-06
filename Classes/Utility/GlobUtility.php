@@ -27,12 +27,27 @@ class Tx_Builder_Utility_GlobUtility {
 	 * @param string $extensions
 	 * @return array
 	 */
-	public function getFilesRecursive($path, $extensions) {
+	public static function getFilesRecursive($path, $extensions) {
 		if ('/' !== substr($path, -1)) {
 			$path .= '/';
 		}
 		$files = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, $extensions);
 		return array_values($files);
+	}
+
+	/**
+	 * @param string $extension
+	 * @param string $path
+	 * @return string
+	 */
+	public static function getRealPathFromExtensionKeyAndPath($extension, $path) {
+		if (NULL !== $extension) {
+			$path = t3lib_extMgm::extPath($extension, $path);
+		} elseif ('/' !== $path{0}) {
+			$path = PATH_site . $path;
+		}
+		$path = realpath($path);
+		return $path;
 	}
 
 }
