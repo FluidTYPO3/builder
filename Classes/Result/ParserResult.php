@@ -10,7 +10,7 @@ class Tx_Builder_Result_ParserResult implements Tx_Builder_Result_ParserResultIn
 	/**
 	 * @var Exception
 	 */
-	protected $error;
+	protected $error = NULL;
 
 	/**
 	 * @param Exception $error
