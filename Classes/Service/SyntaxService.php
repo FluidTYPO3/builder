@@ -59,4 +59,34 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 		return $result;
 	}
 
+	/**
+	 * @param string $filePathAndFilename
+	 * @return Tx_Builder_Result_FluidParserResult
+	 */
+	public function syntaxCheckPhpFile($filePathAndFilename) {
+		/** @var $result Tx_Builder_Result_FluidParserResult */
+		$result = $this->objectManager->get('Tx_Builder_Result_FluidParserResult');
+		$command = 'php --define error_reporting=0 -le ' . $filePathAndFilename;
+		$code = $this->executeCommandAndReturnZeroOrStringMessage($command);
+		if (0 !== $code) {
+			$output = array();
+			$this->executeCommandAndReturnZeroOrStringMessage('php -l ' . $filePathAndFilename . ' 2>&1', $output);
+			$error = new Exception(array_shift($output), $code);
+			$result->setValid(FALSE);
+			$result->setError($error);
+		}
+		return $result;
+	}
+
+	/**
+	 * @param string $command
+	 * @param array $output
+	 * @return integer
+	 */
+	protected function executeCommandAndReturnZeroOrStringMessage($command, &$output = array()) {
+		$code = 0;
+		exec($command, $output, $code);
+		return $code;
+	}
+
 }
