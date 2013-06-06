@@ -22,4 +22,17 @@ class Tx_Builder_Utility_GlobUtility {
 		return glob($path);
 	}
 
+	/**
+	 * @param string $path
+	 * @param string $extensions
+	 * @return array
+	 */
+	public function getFilesRecursive($path, $extensions) {
+		if ('/' !== substr($path, -1)) {
+			$path .= '/';
+		}
+		$files = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, $extensions);
+		return array_values($files);
+	}
+
 }

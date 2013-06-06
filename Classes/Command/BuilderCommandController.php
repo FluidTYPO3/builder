@@ -40,7 +40,8 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 		} elseif ('/' !== $path{0}) {
 			$path = PATH_site . $path;
 		}
-		$files = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, $extensions);
+		$path = realpath($path);
+		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
 		$files = array_values($files);
 		$errors = FALSE;
 		$this->response->setContent('Performing a syntax check on fluid templates (types: ' . $extensions . '; path: ' . $path . ')' . LF);
