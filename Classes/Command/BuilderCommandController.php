@@ -29,18 +29,8 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @return void
 	 */
 	public function templateSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
-		if (NULL === $extension && NULL === $path) {
-			$this->response->setContent('Either "extensionKey" or "path" or both must be specified' . LF);
-			$this->response->send();
-			$this->response->setExitCode(128);
-			return;
-		}
-		if (NULL !== $extension) {
-			$path = t3lib_extMgm::extPath($extension, $path);
-		} elseif ('/' !== $path{0}) {
-			$path = PATH_site . $path;
-		}
-		$path = realpath($path);
+		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
+		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
 		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
 		$files = array_values($files);
 		$errors = FALSE;
@@ -49,7 +39,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 		foreach ($files as $filePathAndFilename) {
 			$basePath = str_replace(PATH_site, '', $filePathAndFilename);
 			$result = $this->syntaxService->syntaxCheckFluidTemplateFile($filePathAndFilename);
-			if ($result->getError()) {
+			if (NULL !== $result->getError()) {
 				$this->response->appendContent('[ERROR] File ' . $basePath . ' has an error: ' . LF);
 				$this->response->appendContent($result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF);
 				$this->response->send();
@@ -64,13 +54,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			}
 			$this->response->setContent(LF);
 		}
-		if (FALSE === $errors) {
-			$this->response->setContent('No errors encountered - ' . count($files) . ' file(s) are all okay' . LF);
-		} else {
-			$this->response->setContent('Errors were detected - review the summary above' . LF);
-			$this->response->setExitCode(1);
-		}
-		$this->response->send();
+		$this->stop($files, $errors, $verbose);
 	}
 
 	/**
@@ -80,12 +64,67 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * key is also given, only files in that path relative
 	 * to that extension are checked.
 	 *
-	 * @param string $extensionKey Optional extension key (if path is included, only files in that path in this extension are checked)
+	 * @param string $extension Optional extension key (if path is included, only files in that path in this extension are checked)
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
+	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
 	 * @return void
 	 */
-	public function phpsyntax($extensionKey = NULL, $path = NULL) {
+	public function phpsyntaxCommand($extension = NULL, $path = NULL, $verbose = FALSE) {
+		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
+		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
+		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, 'php');
+		$errors = FALSE;
+		foreach ($files as $filePathAndFilename) {
+			$result = $this->syntaxService->syntaxCheckPhpFile($filePathAndFilename);
+			if (NULL !== $result->getError()) {
+				$errors = TRUE;
+				$this->response->setContent('[ERROR] ' . $result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF);
+			} elseif (TRUE === (boolean) $verbose) {
 
+			}
+
+		}
+		$this->stop($files, $errors, $verbose);
+	}
+
+	/**
+	 * @param string $extension
+	 * @param string $path
+	 * @return void
+	 */
+	private function assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path) {
+		if (NULL === $extension && NULL === $path) {
+			$this->response->setContent('Either "extensionKey" or "path" or both must be specified' . LF);
+			$this->response->send();
+			$this->response->setExitCode(128);
+			$this->forward('error');
+		}
+	}
+
+	/**
+	 * Black hole
+	 *
+	 * @return void
+	 */
+	protected function errorCommand() {
+
+	}
+
+	/**
+	 * @param array $files
+	 * @param boolean  $errors
+	 * @param boolean $verbose
+	 */
+	protected function stop($files, $errors, $verbose) {
+		if (TRUE === (boolean) $verbose) {
+			if (FALSE === $errors) {
+				$this->response->setContent('No errors encountered - ' . count($files) . ' file(s) are all okay' . LF);
+			} else {
+				$this->response->setContent('Errors were detected - review the summary above' . LF);
+				$this->response->setExitCode(1);
+			}
+		}
+		$this->response->send();
 	}
 
 }
