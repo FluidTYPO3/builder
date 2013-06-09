@@ -47,8 +47,8 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	 * @return void
 	 * @abstract
 	 */
-	public function appendMethodFromSourceTemplate($templateIdentifier, $variables) {
-		$name = $variables['name'];
+	public function appendMethodFromSourceTemplate($templateIdentifier, $variables = array()) {
+		$name = TRUE === isset($variables['name']) ? $variables['name'] : basename($templateIdentifier);
 		$template = $this->getPreparedCodeTemplate($templateIdentifier, $variables);
 		$code = $template->render();
 		$this->methods[$name] = $code;
@@ -57,11 +57,12 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	/**
 	 * @param string $name
 	 * @param string $type
+	 * @param string $visibility
 	 * @return void
 	 * @abstract
 	 */
-	public function appendProperty($name, $type) {
-		$code = "\t/**\n\t * @var " . $name . ' ' . $type;
+	public function appendProperty($name, $type, $visibility = 'protected') {
+		$code = "\t/**\n\t * @var $" . $name . ' ' . $type . "\n\t */\n\t" . $visibility . ' $' . $name . ';';
 		$this->properties[$name] = $code;
 	}
 
@@ -74,11 +75,13 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 		if (NULL === $className) {
 			return NULL;
 		}
+		$properties = array_map('trim', $this->properties);
+		$methods = array_map('trim', $this->methods);
 		$this->appendCommonTestMethods();
 		$variables = array(
 			'class' => $className,
-			'properties' => implode("\n\n", $this->properties),
-			'methods' => implode("\n\n", $this->methods)
+			'properties' => implode("\n\n\t", $properties),
+			'methods' => implode("\n\n\t", $methods)
 		);
 		$template = $this->getPreparedCodeTemplate($template, $variables);
 		return $template->render();
