@@ -81,8 +81,6 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			if (NULL !== $result->getError()) {
 				$errors = TRUE;
 				$this->response->setContent('[ERROR] ' . $result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF);
-			} elseif (TRUE === $verbose) {
-
 			}
 
 		}
@@ -133,8 +131,6 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			if (TRUE === $dry) {
 				$code = $classCodeGenerator->generate();
 				$this->response->setContent($code);
-			} else {
-				#$targetPathAndFilename =
 			}
 		}
 	}

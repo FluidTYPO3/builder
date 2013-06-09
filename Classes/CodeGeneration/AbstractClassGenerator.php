@@ -61,7 +61,7 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	 * @abstract
 	 */
 	public function appendProperty($name, $type) {
-		$code = "\t/**\n\t * @var " . $name . " " . $type;
+		$code = "\t/**\n\t * @var " . $name . ' ' . $type;
 		$this->properties[$name] = $code;
 	}
 
