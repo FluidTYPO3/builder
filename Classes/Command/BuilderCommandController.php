@@ -29,6 +29,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @return void
 	 */
 	public function templateSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
+		$verbose = (boolean) $verbose;
 		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
 		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
 		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
@@ -44,7 +45,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 				$this->response->appendContent($result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF);
 				$this->response->send();
 				$errors = TRUE;
-			} elseif (TRUE === (boolean) $verbose) {
+			} elseif (TRUE === $verbose) {
 				$namespaces = $result->getNamespaces();
 				$this->response->appendContent('File is compilable: ' . (TRUE === $result->getCompilable() ? 'YES' : 'NO (WARNING)') . LF);
 				$this->response->appendContent('File ' . (NULL !== $result->getLayoutName() ? 'has layout (' . $result->getLayoutName() . ')' : 'DOES NOT reference a Layout') . LF);
@@ -70,6 +71,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @return void
 	 */
 	public function phpsyntaxCommand($extension = NULL, $path = NULL, $verbose = FALSE) {
+		$verbose = (boolean) $verbose;
 		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
 		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
 		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, 'php');
@@ -79,12 +81,62 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			if (NULL !== $result->getError()) {
 				$errors = TRUE;
 				$this->response->setContent('[ERROR] ' . $result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF);
-			} elseif (TRUE === (boolean) $verbose) {
+			} elseif (TRUE === $verbose) {
 
 			}
 
 		}
 		$this->stop($files, $errors, $verbose);
+	}
+
+	/**
+	 * Makes simple VH unit test class(es)
+	 *
+	 * Saves a file only if it does not already exist. Which means
+	 * if you have to rebuild your files, remove the old ones first.
+	 *
+	 * If an extension key is provided but no class name, every
+	 * ViewHelper in the provided extension is considered.
+	 *
+	 * The default location of generated test case classes is:
+	 *
+	 * EXT:<ext>/Tests/Unit/ViewHelpers/<class>Test.php
+	 *
+	 * Where <ext> is the extension key detected from the class name
+	 * and <class> is the last part of the ViewHelper class filename
+	 * relative to Classes/ViewHelpers directory and ".php" stripped.
+	 *
+	 * @param string $extension The extension key, if class is not used
+	 * @param string $class The class name, if extension key is not used
+	 * @param boolean $dry If TRUE, performs a dry run and reports files that would change
+	 * @param boolean $verbose If TRUE, outputs more information about actions taken
+	 * @return void
+	 */
+	public function unitViewHelperCommand($extension = NULL, $class = NULL, $dry = FALSE, $verbose = FALSE) {
+		$dry = (boolean) $dry;
+		$verbose = (boolean) $verbose;
+		if (NULL === $extension && NULL === $class || (NULL !== $extension && NULL !== $class)) {
+			$this->response->setContent('Either "extension" or "class" must be specified, but not both' . LF);
+			$this->response->send();
+			$this->response->setExitCode(255);
+			$this->forward('error');
+		}
+		if (NULL === $class) {
+			$classes = $this->getClassNamesInExtension($extension);
+		} else {
+			$classes = array($class);
+		}
+		foreach ($classes as $class) {
+			/** @var $classCodeGenerator Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator */
+			$classCodeGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator');
+			$classCodeGenerator->setViewHelperClassName($class);
+			if (TRUE === $dry) {
+				$code = $classCodeGenerator->generate();
+				$this->response->setContent($code);
+			} else {
+				#$targetPathAndFilename =
+			}
+		}
 	}
 
 	/**
@@ -94,7 +146,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 */
 	private function assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path) {
 		if (NULL === $extension && NULL === $path) {
-			$this->response->setContent('Either "extensionKey" or "path" or both must be specified' . LF);
+			$this->response->setContent('Either "extension" or "path" or both must be specified' . LF);
 			$this->response->send();
 			$this->response->setExitCode(128);
 			$this->forward('error');
@@ -125,6 +177,87 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			}
 		}
 		$this->response->send();
+	}
+
+	/**
+	 * Get all class names inside this namespace and return them as array.
+	 *
+	 * @param string $combinedExtensionKey Extension Key with (possibly) leading Vendor Prefix
+	 * @return array
+	 */
+	protected function getClassNamesInExtension($combinedExtensionKey) {
+		$allViewHelperClassNames = array();
+		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
+		$path = t3lib_extMgm::extPath($extensionKey, 'Classes/ViewHelpers/');
+		$filesInPath = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, 'php');
+		foreach ($filesInPath as $filePathAndFilename) {
+			$className = $this->getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filePathAndFilename);
+			if (class_exists($className)) {
+				$parent = $className;
+				while ($parent = get_parent_class($parent)) {
+					if ($parent === 'Tx_Fluid_Core_ViewHelper_AbstractViewHelper' || $parent === 'TYPO3\\CMS\\Fluid\Core\\ViewHelper\\AbstractViewHelper') {
+						array_push($allViewHelperClassNames, $className);
+					}
+				}
+			}
+		}
+		$affectedViewHelperClassNames = array();
+		foreach ($allViewHelperClassNames as $viewHelperClassName) {
+			$classReflection = new ReflectionClass($viewHelperClassName);
+			if ($classReflection->isAbstract() === TRUE) {
+				continue;
+			}
+			if (strncmp($namespace, $viewHelperClassName, strlen($namespace)) === 0) {
+				$affectedViewHelperClassNames[] = $viewHelperClassName;
+			}
+		}
+		sort($affectedViewHelperClassNames);
+		return $affectedViewHelperClassNames;
+	}
+
+	/**
+	 * Returns the true class name of the ViewHelper as defined
+	 * by the extensionKey (which may be vendorname.extensionkey)
+	 * and the class name. If vendorname is used, namespaced
+	 * classes are assumed. If no vendorname is used a namespaced
+	 * class is first attempted, if this does not exist the old
+	 * Tx_ prefixed class name is tried. If this too does not exist,
+	 * an Exception is thrown.
+	 *
+	 * @param string $combinedExtensionKey
+	 * @param string $filename
+	 * @return string
+	 * @throws Exception
+	 */
+	protected function getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filename) {
+		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
+		$filename = str_replace(\t3lib_extMgm::extPath($extensionKey, 'Classes/ViewHelpers/'), '', $filename);
+		$stripped = substr($filename, 0, -4);
+		if ($vendor) {
+			$classNamePart = str_replace('/', '\\', $stripped);
+			$className = $vendor . '\\' . ucfirst(\t3lib_div::underscoredToLowerCamelCase($extensionKey)) . '\\ViewHelpers\\' . $classNamePart;
+		} else {
+			$classNamePart = str_replace('/', '_', $stripped);
+			$className = 'Tx_' . ucfirst(\t3lib_div::underscoredToLowerCamelCase($extensionKey)) . '_ViewHelpers_' . $classNamePart;
+		}
+		return $className;
+	}
+
+	/**
+	 * @param string $extensionKey
+	 * @return array
+	 */
+	protected function getRealExtensionKeyAndVendorFromCombinedExtensionKey($extensionKey) {
+		if (FALSE !== strpos($extensionKey, '.')) {
+			list ($vendor, $extensionKey) = explode('.', $extensionKey);
+			if ('TYPO3' === $vendor) {
+				$vendor = 'TYPO3\\CMS';
+			}
+		} else {
+			$vendor = NULL;
+		}
+		$extensionKey = strtolower($extensionKey);
+		return array($vendor, $extensionKey);
 	}
 
 }
