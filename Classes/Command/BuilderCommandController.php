@@ -28,7 +28,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
 	 * @return void
 	 */
-	public function templateSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
+	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
 		$verbose = (boolean) $verbose;
 		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
 		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
