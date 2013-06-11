@@ -106,31 +106,68 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 *
 	 * @param string $extension The extension key, if class is not used
 	 * @param string $class The class name, if extension key is not used
+	 * @param string $author The author to be set in the class doc comment
+	 * @param boolean $overwrite If TRUE, allows existing files to be overridden - USE CAUTION!
 	 * @param boolean $dry If TRUE, performs a dry run and reports files that would change
 	 * @param boolean $verbose If TRUE, outputs more information about actions taken
 	 * @return void
 	 */
-	public function unitViewHelperCommand($extension = NULL, $class = NULL, $dry = FALSE, $verbose = FALSE) {
+	public function unitViewHelperCommand($extension = NULL, $class = NULL, $author = NULL, $overwrite = FALSE, $dry = FALSE, $verbose = FALSE) {
 		$dry = (boolean) $dry;
 		$verbose = (boolean) $verbose;
-		if (NULL === $extension && NULL === $class || (NULL !== $extension && NULL !== $class)) {
-			$this->response->setContent('Either "extension" or "class" must be specified, but not both' . LF);
+		$overwrite = (boolean) $overwrite;
+		if (NULL === $extension && NULL === $class) {
+			$this->response->setContent('Either "extension" or "class" or both must be specified' . LF);
 			$this->response->send();
 			$this->response->setExitCode(255);
 			$this->forward('error');
 		}
-		if (NULL === $class) {
-			$classes = $this->getClassNamesInExtension($extension);
-		} else {
+		if (NULL !== $class) {
 			$classes = array($class);
+		} else {
+			$classes = $this->getClassNamesInExtension($extension);
 		}
 		foreach ($classes as $class) {
+			$classNameSeparator = FALSE === strpos($class, '_') ? '\\' : '_';
+			$parts = explode($classNameSeparator, $class);
+			foreach ($parts as $index => $part) {
+				unset($parts[$index]);
+				if ('ViewHelpers' === $part) {
+					break;
+				}
+			}
+			$targetPathAndFilename = 'EXT:' . $extension . '/Tests/Unit/ViewHelpers/' . implode('/', $parts) . 'Test.php';
 			/** @var $classCodeGenerator Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator */
 			$classCodeGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator');
 			$classCodeGenerator->setViewHelperClassName($class);
+			$classCodeGenerator->setAuthor($author);
+			$classCodeGenerator->setPackage(\t3lib_div::underscoredToUpperCamelCase($extension));
+			$code = $classCodeGenerator->generate();
 			if (TRUE === $dry) {
-				$code = $classCodeGenerator->generate();
-				$this->response->setContent($code);
+				if (TRUE === $verbose) {
+					$this->response->appendContent('Would generate ViewHelper test class: ');
+					$this->response->appendContent("\n\t" . $class . 'Test');
+					$this->response->appendContent("\n\t" . $targetPathAndFilename);
+					$this->response->appendContent("\n\t" . '(' . strlen($code) . ' bytes would be written)');
+					$this->response->appendContent(LF . LF);
+				}
+				continue;
+			}
+			$absoluteTargetPathAndFilename = \t3lib_div::getFileAbsFileName($targetPathAndFilename);
+			$directory = pathinfo($absoluteTargetPathAndFilename, PATHINFO_DIRNAME);
+			if (FALSE === is_dir($directory)) {
+				$createdDirectory = mkdir($directory, 0775, TRUE);
+				if (FALSE === $createdDirectory) {
+					$this->response->setContent('Could not create directory ' . $directory . ' - insufficient permissions?' . LF);
+					$this->response->send();
+					$this->response->setExitCode(1024);
+					return;
+				}
+			}
+			if (TRUE === file_exists($absoluteTargetPathAndFilename) && TRUE === $overwrite) {
+				\t3lib_div::writeFile($absoluteTargetPathAndFilename, $code);
+			} elseif (FALSE === file_exists($absoluteTargetPathAndFilename) || 0 === filesize($absoluteTargetPathAndFilename)) {
+				\t3lib_div::writeFile($absoluteTargetPathAndFilename, $code);
 			}
 		}
 	}

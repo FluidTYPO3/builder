@@ -8,6 +8,16 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	protected $name = NULL;
 
 	/**
+	 * @var string
+	 */
+	protected $author = NULL;
+
+	/**
+	 * @var string
+	 */
+	protected $package = NULL;
+
+	/**
 	 * @var array
 	 */
 	protected $attributes = array();
@@ -30,6 +40,21 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	public function setClassName($name) {
 		$this->name = $name;
 	}
+
+	/**
+	 * @param string $author
+	 */
+	public function setAuthor($author) {
+		$this->author = $author;
+	}
+
+	/**
+	 * @param string $package
+	 */
+	public function setPackage($package) {
+		$this->package = $package;
+	}
+
 
 	/**
 	 * @param $attributes
@@ -77,9 +102,13 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 		}
 		$properties = array_map('trim', $this->properties);
 		$methods = array_map('trim', $this->methods);
+
 		$this->appendCommonTestMethods();
 		$variables = array(
 			'class' => $className,
+			'author' => $this->author,
+			'year' => date('Y', time()),
+			'package' => $this->package,
 			'properties' => implode("\n\n\t", $properties),
 			'methods' => implode("\n\n\t", $methods)
 		);
