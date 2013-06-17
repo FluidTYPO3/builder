@@ -173,6 +173,44 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	}
 
 	/**
+	 * Installs an extension by key
+	 *
+	 * The extension files must be present in one of the
+	 * recognised extension folder paths in TYPO3.
+	 *
+	 * @param string $extensionKey
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function installCommand($extensionKey) {
+		if (6 > substr(TYPO3_version, 0, 1)) {
+			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
+		}
+		/** @var $service \TYPO3\CMS\Extensionmanager\Utility\InstallUtility */
+		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
+		$service->install($extensionKey);
+	}
+
+	/**
+	 * Uninstalls an extension by key
+	 *
+	 * The extension files must be present in one of the
+	 * recognised extension folder paths in TYPO3.
+	 *
+	 * @param string $extensionKey
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function uninstallCommand($extensionKey) {
+		if (6 > substr(TYPO3_version, 0, 1)) {
+			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
+		}
+		/** @var $service \TYPO3\CMS\Extensionmanager\Utility\InstallUtility */
+		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
+		$service->uninstall($extensionKey);
+	}
+
+	/**
 	 * Black hole
 	 *
 	 * @return void
