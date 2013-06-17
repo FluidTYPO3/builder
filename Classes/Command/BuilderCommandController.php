@@ -173,6 +173,15 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	}
 
 	/**
+	 * Black hole
+	 *
+	 * @return void
+	 */
+	protected function errorCommand() {
+
+	}
+
+	/**
 	 * @param string $extension
 	 * @param string $path
 	 * @return void
@@ -184,15 +193,6 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			$this->response->setExitCode(128);
 			$this->forward('error');
 		}
-	}
-
-	/**
-	 * Black hole
-	 *
-	 * @return void
-	 */
-	protected function errorCommand() {
-
 	}
 
 	/**
