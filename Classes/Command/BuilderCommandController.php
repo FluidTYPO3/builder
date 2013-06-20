@@ -211,6 +211,92 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	}
 
 	/**
+	 * Builds a ProviderExtension
+	 *
+	 * The resulting extension will contain source code
+	 * and configuration options needed by the various
+	 * toggles. Each of these toggles enable/disable
+	 * generation of source code and configuration for
+	 * that particular feature.
+	 *
+	 * @param string $extensionKey The extension key which should be generated. Must not exist.
+	 * @param string $author The author of the extension, in the format "Name Lastname <name@example.com>" with optional company name, in which case form is "Name Lastname <name@example.com>, Company Name"
+	 * @param string $title The title of the resulting extension, by default "Provider extension for $enabledFeaturesList"
+	 * @param string $description The description of the resulting extension, by default "Provider extension for $enabledFeaturesList"
+	 * @param boolean $useVhs If TRUE, adds the VHS extension as dependency - recommended, on by default
+	 * @param boolean $pages If TRUE, generates basic files for implementing Fluid Page templates
+	 * @param boolean $content IF TRUE, generates basic files for implementing Fluid Content templates
+	 * @param boolean $backend If TRUE, generates basic files for implementing Fluid Backend modules
+	 * @param boolean $controllers If TRUE, generates controllers for each enabled feature. Enabling $backend will always generate a controller regardless of this toggle.
+	 * @param float $minimumVersion The minimum required core version for this extension, defaults to latest LTS (currently 4.5)
+	 * @param boolean $dry If TRUE, performs a dry run: does not write any files but reports which files would have been written
+	 * @param boolean $verbose If FALSE, suppresses a lot of the otherwise output messages (to STDOUT)
+	 * @param boolean $git If TRUE, initialises the newly created extension directory as a Git repository and commits all files. You can then "git add remote origin <URL>" and "git push origin master -u" to push the initial state
+	 * @param boolean $travis If TRUE, generates a Travis-CI build script which uses Fluid Powered TYPO3 coding standards analysis and code inspections to automate testing on Travis-CI
+	 * @return void
+	 */
+	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $minimumVersion = 4.5, $dry = FALSE, $verbose = TRUE, $git = FALSE, $travis = FALSE) {
+		$useVhs = (boolean) $useVhs;
+		$pages = (boolean) $pages;
+		$content = (boolean) $content;
+		$backend = (boolean) $backend;
+		$controllers = (boolean) $controllers;
+		$verbose = (boolean) $verbose;
+		$dry = (boolean) $dry;
+		$git = (boolean) $git;
+		$travis = (boolean) $travis;
+		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
+		if (NULL === $title) {
+			$title = $defaultTitle;
+		}
+		if (NULL === $description) {
+			$description = $defaultTitle;
+		}
+		$dependencies = array();
+		if (TRUE === $pages) {
+			array_push($dependencies, 'fluidpages');
+		}
+		if (TRUE === $content) {
+			array_push($dependencies, 'fluidcontent');
+		}
+		if (TRUE === $backend) {
+			array_push($dependencies, 'fluidbackend');
+		}
+		if (TRUE === $useVhs) {
+			array_push($dependencies, 'vhs');
+		}
+		$dependenciesArrayString = '';
+		foreach ($dependencies as $dependency) {
+			$dependenciesArrayString .= "\n\t\t\t'" . $dependency . "' => '',";
+		}
+		list ($nameAndEmail, $companyName) = t3lib_div::trimExplode(',', $author);
+		list ($name, $email) = t3lib_div::trimExplode('<', $nameAndEmail);
+		$email = trim($email, '>');
+		$extensionVariables = array(
+			'extensionKey' => $extensionKey,
+			'title' => $title,
+			'description' => $description,
+			'date' => date('d-m-Y H:i'),
+			'author' => $name,
+			'email' => $email,
+			'company' => $companyName,
+			'coreMinor' => $minimumVersion,
+			'controllers' => $controllers,
+			'dependencies' => $dependencies,
+			'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
+			'dependenciesArray' => $dependenciesArrayString,
+			'git' => $git,
+			'travis' => $travis,
+		);
+		/** @var $extensionGenerator Tx_Builder_CodeGeneration_Extension_ExtensionGenerator */
+		$extensionGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Extension_ExtensionGenerator');
+		$extensionGenerator->setConfiguration($extensionVariables);
+		$extensionGenerator->setDry($dry);
+		$extensionGenerator->setVerbose($verbose);
+		$extensionGenerator->generate();
+	}
+
+	/**
 	 * Black hole
 	 *
 	 * @return void
