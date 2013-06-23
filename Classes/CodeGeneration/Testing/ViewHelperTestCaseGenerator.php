@@ -1,6 +1,8 @@
 <?php
 
-class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator extends Tx_Builder_CodeGeneration_AbstractClassGenerator {
+class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator
+	extends Tx_Builder_CodeGeneration_AbstractClassGenerator
+	implements Tx_Builder_CodeGeneration_ClassGeneratorInterface {
 
 	const TEMPLATE_CLASS = 'ViewHelper/TestCase/Class';
 	const TEMPLATE_SUPPORT_PREPARE_INSTANCE = 'ViewHelper/TestCase/Method/PrepareInstanceMethod';
@@ -46,8 +48,6 @@ class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator extends Tx_B
 	 * @return void
 	 */
 	protected function appendCommonTestMethods() {
-		/** @var $viewHelperInstance Tx_Fluid_Core_ViewHelper_AbstractViewHelper */
-		$viewHelperInstance = $this->objectManager->get($this->viewHelperClassName);
 		$nodeClassName = (FALSE === strpos($this->viewHelperClassName, '_') ? 'Tx_Fluid_Core_Parser_SyntaxTree_ViewHelperNode' : '\\TYPO3\\CMS\\Fluid\\Core\\Parser\\SyntaxTree\\ViewHelperNode');
 		$variables = array(
 			'class' => $this->viewHelperClassName,
