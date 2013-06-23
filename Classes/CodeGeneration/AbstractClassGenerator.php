@@ -3,6 +3,11 @@
 abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Builder_CodeGeneration_AbstractCodeGenerator implements Tx_Builder_CodeGeneration_ClassGeneratorInterface {
 
 	/**
+	 * @var Tx_Builder_Service_ClassAnalysisService
+	 */
+	protected $classAnalysisService;
+
+	/**
 	 * @var string
 	 */
 	protected $name = NULL;
@@ -31,6 +36,14 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	 * @var array
 	 */
 	protected $methods = array();
+
+	/**
+	 * @param Tx_Builder_Service_ClassAnalysisService $classAnalysisService
+	 * @return void
+	 */
+	public function injectClassAnalysisService(Tx_Builder_Service_ClassAnalysisService $classAnalysisService) {
+		$this->classAnalysisService = $classAnalysisService;
+	}
 
 	/**
 	 * @param string $name
@@ -92,6 +105,28 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	}
 
 	/**
+	 * @param string $filePathAndFilename
+	 * @return void
+	 */
+	public function save($filePathAndFilename) {
+		$code = $this->generate();
+		$shouldBeWritten = FALSE;
+		if (FALSE === file_exists($filePathAndFilename)) {
+			$shouldBeWritten = TRUE;
+		} else {
+			$contents = file_get_contents($filePathAndFilename);
+			if (FALSE !== strpos($contents, '@protection off')) {
+				unlink($filePathAndFilename);
+				// class file contains marker which allows overwriting without further ado
+				$shouldBeWritten = TRUE;
+			}
+		}
+		if (TRUE === $shouldBeWritten) {
+			t3lib_div::writeFile($filePathAndFilename, $code);
+		}
+	}
+
+	/**
 	 * @param string $template
 	 * @param string $className
 	 * @return string
@@ -102,12 +137,12 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 		}
 		$properties = array_map('trim', $this->properties);
 		$methods = array_map('trim', $this->methods);
-
 		$this->appendCommonTestMethods();
 		$variables = array(
 			'class' => $className,
 			'author' => $this->author,
 			'year' => date('Y', time()),
+			'protection' => 'off',
 			'package' => $this->package,
 			'properties' => implode("\n\n\t", $properties),
 			'methods' => implode("\n\n\t", $methods)
