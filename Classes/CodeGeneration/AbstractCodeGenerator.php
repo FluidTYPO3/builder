@@ -67,6 +67,10 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 		if (TRUE === $this->dry) {
 			return TRUE;
 		}
+		$folderPath = pathinfo($filePathAndFilename, PATHINFO_DIRNAME);
+		if (FALSE === file_exists($folderPath)) {
+			$this->createFolder($folderPath);
+		}
 		$createdFile = t3lib_div::writeFile($filePathAndFilename, $content);
 		if (FALSE === $createdFile) {
 			throw new Exception('Unable to create file "' . $filePathAndFilename . '"', 1371695066);
