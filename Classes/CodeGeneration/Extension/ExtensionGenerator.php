@@ -4,10 +4,13 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 	extends Tx_Builder_CodeGeneration_AbstractCodeGenerator
 	implements Tx_Builder_CodeGeneration_CodeGeneratorInterface {
 
+	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
 	const TEMPLATE_CONTENT = 'Fluid/FluxContent';
 	const TEMPLATE_FLUXFORM = 'Fluid/FluxForm';
+	const TEMPLATE_TYPOSCRIPTCONSTANTS = 'Extension/TypoScript/constants';
+	const TEMPLATE_TYPOSCRIPTSETUP = 'Extension/TypoScript/setup';
 
 	/**
 	 * @var array
@@ -50,17 +53,19 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 		);
 		$foldersToBeCreated = array($this->targetFolder);
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
-			$this->appendPageFilesAndFolders($foldersToBeCreated, $filesToBeWritten);
+			$this->appendPageFiles($filesToBeWritten);
 		}
 		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
-			$this->appendContentFilesAndFolders($foldersToBeCreated, $filesToBeWritten);
+			$this->appendContentFiles($filesToBeWritten);
 		}
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
-			$this->appendBackendFilesAndFolders($foldersToBeCreated, $filesToBeWritten);
+			$this->appendBackendFiles($filesToBeWritten);
 		}
 		if (TRUE === $this->configuration['controllers']) {
 			array_push($foldersToBeCreated, $this->targetFolder . '/Classes/Controller');
 		}
+		$this->appendTypoScriptConfiguration($filesToBeWritten);
+		$this->appendExtensionTablesFile($filesToBeWritten);
 		$foldersToBeCreated = array_unique($foldersToBeCreated);
 		foreach ($foldersToBeCreated as $folderPathToBeCreated) {
 			$this->createFolder($folderPathToBeCreated);
@@ -73,50 +78,74 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 	}
 
 	/**
-	 * @param array $folders
 	 * @param array $files
 	 * @return void
 	 */
-	protected function appendBackendFilesAndFolders(&$folders, &$files) {
+	protected function appendTypoScriptConfiguration(&$files) {
+		$templateVariables = array(
+			'extension' => $this->configuration['extensionKey'],
+			'signature' => str_replace('', '_', $this->configuration['extensionKey']),
+		);
+		$folder = $this->targetFolder . '/Configuration/TypoScript';
+		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
+		$files[$folder . '/setup.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTSETUP, $templateVariables)->render();
+	}
+
+	/**
+	 * @param array $files
+	 * @return void
+	 */
+	protected function appendExtensionTablesFile(&$files) {
+		$title = trim($this->configuration['title']);
+		$templateVariables = array(
+			'configuration' => 't3lib_extMgm::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'pages' => '',
+			'content' => '',
+			'backend' => ''
+		);
+		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
+			$templateVariables['pages'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Page\');';
+		}
+		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
+			$templateVariables['content'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Content\');';
+		}
+		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
+			$templateVariables['backend'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
+		}
+		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
+	}
+
+	/**
+	 * @param array $files
+	 * @return void
+	 */
+	protected function appendBackendFiles(&$files) {
 		$layoutName = 'Backend';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, 'Backend');
 		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/MyModule.html');
-		array_push($folders, $this->targetFolder . '/Classes/Controller');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Layouts');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Templates/Backend');
 	}
 
 	/**
-	 * @param array $folders
 	 * @param array $files
 	 * @return void
 	 */
-	protected function appendContentFilesAndFolders(&$folders, &$files) {
+	protected function appendContentFiles(&$files) {
 		$layoutName = 'Content';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, $layoutName);
 		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/MyContentElement.html');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Layouts');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Templates/Content');
-		array_push($folders, $this->targetFolder . '/Resources/Public/Stylesheets');
-		array_push($folders, $this->targetFolder . '/Resources/Public/Scripts');
 	}
 
 	/**
-	 * @param array $folders
 	 * @param array $files
 	 * @return void
 	 */
-	protected function appendPageFilesAndFolders(&$folders, &$files) {
+	protected function appendPageFiles(&$files) {
 		$layoutName = 'Page';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, $layoutName);
 		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Page/MyPageTemplate.html');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Layouts');
-		array_push($folders, $this->targetFolder . '/Resources/Private/Templates/Page');
-		array_push($folders, $this->targetFolder . '/Resources/Public/Stylesheets');
-		array_push($folders, $this->targetFolder . '/Resources/Public/Scripts');
 	}
 
 	/**
@@ -136,8 +165,8 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 			'label' => $identifier,
 			'icon' => 'EXT:' . $this->configuration['extensionKey'] . '/ext_icon.gif'
 		);
-		$files[$this->targetFolder . '/Resources/Private/Templates/' . $placement]
-			= $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
+		$templatePathAndFilename = $this->targetFolder . '/Resources/Private/Templates/' . $placement;
+		$files[$templatePathAndFilename] = $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
 	}
 
 	/**
@@ -151,8 +180,8 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 			'name' => $layoutName,
 			'section' => $layoutSectionRenderName
 		);
-		$files[$this->targetFolder . '/Resources/Private/Layouts/' . $layoutName . '.html']
-			= $this->getPreparedCodeTemplate(self::TEMPLATE_LAYOUT, $layoutVariables)->render();
+		$layoutPathAndFilename = $this->targetFolder . '/Resources/Private/Layouts/' . $layoutName . '.html';
+		$files[$layoutPathAndFilename] = $this->getPreparedCodeTemplate(self::TEMPLATE_LAYOUT, $layoutVariables)->render();
 	}
 
 }
