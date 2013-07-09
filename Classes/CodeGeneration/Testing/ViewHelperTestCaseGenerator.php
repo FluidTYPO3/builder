@@ -75,7 +75,7 @@ class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator
 	 * @return void
 	 */
 	protected function appendCommonTestMethods() {
-		$nodeClassName = (FALSE === strpos($this->viewHelperClassName, '_') ? 'Tx_Fluid_Core_Parser_SyntaxTree_ViewHelperNode' : '\\TYPO3\\CMS\\Fluid\\Core\\Parser\\SyntaxTree\\ViewHelperNode');
+		$nodeClassName = (FALSE !== strpos($this->viewHelperClassName, '_') ? 'Tx_Fluid_Core_Parser_SyntaxTree_ViewHelperNode' : '\\TYPO3\\CMS\\Fluid\\Core\\Parser\\SyntaxTree\\ViewHelperNode');
 		$variables = array(
 			'class' => $this->viewHelperClassName,
 			'nodeclass' => $nodeClassName,
