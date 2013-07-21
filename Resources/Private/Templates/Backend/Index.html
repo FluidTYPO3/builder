@@ -1,0 +1,51 @@
+{namespace v=Tx_Vhs_ViewHelpers}
+
+<f:layout name="Backend" />
+
+<f:section name="ButtonsLeft">
+
+</f:section>
+
+<f:section name="Content">
+	<f:render section="{view}" arguments="{_all}" />
+</f:section>
+
+<f:section name="Index">
+	<h2>{f:translate(key: 'header')}</h2>
+	{f:translate(key: 'introduction') -> f:format.html()}
+	<h3>{f:translate(key: 'fluidsyntax.header')}</h3>
+	<fieldset>
+		<legend>{f:translate(key: 'header.validators')}</legend>
+		<f:form action="syntax">
+			<label>{f:translate(key: 'extensionselector')}</label>
+			<f:render section="ExtensionSelector" arguments="{_all}" />
+			<label>{f:translate(key: 'typeselector')}</label>
+			<label>
+				<f:form.checkbox name="syntax[{formats -> f:count()}]" value="php" checked="checked" />
+				{f:translate(key: 'syntax.php')}
+			</label>
+			<label>
+				<f:form.checkbox name="syntax[fluid]" value="fluid" checked="checked" />
+				{f:translate(key: 'syntax.fluid')}
+			</label>
+			<f:render section="FormatSelector" arguments="{_all}" />
+			<f:form.submit value="{f:translate(key: 'submit')}" />
+		</f:form>
+	</fieldset>
+</f:section>
+
+<f:section name="ExtensionSelector">
+	<f:form.select name="extensions" options="{extensionSelectorOptions}" multiple="TRUE" size="{extensionSelectorOptions -> f:count()}" value="{extensionSelectorOptions}" />
+</f:section>
+
+<f:section name="FormatSelector">
+	<ul>
+		<f:for each="{formats}" as="formatIsPreselected" key="formatName" iteration="iteration">
+			<li>
+				<label class="inline">
+					<f:form.checkbox name="formats[{iteration.index}]" value="{formatName}" checked="{f:if(condition: formatIsPreselected, then: 'checked')}" /> {formatName}
+				</label>
+			</li>
+		</f:for>
+	</ul>
+</f:section>

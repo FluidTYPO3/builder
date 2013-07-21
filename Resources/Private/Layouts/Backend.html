@@ -1,0 +1,47 @@
+{namespace v=Tx_Vhs_ViewHelpers}
+
+<style type="text/css">
+	label {
+		display: block;
+		margin-top: 0.5em;
+		margin-bottom: 0.5em;
+	}
+	.label.inline {
+		display: inline-block;
+		margin-right: 1em;
+		min-height: 1em;
+	}
+	li {
+		margin-left: 18px !important;
+	}
+</style>
+<f:be.container>
+	<div class="typo3-fullDoc">
+		<div id="typo3-docheader">
+			<div id="typo3-docheader-row1">
+				<div class="buttonsleft">
+					<f:render section="ButtonsLeft" />
+				</div>
+				<div class="buttonsright">
+					<f:be.buttons.shortcut />
+				</div>
+			</div>
+			<div id="typo3-docheader-row2">
+				<div class="docheader-row2-left">
+				</div>
+				<div class="docheader-row2-right">
+					<f:be.pagePath />
+					<f:be.pageInfo />
+				</div>
+			</div>
+		</div>
+		<div id="typo3-docbody">
+			<div id="typo3-inner-docbody">
+				<f:flashMessages class="tx-extbase-flash-message" />
+				<div id="news-administration">
+					<f:render section="Content" />
+				</div>
+			</div>
+		</div>
+	</div>
+</f:be.container>

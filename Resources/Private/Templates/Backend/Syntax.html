@@ -1,0 +1,44 @@
+{namespace v=Tx_Vhs_ViewHelpers}
+
+<f:layout name="Backend" />
+
+<f:section name="ButtonsLeft">
+
+</f:section>
+
+<f:section name="Content">
+	<h2>{f:translate(key: 'header.reports')}</h2>
+	<f:for each="{reports}" as="extensionReports" key="extensionKey">
+		<f:if condition="{extensionReports}">
+			<f:else>
+				<f:translate key="noreports" />
+			</f:else>
+			<f:then>
+				<f:for each="{extensionReports}" as="formatReports" key="format">
+					<f:if condition="{formatReports.errors}">
+						<f:else>
+							<f:render section="Report" arguments="{class: 'ok', title: '{extensionKey}: {format}',
+								body: '{f:translate(key: \'filespassed\', arguments: {0: \'{formatReports.reports -> f:count()}\'})}'}" />
+						</f:else>
+						<f:then>
+							<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
+								<f:if condition="{result.valid} < 1">
+									<f:render section="Report" arguments="{class: 'error', title: '{extensionKey}: {filePathAndFilename}', body: result.error}" />
+								</f:if>
+							</f:for>
+						</f:then>
+					</f:if>
+				</f:for>
+			</f:then>
+		</f:if>
+	</f:for>
+</f:section>
+
+<f:section name="Report">
+	<div class="typo3-message message-{class}">
+		<div class="message-header">{title}</div>
+		<div class="message-body">
+			<pre>{body}</pre>
+		</div>
+	</div>
+</f:section>
