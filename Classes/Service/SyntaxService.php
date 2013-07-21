@@ -60,8 +60,22 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 	}
 
 	/**
+	 * @param string $path
+	 * @param string $formats
+	 * @return Tx_Builder_ResultFluidParserResult[]
+	 */
+	public function syntaxCheckFluidTemplateFilesInPath($path, $formats) {
+		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $formats);
+		$results = array();
+		foreach ($files as $filePathAndFilename) {
+			$results[$filePathAndFilename] = $this->syntaxCheckFluidTemplateFile($filePathAndFilename);
+		}
+		return $results;
+	}
+
+	/**
 	 * @param string $filePathAndFilename
-	 * @return Tx_Builder_Result_FluidParserResult
+	 * @return Tx_Builder_Result_ParserResult
 	 */
 	public function syntaxCheckPhpFile($filePathAndFilename) {
 		/** @var $result Tx_Builder_Result_FluidParserResult */
@@ -76,6 +90,34 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 			$result->setError($error);
 		}
 		return $result;
+	}
+
+	/**
+	 * @param string $path
+	 * @return Tx_Builder_Result_ParserResult[]
+	 */
+	public function syntaxCheckPhpFilesInPath($path) {
+		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, 'php');
+		$files = array_values($files);
+		$results = array();
+		foreach ($files as $filePathAndFilename) {
+			$results[$filePathAndFilename] = $this->syntaxCheckPhpFile($filePathAndFilename);
+		}
+		return $results;
+	}
+
+	/**
+	 * @param Tx_Builder_Result_ParserResult[] $results
+	 * @return integer
+	 */
+	public function countErrorsInResultCollection(array $results) {
+		$count = 0;
+		foreach ($results as $result) {
+			if (FALSE === $result->getValid()) {
+				++ $count;
+			}
+		}
+		return $count;
 	}
 
 	/**

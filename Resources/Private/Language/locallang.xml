@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>database</type>
+		<description>Language labels belonging to extension 'builder'</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="mlang_tabs_tab">Builder</label>
+			<label index="mlang_labels_tablabel">Builder</label>
+			<label index="submit">Perform action</label>
+			<label index="noreports">No reports</label>
+			<label index="passed">Passed!</label>
+			<label index="filespassed">%s file(s) passed!</label>
+			<label index="header">EXT:builder Dashboard</label>
+			<label index="header.validators">Validation functions</label>
+			<label index="header.builders">Code building functions</label>
+			<label index="header.reports">Syntax check reports</label>
+			<label index="introduction">In this module you can perform the following actions:</label>
+			<label index="extensionselector">Select extension(s)</label>
+			<label index="typeselector">Select script type(s)</label>
+			<label index="syntax.fluid">Check Fluid template syntax</label>
+			<label index="syntax.php">Check PHP file syntax</label>
+		</languageKey>
+	</data>
+</T3locallang>
