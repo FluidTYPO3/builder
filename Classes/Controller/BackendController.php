@@ -70,8 +70,6 @@ class Tx_Builder_Controller_BackendController extends Tx_Extbase_MVC_Controller_
 				$reports[$extensionKey][$syntaxName]['errors'] = $this->syntaxService->countErrorsInResultCollection($reportsForSyntaxName);
 			}
 		}
-		#\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($reports);
-		#exit();
 		$this->view->assign('reports', $reports);
 	}
 
