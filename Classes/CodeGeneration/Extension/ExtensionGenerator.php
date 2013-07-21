@@ -84,7 +84,7 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 	protected function appendTypoScriptConfiguration(&$files) {
 		$templateVariables = array(
 			'extension' => $this->configuration['extensionKey'],
-			'signature' => str_replace('', '_', $this->configuration['extensionKey']),
+			'signature' => t3lib_extMgm::getCN($this->configuration['extensionKey'])
 		);
 		$folder = $this->targetFolder . '/Configuration/TypoScript';
 		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
