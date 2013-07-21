@@ -73,10 +73,9 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	public function phpsyntaxCommand($extension = NULL, $path = NULL, $verbose = FALSE) {
 		$verbose = (boolean) $verbose;
 		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
-		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, 'php');
+		$results = $this->syntaxService->syntaxCheckPhpFilesInExtension($extension);
 		$errors = FALSE;
-		foreach ($files as $filePathAndFilename) {
+		foreach ($results as $filePathAndFilename => $result) {
 			$result = $this->syntaxService->syntaxCheckPhpFile($filePathAndFilename);
 			if (NULL !== $result->getError()) {
 				$errors = TRUE;
@@ -84,7 +83,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			}
 
 		}
-		$this->stop($files, $errors, $verbose);
+		$this->stop($results, $errors, $verbose);
 	}
 
 	/**
