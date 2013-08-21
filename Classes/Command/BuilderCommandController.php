@@ -49,7 +49,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 				$namespaces = $result->getNamespaces();
 				$this->response->appendContent('File is compilable: ' . (TRUE === $result->getCompilable() ? 'YES' : 'NO (WARNING)') . LF);
 				$this->response->appendContent('File ' . (NULL !== $result->getLayoutName() ? 'has layout (' . $result->getLayoutName() . ')' : 'DOES NOT reference a Layout') . LF);
-				$this->response->appendContent('File has ' . count($namespaces) . ' namespace(s)' . (0 < count($namespaces) ? ': ' . $result->getNamespacesFlattened() : ''). LF);
+				$this->response->appendContent('File has ' . count($namespaces) . ' namespace(s)' . (0 < count($namespaces) ? ': ' . $result->getNamespacesFlattened() : '') . LF);
 				$this->response->appendContent('[OK] File  ' . $basePath . ' is valid.' . LF);
 				$this->response->send();
 			}
@@ -191,6 +191,45 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	}
 
 	/**
+	 * Lists installed Extensions. The output defaults to text and is new-line separated.
+	 *
+	 * @param boolean $detail If TRUE, the command will give detailed information such as version and state
+	 * @param boolean $active If TRUE, the command will give information about active extensions only
+	 * @param boolean $inactive If TRUE, the command will give information about inactive extensions only
+	 * @param boolean $json If TRUE, the command will return a json object-string
+	 * @return void
+	 */
+	public function listCommand($detail = FALSE, $active = NULL, $inactive = FALSE, $json = FALSE) {
+		if (6 > substr(TYPO3_version, 0, 1)) {
+			throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+		}
+
+		$detail = (boolean) $detail;
+		$active = (boolean) $active;
+		$inactive = (boolean) $inactive;
+		$json = (boolean) $json;
+
+		$format = 'text';
+		if (TRUE === $json) {
+			$format = 'json';
+		}
+		if ($active) {
+			$state = Tx_Builder_Service_ExtensionService::STATE_ACTIVE;
+		} elseif ($inactive) {
+			$state = Tx_Builder_Service_ExtensionService::STATE_INACTIVE;
+		} else {
+			$state = Tx_Builder_Service_ExtensionService::STATE_ALL;
+		}
+
+		/** @var Tx_Builder_Service_ExtensionService $extensionService */
+		$extensionService = $this->objectManager->get('Tx_Builder_Service_ExtensionService');
+
+		$this->response->setContent(
+			$extensionService->getPrintableInformation($format, $detail, $state)
+		);
+	}
+
+	/**
 	 * Uninstalls an extension by key
 	 *
 	 * The extension files must be present in one of the
@@ -320,7 +359,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 
 	/**
 	 * @param array $files
-	 * @param boolean  $errors
+	 * @param boolean $errors
 	 * @param boolean $verbose
 	 */
 	protected function stop($files, $errors, $verbose) {
