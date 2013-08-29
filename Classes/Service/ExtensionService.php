@@ -99,8 +99,11 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	}
 
 	/**
+	 * Prints text-output
+	 *
 	 * @param array $extensionInformation
 	 * @param boolean $detail
+	 * @param int $state
 	 *
 	 * @return string
 	 */
@@ -108,7 +111,21 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 		$output = '';
 		foreach ($extensionInformation as $extension => $info) {
 			if (FALSE === $detail) {
-				$output .= $extension . LF;
+				switch ($state) {
+					case self::STATE_INACTIVE:
+						if (0 === intval($info['installed'])) {
+							$output .= $extension . LF;
+						}
+						break;
+					case self::STATE_ACTIVE:
+						if (1 === intval($info['installed'])) {
+							$output .= $extension . LF;
+						}
+						break;
+					default:
+						$output .= $extension . LF;
+						break;
+				}
 			} elseif (TRUE === $detail) {
 				switch ($state) {
 					case self::STATE_INACTIVE:
