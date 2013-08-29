@@ -46,7 +46,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			$extensionInformation = $extensionService->getComputableInformation();
 			foreach ($extensionInformation as $extensionName => $extensionInfo) {
 				// Syntax service declines linting of inactive extensions
-				if (0 === intval($installed = $extensionInfo['installed'])) {
+				if (0 === intval($installed = $extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
 					continue;
 				}
 				$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
