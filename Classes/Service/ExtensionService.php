@@ -60,7 +60,7 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	 * @return string
 	 */
 	public function getPrintableInformation($format = 'text', $detail = FALSE, $state = self::STATE_ALL) {
-		$extensionInformation = $this->gatherInformation($format, $detail, $state);
+		$extensionInformation = $this->gatherInformation();
 
 		if ('text' === $format) {
 			$printedInfo = $this->printAsText($extensionInformation, $detail, $state);
@@ -74,15 +74,24 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	}
 
 	/**
-	 * Gathers Extension Information
+	 * Returns an array of extension information. Which is the same as the --detail switch.
 	 *
-	 * @param string $format
-	 * @param boolean $detail
-	 * @param int $state
+	 * A facade is used as more behaviour might be hidden.
 	 *
 	 * @return array
 	 */
-	private function gatherInformation($format, $detail, $state) {
+	public function getComputableInformation() {
+		$extensionInformation = $this->gatherInformation();
+
+		return $extensionInformation;
+	}
+
+	/**
+	 * Gathers Extension Information
+	 *
+	 * @return array
+	 */
+	private function gatherInformation() {
 		/** @var \TYPO3\CMS\Extensionmanager\Utility\ListUtility $service */
 		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
 
@@ -99,8 +108,11 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	}
 
 	/**
+	 * Prints text-output
+	 *
 	 * @param array $extensionInformation
 	 * @param boolean $detail
+	 * @param int $state
 	 *
 	 * @return string
 	 */
@@ -108,7 +120,21 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 		$output = '';
 		foreach ($extensionInformation as $extension => $info) {
 			if (FALSE === $detail) {
-				$output .= $extension . LF;
+				switch ($state) {
+					case self::STATE_INACTIVE:
+						if (0 === intval($info['installed'])) {
+							$output .= $extension . LF;
+						}
+						break;
+					case self::STATE_ACTIVE:
+						if (1 === intval($info['installed'])) {
+							$output .= $extension . LF;
+						}
+						break;
+					default:
+						$output .= $extension . LF;
+						break;
+				}
 			} elseif (TRUE === $detail) {
 				switch ($state) {
 					case self::STATE_INACTIVE:
