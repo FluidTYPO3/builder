@@ -26,13 +26,33 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
 	 * @param string $extensions If provided, this CSV list of file extensions are considered Fluid templates
 	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
+	 * @param boolean $all If TRUE, lints ALL installed extensions templates
 	 * @return void
 	 */
-	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
+	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE, $all = FALSE) {
+		$all = (boolean) $all;
 		$verbose = (boolean) $verbose;
-		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
-		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
+		if (FALSE !== $all) {
+			$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
+			$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
+			$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
+		} else {
+			if (6 > substr(TYPO3_version, 0, 1)) {
+				throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+			}
+			$files = array();
+			/** @var Tx_Builder_Service_ExtensionService $extensionService */
+			$extensionService = $this->objectManager->get('Tx_Builder_Service_ExtensionService');
+			$extensionInformation = $extensionService->getComputableInformation();
+			foreach ($extensionInformation as $extensionName => $extensionInfo) {
+				// Syntax service declines linting of inactive extensions
+				if (0 === intval($installed = $extensionInfo['installed'])) {
+					continue;
+				}
+				$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
+				$files = array_merge($files, Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions));
+			}
+		}
 		$files = array_values($files);
 		$errors = FALSE;
 		$this->response->setContent('Performing a syntax check on fluid templates (types: ' . $extensions . '; path: ' . $path . ')' . LF);
