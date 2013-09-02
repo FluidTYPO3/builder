@@ -20,25 +20,26 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 *
 	 * Checks one template file, all templates in
 	 * an extension or a sub-path (which can be used
-	 * with an extension key for a relative path)
+	 * with an extension key for a relative path).
+	 * If left out, it will lint ALL templates in
+	 * EVERY local extension.
 	 *
 	 * @param string $extension Optional extension key (if path is included, only files in that path in this extension are checked)
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
 	 * @param string $extensions If provided, this CSV list of file extensions are considered Fluid templates
 	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
-	 * @param boolean $all If TRUE, lints ALL installed extensions templates
 	 * @return void
 	 */
-	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE, $all = FALSE) {
-		$all = (boolean) $all;
+	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
 		$verbose = (boolean) $verbose;
-		if (FALSE !== $all) {
+		if (NULL !== $extension) {
 			$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
 			$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
 			$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
 		} else {
+			// no extension key given, let's lint it all
 			if (6 > substr(TYPO3_version, 0, 1)) {
-				throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+				throw new RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
 			}
 			$files = array();
 			/** @var Tx_Builder_Service_ExtensionService $extensionService */
