@@ -20,7 +20,9 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 *
 	 * Checks one template file, all templates in
 	 * an extension or a sub-path (which can be used
-	 * with an extension key for a relative path)
+	 * with an extension key for a relative path).
+	 * If left out, it will lint ALL templates in
+	 * EVERY local extension.
 	 *
 	 * @param string $extension Optional extension key (if path is included, only files in that path in this extension are checked)
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
@@ -30,9 +32,28 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 */
 	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
 		$verbose = (boolean) $verbose;
-		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-		$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
-		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
+		if (NULL !== $extension) {
+			$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
+			$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
+			$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
+		} else {
+			// no extension key given, let's lint it all
+			if (6 > substr(TYPO3_version, 0, 1)) {
+				throw new RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+			}
+			$files = array();
+			/** @var Tx_Builder_Service_ExtensionService $extensionService */
+			$extensionService = $this->objectManager->get('Tx_Builder_Service_ExtensionService');
+			$extensionInformation = $extensionService->getComputableInformation();
+			foreach ($extensionInformation as $extensionName => $extensionInfo) {
+				// Syntax service declines linting of inactive extensions
+				if (0 === intval($installed = $extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
+					continue;
+				}
+				$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
+				$files = array_merge($files, Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions));
+			}
+		}
 		$files = array_values($files);
 		$errors = FALSE;
 		$this->response->setContent('Performing a syntax check on fluid templates (types: ' . $extensions . '; path: ' . $path . ')' . LF);
