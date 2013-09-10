@@ -5,7 +5,7 @@
      xmlns:v="http://fedext.net/ns/vhs/ViewHelpers"
      xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
 <f:section name="###configurationSectionName###">
-	<flux:flexform id="###id###" label="###label###" icon="###icon###">
+	<flux:flexform id="###id###" label="###label###" icon="{f:uri.resource(path: '###icon###')}">
 		<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
 	</flux:flexform>
 </f:section>
