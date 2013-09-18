@@ -93,6 +93,15 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 	}
 
 	/**
+	 * @param string $extensionKey
+	 * @return Tx_Builder_Result_ParserResult[]
+	 */
+	public function syntaxCheckPhpFilesInExtension($extensionKey) {
+		$path = t3lib_extMgm::extPath($extensionKey);
+		return $this->syntaxCheckPhpFilesInPath($path);
+	}
+
+	/**
 	 * @param string $path
 	 * @return Tx_Builder_Result_ParserResult[]
 	 */

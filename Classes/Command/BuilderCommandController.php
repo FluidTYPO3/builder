@@ -94,7 +94,11 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	public function phpsyntaxCommand($extension = NULL, $path = NULL, $verbose = FALSE) {
 		$verbose = (boolean) $verbose;
 		$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-		$results = $this->syntaxService->syntaxCheckPhpFilesInExtension($extension);
+		if (NULL !== $extension) {
+			$results = $this->syntaxService->syntaxCheckPhpFilesInExtension($extension);
+		} else {
+			$results = $this->syntaxService->syntaxCheckPhpFilesInPath($path);
+		}
 		$errors = FALSE;
 		foreach ($results as $filePathAndFilename => $result) {
 			$result = $this->syntaxService->syntaxCheckPhpFile($filePathAndFilename);
