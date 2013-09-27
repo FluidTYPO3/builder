@@ -54,6 +54,7 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 		$foldersToBeCreated = array($this->targetFolder);
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
 			$this->appendPageFiles($filesToBeWritten);
+			array_push($folderPathToBeCreated, $this->targetFolder . '/Resources/Public/Icons');
 		}
 		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
 			$this->appendContentFiles($filesToBeWritten);
@@ -70,10 +71,13 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 		foreach ($foldersToBeCreated as $folderPathToBeCreated) {
 			$this->createFolder($folderPathToBeCreated);
 		}
-		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
 		foreach ($filesToBeWritten as $fileToBeWritten => $fileContentToBeWritten) {
 			$this->createFile($fileToBeWritten, $fileContentToBeWritten);
 		}
+		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
+			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Page.gif');
+		}
+		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
 		return 'Built extension "' . $extensionKey . '"';
 	}
 
@@ -163,7 +167,7 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 			'configurationSectionName' => 'Configuration',
 			'id' => str_replace('/', '', strtolower($identifier)),
 			'label' => $identifier,
-			'icon' => 'EXT:' . $this->configuration['extensionKey'] . '/ext_icon.gif'
+			'icon' => 'Icons/Page.gif'
 		);
 		$templatePathAndFilename = $this->targetFolder . '/Resources/Private/Templates/' . $placement;
 		$files[$templatePathAndFilename] = $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
