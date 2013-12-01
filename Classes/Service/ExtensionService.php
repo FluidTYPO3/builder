@@ -51,6 +51,71 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	}
 
 	/**
+	 * @param string $extensionKey Extension key, traditional format
+	 * @param string $author Author, format "Name Lastname <email@domain.com>"
+	 * @param string $title Title of extension (NULL for auto title)
+	 * @param string $description
+	 * @param boolean $controllers Generate controllers for each FluidTYPO3 feature
+	 * @param boolean $pages Include use of fluidpages
+	 * @param boolean $content Include use of fluidcontent
+	 * @param boolean $backend Include use of fluidbackend
+	 * @param boolean $useVhs Include VHS as dependency
+	 * @param boolean $git Generate Git repository and initial commits
+	 * @param boolean $travis Generate Travis build file for Continuous Integration through travis-ci.org
+	 * @return Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
+	 */
+	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE, $git = FALSE, $travis = FALSE) {
+		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
+		if (NULL === $title) {
+			$title = $defaultTitle;
+		}
+		if (NULL === $description) {
+			$description = $defaultTitle;
+		}
+		$dependencies = array();
+		if (TRUE === $pages) {
+			array_push($dependencies, 'fluidpages');
+		}
+		if (TRUE === $content) {
+			array_push($dependencies, 'fluidcontent');
+		}
+		if (TRUE === $backend) {
+			array_push($dependencies, 'fluidbackend');
+		}
+		if (TRUE === $useVhs) {
+			array_push($dependencies, 'vhs');
+		}
+		$dependenciesArrayString = '';
+		foreach ($dependencies as $dependency) {
+			$dependenciesArrayString .= "\n\t\t\t'" . $dependency . "' => '',";
+		}
+		list ($nameAndEmail, $companyName) = t3lib_div::trimExplode(',', $author);
+		list ($name, $email) = t3lib_div::trimExplode('<', $nameAndEmail);
+		$email = trim($email, '>');
+		$minimumVersion = 4.5;
+		$extensionVariables = array(
+			'extensionKey' => $extensionKey,
+			'title' => $title,
+			'description' => $description,
+			'date' => date('d-m-Y H:i'),
+			'author' => $name,
+			'email' => $email,
+			'company' => $companyName,
+			'coreMinor' => $minimumVersion,
+			'controllers' => $controllers,
+			'dependencies' => $dependencies,
+			'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
+			'dependenciesArray' => $dependenciesArrayString,
+			'git' => $git,
+			'travis' => $travis,
+		);
+		/** @var $extensionGenerator Tx_Builder_CodeGeneration_Extension_ExtensionGenerator */
+		$extensionGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Extension_ExtensionGenerator');
+		$extensionGenerator->setConfiguration($extensionVariables);
+		return $extensionGenerator;
+	}
+
+	/**
 	 * Prints information according to the instances properties
 	 *
 	 * @param string $format Desired format. Currently 'text' or 'json'

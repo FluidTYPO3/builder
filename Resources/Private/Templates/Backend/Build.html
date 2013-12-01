@@ -1,0 +1,32 @@
+{namespace v=Tx_Vhs_ViewHelpers}
+
+<f:layout name="Backend" />
+
+<f:section name="ButtonsLeft">
+
+</f:section>
+
+<f:section name="Content">
+	<h2>{f:translate(key: 'header.built')}</h2>
+	<f:if condition="{attributes.install.value} > 0">
+		<f:translate key="warnings.installed" />
+	</f:if>
+	<table style="font: inherit;">
+		<thead>
+			<th><strong><f:translate key="attributes.name" /></strong></th>
+			<th><strong><f:translate key="attributes.value" /></strong></th>
+		</thead>
+		<f:for each="{attributes}" as="attribute" key="attributeName" iteration="iteration">
+			<tr>
+				<td style="padding: 0.25em; width: 220px; padding-right: 2em;{f:if(condition: iteration.isOdd, then: ' background-color: #ECECEC;')}">
+					<f:translate key="providerextension.{attributeName}" />
+				</td>
+				<td style="padding: 0.25em;{f:if(condition: iteration.isOdd, then: 'background-color: #ECECEC;')}">
+					<em>
+						<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}" default="{attribute.value}" />
+					</em>
+				</td>
+			</tr>
+		</f:for>
+	</table>
+</f:section>
