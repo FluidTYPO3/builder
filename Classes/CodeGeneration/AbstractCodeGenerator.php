@@ -68,7 +68,7 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 			return TRUE;
 		}
 		$folderPath = pathinfo($filePathAndFilename, PATHINFO_DIRNAME);
-		if (FALSE === file_exists($folderPath)) {
+		if (FALSE === is_dir($folderPath)) {
 			$this->createFolder($folderPath);
 		}
 		$createdFile = t3lib_div::writeFile($filePathAndFilename, $content);
@@ -87,6 +87,10 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 	public function copyFile($localRelativePathAndFilename, $destinationPathAndFilename) {
 		if (TRUE === $this->dry) {
 			return TRUE;
+		}
+		$folderPath = pathinfo($destinationPathAndFilename, PATHINFO_DIRNAME);
+		if (FALSE === is_dir($folderPath)) {
+			$this->createFolder($folderPath);
 		}
 		$localFile = t3lib_extMgm::extPath('builder', $localRelativePathAndFilename);
 		$fileCopied = copy($localFile, $destinationPathAndFilename);

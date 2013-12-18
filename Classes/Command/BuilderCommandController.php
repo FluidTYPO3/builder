@@ -8,11 +8,24 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	protected $syntaxService;
 
 	/**
+	 * @var Tx_Builder_Service_ExtensionService
+	 */
+	protected $extensionService;
+
+	/**
 	 * @param Tx_Builder_Service_SyntaxService $syntaxService
 	 * @return void
 	 */
 	public function injectSyntaxService(Tx_Builder_Service_SyntaxService $syntaxService) {
 		$this->syntaxService = $syntaxService;
+	}
+
+	/**
+	 * @param Tx_Builder_Service_ExtensionService $extensionService
+	 * @return void
+	 */
+	public function injectExtensionService(Tx_Builder_Service_ExtensionService $extensionService) {
+		$this->extensionService = $extensionService;
 	}
 
 	/**
@@ -28,6 +41,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
 	 * @param string $extensions If provided, this CSV list of file extensions are considered Fluid templates
 	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
+	 * @throws RuntimeException
 	 * @return void
 	 */
 	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
@@ -222,11 +236,12 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @param boolean $active If TRUE, the command will give information about active extensions only
 	 * @param boolean $inactive If TRUE, the command will give information about inactive extensions only
 	 * @param boolean $json If TRUE, the command will return a json object-string
+	 * @throws RuntimeException
 	 * @return void
 	 */
 	public function listCommand($detail = FALSE, $active = NULL, $inactive = FALSE, $json = FALSE) {
 		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+			throw new RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
 		}
 
 		$detail = (boolean) $detail;
@@ -262,11 +277,11 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 *
 	 * @param string $extensionKey
 	 * @return void
-	 * @throws \Exception
+	 * @throws RuntimeException
 	 */
 	public function uninstallCommand($extensionKey) {
 		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
+			throw new RuntimeException('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
 		}
 		/** @var $service \TYPO3\CMS\Extensionmanager\Utility\InstallUtility */
 		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
@@ -291,14 +306,13 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 * @param boolean $content IF TRUE, generates basic files for implementing Fluid Content templates
 	 * @param boolean $backend If TRUE, generates basic files for implementing Fluid Backend modules
 	 * @param boolean $controllers If TRUE, generates controllers for each enabled feature. Enabling $backend will always generate a controller regardless of this toggle.
-	 * @param float $minimumVersion The minimum required core version for this extension, defaults to latest LTS (currently 4.5)
 	 * @param boolean $dry If TRUE, performs a dry run: does not write any files but reports which files would have been written
 	 * @param boolean $verbose If FALSE, suppresses a lot of the otherwise output messages (to STDOUT)
 	 * @param boolean $git If TRUE, initialises the newly created extension directory as a Git repository and commits all files. You can then "git add remote origin <URL>" and "git push origin master -u" to push the initial state
 	 * @param boolean $travis If TRUE, generates a Travis-CI build script which uses Fluid Powered TYPO3 coding standards analysis and code inspections to automate testing on Travis-CI
 	 * @return void
 	 */
-	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $minimumVersion = 4.5, $dry = FALSE, $verbose = TRUE, $git = FALSE, $travis = FALSE) {
+	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE, $git = FALSE, $travis = FALSE) {
 		$useVhs = (boolean) $useVhs;
 		$pages = (boolean) $pages;
 		$content = (boolean) $content;
@@ -308,52 +322,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 		$dry = (boolean) $dry;
 		$git = (boolean) $git;
 		$travis = (boolean) $travis;
-		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
-		if (NULL === $title) {
-			$title = $defaultTitle;
-		}
-		if (NULL === $description) {
-			$description = $defaultTitle;
-		}
-		$dependencies = array();
-		if (TRUE === $pages) {
-			array_push($dependencies, 'fluidpages');
-		}
-		if (TRUE === $content) {
-			array_push($dependencies, 'fluidcontent');
-		}
-		if (TRUE === $backend) {
-			array_push($dependencies, 'fluidbackend');
-		}
-		if (TRUE === $useVhs) {
-			array_push($dependencies, 'vhs');
-		}
-		$dependenciesArrayString = '';
-		foreach ($dependencies as $dependency) {
-			$dependenciesArrayString .= "\n\t\t\t'" . $dependency . "' => '',";
-		}
-		list ($nameAndEmail, $companyName) = t3lib_div::trimExplode(',', $author);
-		list ($name, $email) = t3lib_div::trimExplode('<', $nameAndEmail);
-		$email = trim($email, '>');
-		$extensionVariables = array(
-			'extensionKey' => $extensionKey,
-			'title' => $title,
-			'description' => $description,
-			'date' => date('d-m-Y H:i'),
-			'author' => $name,
-			'email' => $email,
-			'company' => $companyName,
-			'coreMinor' => $minimumVersion,
-			'controllers' => $controllers,
-			'dependencies' => $dependencies,
-			'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
-			'dependenciesArray' => $dependenciesArrayString,
-			'git' => $git,
-			'travis' => $travis,
-		);
-		/** @var $extensionGenerator Tx_Builder_CodeGeneration_Extension_ExtensionGenerator */
-		$extensionGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Extension_ExtensionGenerator');
-		$extensionGenerator->setConfiguration($extensionVariables);
+		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs, $git, $travis);
 		$extensionGenerator->setDry($dry);
 		$extensionGenerator->setVerbose($verbose);
 		$extensionGenerator->generate();
