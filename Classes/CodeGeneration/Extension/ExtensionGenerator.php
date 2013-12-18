@@ -44,7 +44,9 @@ class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
 	 */
 	public function generate() {
 		$extensionKey = $this->configuration['extensionKey'];
-		$this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
+		if (NULL === $this->targetFolder) {
+			$this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
+		}
 		if (TRUE === is_dir($this->targetFolder)) {
 			throw new Exception('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
 		}
