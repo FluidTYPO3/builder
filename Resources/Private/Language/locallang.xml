@@ -1,48 +1,49 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <T3locallang>
 	<meta type="array">
 		<type>database</type>
-		<description>Language labels belonging to extension 'builder'</description>
+		<description>Labels for languages: default</description>
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="mlang_tabs_tab">Builder</label>
-			<label index="mlang_labels_tablabel">Builder</label>
-			<label index="submit.validate">Perform validations</label>
-			<label index="submit.provider">Create provider extension</label>
-			<label index="noreports">No reports</label>
-			<label index="passed">Passed!</label>
-			<label index="filespassed">%s file(s) passed!</label>
-			<label index="toggles">Toggles</label>
+			<label index="attributes.name">Option</label>
+			<label index="attributes.value">Selected value</label>
+			<label index="booleans.0">No</label>
+			<label index="booleans.1">Yes</label>
 			<label index="buildBehavior">Build behavior</label>
+			<label index="extensionselector">Select extension(s)</label>
+			<label index="filespassed">%s file(s) passed!</label>
 			<label index="header">EXT:builder Dashboard</label>
-			<label index="header.validators">Validation functions</label>
 			<label index="header.builders">Create FluidTYPO3 Provider Extension</label>
 			<label index="header.built">Build results</label>
 			<label index="header.reports">Syntax check reports</label>
+			<label index="header.validators">Validation functions</label>
 			<label index="introduction">In this module you can perform the following actions:</label>
-			<label index="extensionselector">Select extension(s)</label>
-			<label index="typeselector">Select script type(s)</label>
+			<label index="mlang_labels_tabdescr">mlang_labels_tabdescr</label>
+			<label index="mlang_labels_tablabel">Builder</label>
+			<label index="mlang_tabs_tab">Builder</label>
+			<label index="noreports">No reports</label>
+			<label index="passed">Passed!</label>
+			<label index="providerextension.author">Author name and email</label>
+			<label index="providerextension.backend">Include backend module templates</label>
+			<label index="providerextension.content">Include content templates</label>
+			<label index="providerextension.controllers">Create controllers for enabled FluidTYPO3 features</label>
+			<label index="providerextension.description">Brief description</label>
+			<label index="providerextension.dry">Dry run - do not build actual files</label>
+			<label index="providerextension.git">Initialise created extension as Git repository</label>
+			<label index="providerextension.install">Install extension (ignored if dry run, TYPO3 6.2 required)</label>
+			<label index="providerextension.name">Extension key</label>
+			<label index="providerextension.pages">Include page templates</label>
+			<label index="providerextension.title">Brief title</label>
+			<label index="providerextension.travis">Create Travis continuous integration configuration file</label>
+			<label index="providerextension.verbose">Be verbose about actions taken</label>
+			<label index="providerextension.vhs">Set the VHS extension as depedency</label>
+			<label index="submit.provider">Create provider extension</label>
+			<label index="submit.validate">Perform validations</label>
 			<label index="syntax.fluid">Check Fluid template syntax</label>
 			<label index="syntax.php">Check PHP file syntax</label>
-			<label index="providerextension.name">Extension key</label>
-			<label index="providerextension.author">Author name and email</label>
-			<label index="providerextension.title">Brief title</label>
-			<label index="providerextension.description">Brief description</label>
-			<label index="providerextension.pages">Include page templates</label>
-			<label index="providerextension.content">Include content templates</label>
-			<label index="providerextension.backend">Include backend module templates</label>
-			<label index="providerextension.controllers">Create controllers for enabled FluidTYPO3 features</label>
-			<label index="providerextension.vhs">Set the VHS extension as depedency</label>
-			<label index="providerextension.git">Initialise created extension as Git repository</label>
-			<label index="providerextension.travis">Create Travis continuous integration configuration file</label>
-			<label index="providerextension.dry">Dry run - do not build actual files</label>
-			<label index="providerextension.verbose">Be verbose about actions taken</label>
-			<label index="providerextension.install">Install extension (ignored if dry run, TYPO3 6.2 required)</label>
-			<label index="attributes.name">Option</label>
-			<label index="attributes.value">Selected value</label>
-			<label index="booleans.1">Yes</label>
-			<label index="booleans.0">No</label>
+			<label index="toggles">Toggles</label>
+			<label index="typeselector">Select script type(s)</label>
 			<label index="warnings.installed">You chose to install the Provider extension - please make sure you clear all caches RIGHT NOW.</label>
 		</languageKey>
 	</data>
