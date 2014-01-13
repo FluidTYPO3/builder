@@ -5,9 +5,9 @@ if (!defined('TYPO3_MODE')) {
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Tx_Builder_Command_BuilderCommandController';
 
-Tx_Extbase_Utility_Extension::registerPlugin('builder', 'frontend', 'Builder: Frontend', 'EXT:builder/ext_icon.gif');
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin('builder', 'frontend', 'Builder: Frontend', 'EXT:builder/ext_icon.gif');
 
-Tx_Extbase_Utility_Extension::registerModule(
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 	$_EXTKEY,
 	'tools',
 	'tx_builder_module',
