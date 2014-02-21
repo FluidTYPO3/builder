@@ -1,5 +1,6 @@
 <?php
+namespace FluidTYPO3\Builder\Result;
 
-interface Tx_Builder_Result_ParserResultInterface {
+interface ParserResultInterface {
 
 }

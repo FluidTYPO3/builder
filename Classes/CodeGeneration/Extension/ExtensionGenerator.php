@@ -1,8 +1,13 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration\Extension;
 
-class Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
-	extends Tx_Builder_CodeGeneration_AbstractCodeGenerator
-	implements Tx_Builder_CodeGeneration_CodeGeneratorInterface {
+use FluidTYPO3\Builder\CodeGeneration\AbstractCodeGenerator;
+use FluidTYPO3\Builder\CodeGeneration\CodeGeneratorInterface;
+use Exception;
+
+class ExtensionGenerator
+	extends AbstractCodeGenerator
+	implements CodeGeneratorInterface {
 
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';

@@ -1,6 +1,9 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration;
 
-class Tx_Builder_CodeGeneration_CodeTemplate {
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
+class CodeTemplate {
 
 	/**
 	 * @var string
@@ -51,7 +54,7 @@ class Tx_Builder_CodeGeneration_CodeTemplate {
 		if (NULL === $identifier) {
 			return NULL;
 		}
-		$filePathAndFilename = t3lib_extMgm::extPath('builder', 'Resources/Private/CodeTemplates/' . $identifier . '.phpt');
+		$filePathAndFilename = ExtensionManagementUtility::extPath('builder', 'Resources/Private/CodeTemplates/' . $identifier . '.phpt');
 		$content = file_get_contents($filePathAndFilename);
 		foreach ($variables as $name => $value) {
 			$content = str_replace('###' . $name . '###', $value, $content);

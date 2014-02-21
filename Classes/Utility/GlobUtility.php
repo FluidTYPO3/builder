@@ -1,6 +1,10 @@
 <?php
+namespace FluidTYPO3\Builder\Utility;
 
-class Tx_Builder_Utility_GlobUtility {
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+class GlobUtility {
 
 	/**
 	 * Glob() a path inside an extension
@@ -31,7 +35,7 @@ class Tx_Builder_Utility_GlobUtility {
 		if ('/' !== substr($path, -1)) {
 			$path .= '/';
 		}
-		$files = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, $extensions);
+		$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $path, $extensions);
 		return array_values($files);
 	}
 
@@ -42,7 +46,7 @@ class Tx_Builder_Utility_GlobUtility {
 	 */
 	public static function getRealPathFromExtensionKeyAndPath($extension, $path) {
 		if (NULL !== $extension) {
-			$path = t3lib_extMgm::extPath($extension, $path);
+			$path = ExtensionManagementUtility::extPath($extension, $path);
 		} elseif ('/' !== $path{0}) {
 			$path = PATH_site . $path;
 		}

@@ -1,20 +1,26 @@
 <?php
+namespace FluidTYPO3\Builder\Controller;
+
+use FluidTYPO3\Builder\Service\ExtensionService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+
 
 /**
- * Class Tx_Builder_Controller_FrontendController
+ * Class FrontendController
  */
-class Tx_Builder_Controller_FrontendController extends Tx_Extbase_MVC_Controller_ActionController {
+class FrontendController extends ActionController {
 
 	/**
-	 * @var Tx_Builder_Service_ExtensionService
+	 * @var ExtensionService
 	 */
 	protected $extensionService;
 
 	/**
-	 * @param Tx_Builder_Service_ExtensionService $extensionService
+	 * @param ExtensionService $extensionService
 	 * @return void
 	 */
-	public function injectExtensionService(Tx_Builder_Service_ExtensionService $extensionService) {
+	public function injectExtensionService(ExtensionService $extensionService) {
 		$this->extensionService = $extensionService;
 	}
 
@@ -39,10 +45,10 @@ class Tx_Builder_Controller_FrontendController extends Tx_Extbase_MVC_Controller
 		$travis = FALSE;
 		$dry = FALSE;
 		$verbose = FALSE;
-		$temporaryBaseFolder = t3lib_div::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
+		$temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
 		$temporaryFolder =  $temporaryBaseFolder . '/' . $extensionKey;
 		$archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
-		t3lib_div::mkdir_deep($temporaryBaseFolder);
+		GeneralUtility::mkdir_deep($temporaryBaseFolder);
 		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);

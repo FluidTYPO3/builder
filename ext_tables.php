@@ -3,9 +3,9 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Tx_Builder_Command_BuilderCommandController';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'FluidTYPO3\Builder\Command\BuilderCommandController';
 
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin('builder', 'frontend', 'Builder: Frontend', 'EXT:builder/ext_icon.gif');
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin('FluidTYPO3.Builder', 'frontend', 'Builder: Frontend', 'EXT:builder/ext_icon.gif');
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 	$_EXTKEY,

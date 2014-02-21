@@ -1,30 +1,40 @@
 <?php
+namespace FluidTYPO3\Builder\Service;
 
-class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
+use FluidTYPO3\Builder\Utility\GlobUtility;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
+use FluidTYPO3\Builder\Result\FluidParserResult;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use Exception;
+
+class SyntaxService implements SingletonInterface {
 
 	/**
-	 * @var Tx_Extbase_Object_ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var Tx_Fluid_Core_Parser_TemplateParser
+	 * @var TemplateParser
 	 */
 	protected $templateParser;
 
 	/**
-	 * @param Tx_Extbase_Object_ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(Tx_Extbase_Object_ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * @param Tx_Fluid_Core_Parser_TemplateParser $templateParser
+	 * @param TemplateParser $templateParser
 	 * @return void
 	 */
-	public function injectTemplateParser(Tx_Fluid_Core_Parser_TemplateParser $templateParser) {
+	public function injectTemplateParser(TemplateParser $templateParser) {
 		$this->templateParser = $templateParser;
 	}
 
@@ -40,13 +50,13 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 	 * for errors).
 	 *
 	 * @param string $filePathAndFilename
-	 * @return Tx_Builder_Result_FluidParserResult
+	 * @return FluidParserResult
 	 */
 	public function syntaxCheckFluidTemplateFile($filePathAndFilename) {
-		/** @var $result Tx_Builder_Result_FluidParserResult */
-		$result = $this->objectManager->get('Tx_Builder_Result_FluidParserResult');
-		/** @var $context Tx_Fluid_Core_Rendering_RenderingContext */
-		$context = $this->objectManager->get('Tx_Fluid_Core_Rendering_RenderingContext');
+		/** @var $result FluidParserResult */
+		$result = $this->objectManager->get('FluidTYPO3\Builder\Result\FluidParserResult');
+		/** @var $context RenderingContext */
+		$context = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Rendering\RenderingContext');
 		try {
 			$parsedTemplate = $this->templateParser->parse(file_get_contents($filePathAndFilename));
 			$result->setLayoutName($parsedTemplate->getLayoutName($context));
@@ -62,10 +72,10 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 	/**
 	 * @param string $path
 	 * @param string $formats
-	 * @return Tx_Builder_ResultFluidParserResult[]
+	 * @return FluidParserResult[]
 	 */
 	public function syntaxCheckFluidTemplateFilesInPath($path, $formats) {
-		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $formats);
+		$files = GlobUtility::getFilesRecursive($path, $formats);
 		$results = array();
 		foreach ($files as $filePathAndFilename) {
 			$results[$filePathAndFilename] = $this->syntaxCheckFluidTemplateFile($filePathAndFilename);
@@ -75,11 +85,11 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 
 	/**
 	 * @param string $filePathAndFilename
-	 * @return Tx_Builder_Result_ParserResult
+	 * @return ParserResult
 	 */
 	public function syntaxCheckPhpFile($filePathAndFilename) {
-		/** @var $result Tx_Builder_Result_FluidParserResult */
-		$result = $this->objectManager->get('Tx_Builder_Result_FluidParserResult');
+		/** @var $result FluidParserResult */
+		$result = $this->objectManager->get('FluidTYPO3\Builder\Result\FluidParserResult');
 		$command = 'php --define error_reporting=0 -le ' . $filePathAndFilename;
 		$code = $this->executeCommandAndReturnZeroOrStringMessage($command);
 		if (0 !== $code) {
@@ -94,19 +104,19 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 
 	/**
 	 * @param string $extensionKey
-	 * @return Tx_Builder_Result_ParserResult[]
+	 * @return ParserResult[]
 	 */
 	public function syntaxCheckPhpFilesInExtension($extensionKey) {
-		$path = t3lib_extMgm::extPath($extensionKey);
+		$path = ExtensionManagementUtility::extPath($extensionKey);
 		return $this->syntaxCheckPhpFilesInPath($path);
 	}
 
 	/**
 	 * @param string $path
-	 * @return Tx_Builder_Result_ParserResult[]
+	 * @return ParserResult[]
 	 */
 	public function syntaxCheckPhpFilesInPath($path) {
-		$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, 'php');
+		$files = GlobUtility::getFilesRecursive($path, 'php');
 		$files = array_values($files);
 		$results = array();
 		foreach ($files as $filePathAndFilename) {
@@ -116,7 +126,7 @@ class Tx_Builder_Service_SyntaxService implements t3lib_Singleton {
 	}
 
 	/**
-	 * @param Tx_Builder_Result_ParserResult[] $results
+	 * @param ParserResult[] $results
 	 * @return integer
 	 */
 	public function countErrorsInResultCollection(array $results) {

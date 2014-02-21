@@ -1,9 +1,12 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration;
 
-abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Builder_CodeGeneration_AbstractCodeGenerator implements Tx_Builder_CodeGeneration_ClassGeneratorInterface {
+use FluidTYPO3\Builder\Service\ClassAnalysisService;
+
+abstract class AbstractClassGenerator extends AbstractCodeGenerator implements ClassGeneratorInterface {
 
 	/**
-	 * @var Tx_Builder_Service_ClassAnalysisService
+	 * @var ClassAnalysisService
 	 */
 	protected $classAnalysisService;
 
@@ -38,10 +41,10 @@ abstract class Tx_Builder_CodeGeneration_AbstractClassGenerator extends Tx_Build
 	protected $methods = array();
 
 	/**
-	 * @param Tx_Builder_Service_ClassAnalysisService $classAnalysisService
+	 * @param ClassAnalysisService $classAnalysisService
 	 * @return void
 	 */
-	public function injectClassAnalysisService(Tx_Builder_Service_ClassAnalysisService $classAnalysisService) {
+	public function injectClassAnalysisService(ClassAnalysisService $classAnalysisService) {
 		$this->classAnalysisService = $classAnalysisService;
 	}
 

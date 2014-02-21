@@ -1,6 +1,9 @@
 <?php
+namespace FluidTYPO3\Builder\Utility;
 
-class Tx_Builder_Utility_ExtensionUtility {
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
+class ExtensionUtility {
 
 	/**
 	 * @var array
@@ -15,10 +18,10 @@ class Tx_Builder_Utility_ExtensionUtility {
 		if (TRUE === is_array(self::$cache)) {
 			return self::$cache;
 		}
-		$allExtensions = t3lib_extMgm::getLoadedExtensionListArray();
+		$allExtensions = ExtensionManagementUtility::getLoadedExtensionListArray();
 		$fluidExtensions = array();
 		foreach ($allExtensions as $extensionKey) {
-			$fluidTemplateFolderPath = t3lib_extMgm::extPath($extensionKey, 'Resources/Private/Templates');
+			$fluidTemplateFolderPath = ExtensionManagementUtility::extPath($extensionKey, 'Resources/Private/Templates');
 			$isCore = strpos($fluidTemplateFolderPath, 'sysext');
 			$hasTemplates = file_exists($fluidTemplateFolderPath);
 			if (TRUE === $hasTemplates) {

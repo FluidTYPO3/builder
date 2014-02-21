@@ -1,8 +1,18 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration\Testing;
 
-class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator
-	extends Tx_Builder_CodeGeneration_AbstractClassGenerator
-	implements Tx_Builder_CodeGeneration_ClassGeneratorInterface {
+use FluidTYPO3\Builder\CodeGeneration\AbstractClassGenerator;
+use FluidTYPO3\Builder\CodeGeneration\ClassGeneratorInterface;
+use TYPO3\CMS\Extbase\Mvc\Web\Request;
+use TYPO3\CMS\Extbase\Utility\FrontendSimulatorUtility;
+use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+class ViewHelperTestCaseGenerator
+	extends AbstractClassGenerator
+	implements ClassGeneratorInterface {
 
 	const TEMPLATE_CLASS = 'ViewHelper/TestCase/Class';
 	const TEMPLATE_SUPPORT_PREPARE_INSTANCE = 'ViewHelper/TestCase/Method/PrepareInstanceMethod';
@@ -38,13 +48,13 @@ class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator
 			return NULL;
 		}
 		$GLOBALS['TSFE']->cObj = $this->objectManager->get('tslib_cObj');
-		Tx_Extbase_Utility_FrontendSimulator::simulateFrontendEnvironment($GLOBALS['TSFE']->cObj);
+		FrontendSimulatorUtility::simulateFrontendEnvironment($GLOBALS['TSFE']->cObj);
 		$GLOBALS['TSFE']->sys_page = $this->objectManager->get('t3lib_PageSelect');
 		$GLOBALS['TSFE']->tmpl = $this->objectManager->get('t3lib_TStemplate');
 		$this->appendCommonProperties();
 		$this->appendCommonTestMethods();
 		$rendered = $this->renderClass(self::TEMPLATE_CLASS, $this->viewHelperClassName . 'Test');
-		Tx_Extbase_Utility_FrontendSimulator::resetFrontendEnvironment();
+		FrontendSimulatorUtility::resetFrontendEnvironment();
 		return $rendered;
 	}
 
@@ -99,16 +109,16 @@ class Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator
 		$controllerContextClassName = (FALSE !== strpos($this->viewHelperClassName, '_') ? 'Tx_Extbase_MVC_Controller_ControllerContext' : '\\TYPO3\\CMS\\Extbase\\MVC\\Controller\\ControllerContext');
 		$requestClassName = (FALSE !== strpos($this->viewHelperClassName, '_') ? 'Tx_Extbase_MVC_Web_Request' : '\\TYPO3\\CMS\\Extbase\\MVC\\Web\\Request');
 
-		/** @var Tx_Extbase_MVC_Web_Request $request */
+		/** @var Request $request */
 		$request = $this->objectManager->get($requestClassName);
-		/** @var $viewHelperInstance Tx_Fluid_Core_ViewHelper_AbstractViewHelper */
+		/** @var $viewHelperInstance AbstractViewHelper */
 		$viewHelperInstance = $this->objectManager->get($this->viewHelperClassName);
-		/** @var Tx_Fluid_Core_Parser_SyntaxTree_ViewHelperNode $node */
+		/** @var ViewHelperNode $node */
 		$node = $this->objectManager->get($nodeClassName, $viewHelperInstance, $arguments);
-		/** @var Tx_Extbase_MVC_Controller_ControllerContext $controllerContext */
+		/** @var ControllerContext $controllerContext */
 		$controllerContext = $this->objectManager->get($controllerContextClassName);
 		$controllerContext->setRequest($request);
-		/** @var Tx_Fluid_Core_Rendering_RenderingContext $renderingContext */
+		/** @var RenderingContext $renderingContext */
 		$renderingContext = $this->objectManager->get($renderingContextClassName);
 		$renderingContext->setControllerContext($controllerContext);
 

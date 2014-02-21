@@ -1,6 +1,11 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration;
 
-abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+
+abstract class AbstractCodeGenerator {
 
 	/**
 	 * @var boolean
@@ -13,15 +18,15 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 	protected $dry = FALSE;
 
 	/**
-	 * @var Tx_Extbase_Object_ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @param Tx_Extbase_Object_ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(Tx_Extbase_Object_ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -50,7 +55,7 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 		if (TRUE === $this->dry) {
 			return TRUE;
 		}
-		$madeDirectory = t3lib_div::mkdir_deep($folderPath);
+		$madeDirectory = GeneralUtility::mkdir_deep($folderPath);
 		if (FALSE === $madeDirectory) {
 			throw new Exception('Unable to create directory "' . $folderPath . '"', 1371692697);
 		}
@@ -92,7 +97,7 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 		if (FALSE === is_dir($folderPath)) {
 			$this->createFolder($folderPath);
 		}
-		$localFile = t3lib_extMgm::extPath('builder', $localRelativePathAndFilename);
+		$localFile = ExtensionManagementUtility::extPath('builder', $localRelativePathAndFilename);
 		$fileCopied = copy($localFile, $destinationPathAndFilename);
 		if (FALSE === $fileCopied) {
 			throw new Exception('Unable to copy file "' . $localFile . '" to "' . $destinationPathAndFilename . '"', 1371695897);
@@ -115,8 +120,8 @@ abstract class Tx_Builder_CodeGeneration_AbstractCodeGenerator {
 	 * @return Tx_Builder_CodeGeneration_CodeTemplate
 	 */
 	protected function getPreparedCodeTemplate($identifier, $variables) {
-		/** @var $template Tx_Builder_CodeGeneration_CodeTemplate */
-		$template = $this->objectManager->get('Tx_Builder_CodeGeneration_CodeTemplate');
+		/** @var $template CodeTemplate */
+		$template = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\CodeTemplate');
 		$template->setIdentifier($identifier);
 		$template->setVariables($variables);
 		return $template;

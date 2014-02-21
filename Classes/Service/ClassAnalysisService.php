@@ -1,6 +1,10 @@
 <?php
+namespace FluidTYPO3\Builder\Service;
 
-class Tx_Builder_Service_ClassAnalysisService implements t3lib_Singleton {
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+
+class ClassAnalysisService implements SingletonInterface {
 
 	/**
 	 * @var Tx_Extbase_Object_ObjectManagerInterface
@@ -8,10 +12,10 @@ class Tx_Builder_Service_ClassAnalysisService implements t3lib_Singleton {
 	protected $objectManager;
 
 	/**
-	 * @param Tx_Extbase_Object_ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(Tx_Extbase_Object_ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 

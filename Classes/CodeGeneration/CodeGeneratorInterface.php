@@ -1,6 +1,7 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration;
 
-interface Tx_Builder_CodeGeneration_CodeGeneratorInterface {
+interface CodeGeneratorInterface {
 
 	/**
 	 * @param boolean $dry

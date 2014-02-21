@@ -1,4 +1,5 @@
 <?php
+namespace FluidTYPO3\Builder\Service;
 /***************************************************************
  *  Copyright notice
  *
@@ -23,6 +24,12 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
+
 /**
  * Service to compute Extension Manager api
  *
@@ -30,23 +37,23 @@
  * @package builder
  * @subpackage Service
  */
-class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
+class ExtensionService implements SingletonInterface {
 
 	const STATE_INACTIVE = 0;
 	const STATE_ACTIVE = 1;
 	const STATE_ALL = 2;
 
 	/**
-	 * @var Tx_Extbase_Object_ObjectManagerInterface
+	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @param Tx_Extbase_Object_ObjectManagerInterface $objectManager
+	 * @param \TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(Tx_Extbase_Object_ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -109,8 +116,8 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 			'git' => $git,
 			'travis' => $travis,
 		);
-		/** @var $extensionGenerator Tx_Builder_CodeGeneration_Extension_ExtensionGenerator */
-		$extensionGenerator = $this->objectManager->get('Tx_Builder_CodeGeneration_Extension_ExtensionGenerator');
+		/** @var $extensionGenerator ExtensionGenerator */
+		$extensionGenerator = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator');
 		$extensionGenerator->setConfiguration($extensionVariables);
 		return $extensionGenerator;
 	}
@@ -157,12 +164,12 @@ class Tx_Builder_Service_ExtensionService implements t3lib_Singleton {
 	 * @return array
 	 */
 	private function gatherInformation() {
-		/** @var \TYPO3\CMS\Extensionmanager\Utility\ListUtility $service */
+		/** @var ListUtility $service */
 		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
 
 		$extensionInformation = $service->getAvailableExtensions();
 		foreach ($extensionInformation as $extensionKey => $info) {
-			$extensionInformation[$extensionKey]['version'] = t3lib_extMgm::getExtensionVersion($extensionKey);
+			$extensionInformation[$extensionKey]['version'] = ExtensionManagementUtility::getExtensionVersion($extensionKey);
 			if (TRUE === array_key_exists($extensionKey, $GLOBALS['TYPO3_LOADED_EXT'])) {
 				$extensionInformation[$extensionKey]['installed'] = 1;
 			} else {

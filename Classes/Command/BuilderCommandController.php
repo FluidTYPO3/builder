@@ -1,6 +1,15 @@
 <?php
+namespace FluidTYPO3\Builder\Command;
 
-class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Controller_CommandController {
+use FluidTYPO3\Builder\Service\ExtensionService;
+use FluidTYPO3\Builder\Service\SyntaxService;
+use FluidTYPO3\Builder\Utility\GlobUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use RuntimeException;
+
+class BuilderCommandController extends CommandController {
 
 	/**
 	 * @var Tx_Builder_Service_SyntaxService
@@ -13,18 +22,18 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	protected $extensionService;
 
 	/**
-	 * @param Tx_Builder_Service_SyntaxService $syntaxService
+	 * @param SyntaxService $syntaxService
 	 * @return void
 	 */
-	public function injectSyntaxService(Tx_Builder_Service_SyntaxService $syntaxService) {
+	public function injectSyntaxService(SyntaxService $syntaxService) {
 		$this->syntaxService = $syntaxService;
 	}
 
 	/**
-	 * @param Tx_Builder_Service_ExtensionService $extensionService
+	 * @param ExtensionService $extensionService
 	 * @return void
 	 */
-	public function injectExtensionService(Tx_Builder_Service_ExtensionService $extensionService) {
+	public function injectExtensionService(ExtensionService $extensionService) {
 		$this->extensionService = $extensionService;
 	}
 
@@ -48,8 +57,8 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 		$verbose = (boolean) $verbose;
 		if (NULL !== $extension) {
 			$this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-			$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
-			$files = Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions);
+			$path = GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
+			$files = GlobUtility::getFilesRecursive($path, $extensions);
 		} else {
 			// no extension key given, let's lint it all
 			if (6 > substr(TYPO3_version, 0, 1)) {
@@ -64,7 +73,7 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 				if (0 === intval($installed = $extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
 					continue;
 				}
-				$path = Tx_Builder_Utility_GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
+				$path = GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
 				$files = array_merge($files, Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions));
 			}
 		}
@@ -254,18 +263,15 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 			$format = 'json';
 		}
 		if ($active) {
-			$state = Tx_Builder_Service_ExtensionService::STATE_ACTIVE;
+			$state = ExtensionService::STATE_ACTIVE;
 		} elseif ($inactive) {
-			$state = Tx_Builder_Service_ExtensionService::STATE_INACTIVE;
+			$state = ExtensionService::STATE_INACTIVE;
 		} else {
-			$state = Tx_Builder_Service_ExtensionService::STATE_ALL;
+			$state = ExtensionService::STATE_ALL;
 		}
 
-		/** @var Tx_Builder_Service_ExtensionService $extensionService */
-		$extensionService = $this->objectManager->get('Tx_Builder_Service_ExtensionService');
-
 		$this->response->setContent(
-			$extensionService->getPrintableInformation($format, $detail, $state)
+			$this->extensionService->getPrintableInformation($format, $detail, $state)
 		);
 	}
 
@@ -420,14 +426,14 @@ class Tx_Builder_Command_BuilderCommandController extends Tx_Extbase_MVC_Control
 	 */
 	protected function getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filename) {
 		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
-		$filename = str_replace(\t3lib_extMgm::extPath($extensionKey, 'Classes/ViewHelpers/'), '', $filename);
+		$filename = str_replace(ExtensionManagementUtility::extPath($extensionKey, 'Classes/ViewHelpers/'), '', $filename);
 		$stripped = substr($filename, 0, -4);
 		if ($vendor) {
 			$classNamePart = str_replace('/', '\\', $stripped);
-			$className = $vendor . '\\' . ucfirst(\t3lib_div::underscoredToLowerCamelCase($extensionKey)) . '\\ViewHelpers\\' . $classNamePart;
+			$className = $vendor . '\\' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '\\ViewHelpers\\' . $classNamePart;
 		} else {
 			$classNamePart = str_replace('/', '_', $stripped);
-			$className = 'Tx_' . ucfirst(\t3lib_div::underscoredToLowerCamelCase($extensionKey)) . '_ViewHelpers_' . $classNamePart;
+			$className = 'Tx_' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '_ViewHelpers_' . $classNamePart;
 		}
 		return $className;
 	}

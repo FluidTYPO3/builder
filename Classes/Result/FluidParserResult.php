@@ -1,6 +1,7 @@
 <?php
+namespace FluidTYPO3\Builder\Result;
 
-class Tx_Builder_Result_FluidParserResult extends Tx_Builder_Result_ParserResult {
+class FluidParserResult extends ParserResult {
 
 	/**
 	 * @var array

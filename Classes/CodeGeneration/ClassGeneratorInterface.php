@@ -1,6 +1,7 @@
 <?php
+namespace FluidTYPO3\Builder\CodeGeneration;
 
-interface Tx_Builder_CodeGeneration_ClassGeneratorInterface extends Tx_Builder_CodeGeneration_CodeGeneratorInterface {
+interface ClassGeneratorInterface extends CodeGeneratorInterface {
 
 	/**
 	 * @param string $name

@@ -1,6 +1,7 @@
 <?php
+namespace FluidTYPO3\Builder\Result;
 
-class Tx_Builder_Result_ParserResult implements Tx_Builder_Result_ParserResultInterface {
+class ParserResult implements ParserResultInterface {
 
 	/**
 	 * @var boolean

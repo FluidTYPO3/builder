@@ -1,31 +1,38 @@
 <?php
+namespace FluidTYPO3\Builder\Controller;
 
+use FluidTYPO3\Builder\Service\ExtensionService;
+use FluidTYPO3\Builder\Service\SyntaxService;
+use FluidTYPO3\Builder\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 
-class Tx_Builder_Controller_BackendController extends Tx_Extbase_MVC_Controller_ActionController {
+class BackendController extends ActionController {
 
 	/**
-	 * @var Tx_Builder_Service_SyntaxService
+	 * @var SyntaxService
 	 */
 	protected $syntaxService;
 
 	/**
-	 * @var Tx_Builder_Service_ExtensionService
+	 * @var ExtensionService
 	 */
 	protected $extensionService;
 
 	/**
-	 * @param Tx_Builder_Service_SyntaxService $syntaxService
+	 * @param SyntaxService $syntaxService
 	 * @return void
 	 */
-	public function injectSyntaxService(Tx_Builder_Service_SyntaxService $syntaxService) {
+	public function injectSyntaxService(SyntaxService $syntaxService) {
 		$this->syntaxService = $syntaxService;
 	}
 
 	/**
-	 * @param Tx_Builder_Service_ExtensionService $extensionService
+	 * @param ExtensionService $extensionService
 	 * @return void
 	 */
-	public function injectExtensionService(Tx_Builder_Service_ExtensionService $extensionService) {
+	public function injectExtensionService(ExtensionService $extensionService) {
 		$this->extensionService = $extensionService;
 	}
 
@@ -34,8 +41,8 @@ class Tx_Builder_Controller_BackendController extends Tx_Extbase_MVC_Controller_
 	 * @return void
 	 */
 	public function indexAction($view = 'Index') {
-		$extensions = Tx_Builder_Utility_ExtensionUtility::getAllInstalledFluidEnabledExtensions();
-		$selectorOptions = Tx_Builder_Utility_ExtensionUtility::getAllInstalledFluidEnabledExtensionsAsSelectorOptions();
+		$extensions = ExtensionUtility::getAllInstalledFluidEnabledExtensions();
+		$selectorOptions = ExtensionUtility::getAllInstalledFluidEnabledExtensionsAsSelectorOptions();
 		$formats = array(
 			'html' => TRUE,
 			'xml' => FALSE,
@@ -76,7 +83,7 @@ class Tx_Builder_Controller_BackendController extends Tx_Extbase_MVC_Controller_
 		if (FALSE === $dry) {
 			$generator->generate();
 			if (TRUE === $install) {
-				/** @var \TYPO3\CMS\Extensionmanager\Utility\InstallUtility $service */
+				/** @var InstallUtility $service */
 				$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
 				$service->install($name);
 			}
@@ -100,7 +107,7 @@ class Tx_Builder_Controller_BackendController extends Tx_Extbase_MVC_Controller_
 			if (TRUE === empty($extensionKey)) {
 				continue;
 			}
-			$extensionFolder = t3lib_extMgm::extPath($extensionKey);
+			$extensionFolder = ExtensionManagementUtility::extPath($extensionKey);
 			$reports[$extensionKey] = array();
 			foreach ($syntax as $syntaxName) {
 				if (TRUE === empty($syntaxName)) {
