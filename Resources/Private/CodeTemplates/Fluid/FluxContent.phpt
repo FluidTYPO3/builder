@@ -1,13 +1,10 @@
-{namespace flux=Tx_Flux_ViewHelpers}
+{namespace flux=FluidTYPO3\Flux\ViewHelpers}
 <f:layout name="###layout###" />
-<div xmlns="http://www.w3.org/1999/xhtml"
-     xmlns:flux="http://fedext.net/ns/flux/ViewHelpers"
-     xmlns:v="http://fedext.net/ns/vhs/ViewHelpers"
-     xmlns:f="http://typo3.org/ns/fluid/ViewHelpers">
+
 <f:section name="###configurationSectionName###">
-	<flux:flexform id="###id###" label="###label###" icon="###icon###">
+	<flux:form id="###id###" label="###label###" icon="###icon###">
 		<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
-	</flux:flexform>
+	</flux:form>
 </f:section>
 
 <f:section name="Preview">
@@ -18,4 +15,3 @@
 <f:section name="###section###">
 	Hello world!
 </f:section>
-</div>
