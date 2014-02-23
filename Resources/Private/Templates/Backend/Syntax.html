@@ -7,34 +7,73 @@
 </f:section>
 
 <f:section name="Content">
+	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/jqplot.min.css')}" />
+	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/plotter.css')}" />
+	<f:form action="syntax" class="re-run">
+		<f:for each="{syntax}" as="syntaxName">
+			<f:form.hidden name="syntax[]" value="{syntaxName}" />
+		</f:for>
+		<f:for each="{formats}" as="formatName">
+			<f:form.hidden name="formats[]" value="{formatName}" />
+		</f:for>
+		<f:for each="{extensions}" as="extensionName">
+			<f:form.hidden name="extensions[]" value="{extensionName}" />
+		</f:for>
+		<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
+			<f:for each="{files}" as="filterFile">
+				<v:form.select.option value="{filterFile}" selected="{v:if.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}">
+					{filterFile -> v:format.substring(start: basePathLength)}
+				</v:form.select.option>
+			</f:for>
+		</v:form.select><br />
+		<button type="submit">Re-run</button>
+	</f:form>
 	<h2>{f:translate(key: 'header.reports')}</h2>
 	<f:for each="{reports}" as="extensionReports" key="extensionKey">
+		<h4>{extensionKey}</h4>
 		<f:if condition="{extensionReports}">
 			<f:else>
 				<f:translate key="noreports" />
 			</f:else>
 			<f:then>
 				<f:for each="{extensionReports}" as="formatReports" key="format">
-					<f:if condition="{formatReports.errors}">
-						<f:else>
-							<f:render section="Report" arguments="{class: 'ok', title: '{extensionKey}: {format}',
-								body: '{f:translate(key: \'filespassed\', arguments: {0: \'{formatReports.reports -> f:count()}\'})}'}" />
-						</f:else>
-						<f:then>
-							<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
-								<f:if condition="{result.valid} < 1">
-									<f:render section="Report" arguments="{class: 'error', title: '{extensionKey}: {filePathAndFilename}', body: result.error}" />
-								</f:if>
-							</f:for>
-						</f:then>
+					<h5>{format -> v:format.case(case: 'ucfirst')}</h5>
+					<f:if condition="{formatReports.json}">
+						<div class="storage storage-{format}">
+							{formatReports.json -> f:format.raw()}
+						</div>
+						<div class="graph"></div>
 					</f:if>
+					<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
+						<f:render section="Payload{result.payloadType}" arguments="{_all}" />
+					</f:for>
 				</f:for>
 			</f:then>
 		</f:if>
 	</f:for>
 </f:section>
 
-<f:section name="Report">
+<f:section name="PayloadMetrics">
+	<v:var.set name="map" value="{0: 'ok', 1: 'error', -2: 'warning'}" />
+	<h6>{filePathAndFilename}</h6>
+	<f:for each="{result.payload}" as="metric" key="metricName">
+		<f:for each="{metric.messages}" as="message">
+			{metricName -> v:var.set(name: 'title')}
+			{v:var.get(name: 'map.{message.severity}') -> v:var.set(name: 'class')}
+			{message.payload -> v:var.convert(type: 'array') -> v:var.set(name: 'payload')}
+			{message.message -> f:format.printf(arguments: payload) -> v:var.set(name: 'body')}
+			<f:render section="FlashMessage" arguments="{_all}" />
+		</f:for>
+	</f:for>
+</f:section>
+
+<f:section name="PayloadFlashMessage">
+	{f:if(condition: result.valid, then: 'ok', else: 'error') -> v:var.set(name: 'class')}
+	{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:var.set(name: 'body')}
+	<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
+</f:section>
+
+<f:section name="FlashMessage">
 	<div class="typo3-message message-{class}">
 		<div class="message-header">{title}</div>
 		<div class="message-body">

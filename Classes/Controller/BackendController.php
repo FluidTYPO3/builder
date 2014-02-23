@@ -1,11 +1,17 @@
 <?php
 namespace FluidTYPO3\Builder\Controller;
 
+use FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
+use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use FluidTYPO3\Builder\Analysis\Metric;
+use FluidTYPO3\Builder\Result\ParserResult;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 
 class BackendController extends ActionController {
@@ -96,13 +102,27 @@ class BackendController extends ActionController {
 	 * @validate $syntax NotEmpty
 	 * @validate $extensions NotEmpty
 	 * @validate $formats NotEmpty
+	 * @ignorevalidation $filteredFiles
 	 * @param array $syntax
 	 * @param array $extensions
 	 * @param array $formats
+	 * @param array $filteredFiles
 	 */
-	public function syntaxAction(array $syntax, array $extensions, array $formats) {
+	public function syntaxAction(array $syntax, array $extensions, array $formats, array $filteredFiles = array()) {
+		/** @var DocumentTemplate $document */
+		$document = &$GLOBALS['TBE_TEMPLATE'];
+		$resourcePath = $document->backPath . ExtensionManagementUtility::extRelPath('builder') . 'Resources/Public/';
+		$pageRenderer = $document->getPageRenderer();
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasTextRenderer.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasAxisTickRenderer.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.cursor.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.categoryAxisRenderer.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.barRenderer.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.pointLabels.min.js');
+		$pageRenderer->addJsFile($resourcePath . 'Javascript/plotter.js');
 		$reports = array();
-		$csvFormats = implode(',', $formats);
+		$csvFormats = trim(implode(',', $formats), ',');
 		foreach ($extensions as $extensionKey) {
 			if (TRUE === empty($extensionKey)) {
 				continue;
@@ -113,18 +133,53 @@ class BackendController extends ActionController {
 				if (TRUE === empty($syntaxName)) {
 					continue;
 				}
+				$reportsForSyntaxName = array();
 				if ('php' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes');
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes', $filteredFiles);
 				} elseif ('fluid' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats);
-				} else {
-					$reportsForSyntaxName = array();
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats, $filteredFiles);
+				} elseif ('profile' === $syntaxName) {
+					$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $extensionFolder, $csvFormats);
+					if (0 === count($filteredFiles)) {
+						$filteredFiles = $files;
+					}
+					$this->view->assign('files', $files);
+					$this->view->assign('basePathLength', strlen($extensionFolder . '/Resources/Private'));
+					foreach ($files as $file) {
+						if (0 < count($filteredFiles) && FALSE === in_array($file, $filteredFiles)) {
+							continue;
+						}
+						$shortFilename = substr($file, strlen($extensionFolder . '/Resources/Private'));
+						/** @var TemplateAnalyzer $templateAnalyzer */
+						$templateAnalyzer = $this->objectManager->get('FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer');
+						$reportsForSyntaxName[$shortFilename] = $templateAnalyzer->analyze($file);
+					}
+					$reports[$extensionKey][$syntaxName]['json'] = $this->encodeMetricsToJson($reportsForSyntaxName);
 				}
 				$reports[$extensionKey][$syntaxName]['reports'] = $reportsForSyntaxName;
 				$reports[$extensionKey][$syntaxName]['errors'] = $this->syntaxService->countErrorsInResultCollection($reportsForSyntaxName);
 			}
 		}
+		$this->view->assign('filteredFiles', $filteredFiles);
 		$this->view->assign('reports', $reports);
+		$this->view->assign('extensions', $extensions);
+		$this->view->assign('formats', $formats);
+		$this->view->assign('syntax', $syntax);
+	}
+
+	/**
+	 * @param ParserResult[] $metrics
+	 * @return string
+	 */
+	protected function encodeMetricsToJson($metrics) {
+		foreach ($metrics as $index => $metric) {
+			$values = $metric->getPayload();
+			$metrics[$index] = array();
+			foreach ($values as $value) {
+				$metrics[$index][$value->getName()] = $value->getValue();
+			}
+		}
+		return json_encode($metrics);
 	}
 
 }
