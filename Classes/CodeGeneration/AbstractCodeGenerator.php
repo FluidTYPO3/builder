@@ -76,7 +76,7 @@ abstract class AbstractCodeGenerator {
 		if (FALSE === is_dir($folderPath)) {
 			$this->createFolder($folderPath);
 		}
-		$createdFile = t3lib_div::writeFile($filePathAndFilename, $content);
+		$createdFile = \t3lib_div::writeFile($filePathAndFilename, $content);
 		if (FALSE === $createdFile) {
 			throw new Exception('Unable to create file "' . $filePathAndFilename . '"', 1371695066);
 		}
