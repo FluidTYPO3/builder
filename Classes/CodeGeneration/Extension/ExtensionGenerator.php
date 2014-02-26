@@ -95,7 +95,7 @@ class ExtensionGenerator
 	protected function appendTypoScriptConfiguration(&$files) {
 		$templateVariables = array(
 			'extension' => $this->configuration['extensionKey'],
-			'signature' => t3lib_extMgm::getCN($this->configuration['extensionKey'])
+			'signature' => \t3lib_extMgm::getCN($this->configuration['extensionKey'])
 		);
 		$folder = $this->targetFolder . '/Configuration/TypoScript';
 		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
@@ -109,7 +109,7 @@ class ExtensionGenerator
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
 		$templateVariables = array(
-			'configuration' => 't3lib_extMgm::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'configuration' => '\t3lib_extMgm::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
 			'pages' => '',
 			'content' => '',
 			'backend' => ''

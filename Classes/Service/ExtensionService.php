@@ -96,8 +96,8 @@ class ExtensionService implements SingletonInterface {
 		foreach ($dependencies as $dependency) {
 			$dependenciesArrayString .= "\n\t\t\t'" . $dependency . "' => '',";
 		}
-		list ($nameAndEmail, $companyName) = t3lib_div::trimExplode(',', $author);
-		list ($name, $email) = t3lib_div::trimExplode('<', $nameAndEmail);
+		list ($nameAndEmail, $companyName) = \t3lib_div::trimExplode(',', $author);
+		list ($name, $email) = \t3lib_div::trimExplode('<', $nameAndEmail);
 		$email = trim($email, '>');
 		$minimumVersion = 4.5;
 		$extensionVariables = array(
