@@ -65,6 +65,10 @@
 				<f:form.checkbox name="syntax[fluid]" value="fluid" checked="checked" />
 				{f:translate(key: 'syntax.fluid')}
 			</label>
+			<label>
+				<f:form.checkbox name="syntax[profile]" value="profile" checked="checked" />
+				{f:translate(key: 'syntax.profile')}
+			</label>
 			<f:render section="FormatSelector" arguments="{_all}" />
 			<f:form.submit value="{f:translate(key: 'submit.validate')}" />
 		</fieldset>
@@ -72,7 +76,7 @@
 </f:section>
 
 <f:section name="ExtensionSelector">
-	<f:form.select name="extensions" options="{extensionSelectorOptions}" multiple="TRUE" size="{extensionSelectorOptions -> f:count()}" value="{extensionSelectorOptions}" />
+	<f:form.select name="extensions[]" options="{extensionSelectorOptions}" value="{extensionSelectorOptions}" />
 </f:section>
 
 <f:section name="FormatSelector">

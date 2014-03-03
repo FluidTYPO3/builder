@@ -11,7 +11,7 @@
 			<label index="booleans.0">No</label>
 			<label index="booleans.1">Yes</label>
 			<label index="buildBehavior">Build behavior</label>
-			<label index="extensionselector">Select extension(s)</label>
+			<label index="extensionselector">Select extension</label>
 			<label index="filespassed">%s file(s) passed!</label>
 			<label index="header">EXT:builder Dashboard</label>
 			<label index="header.builders">Create FluidTYPO3 Provider Extension</label>
@@ -42,6 +42,7 @@
 			<label index="submit.validate">Perform validations</label>
 			<label index="syntax.fluid">Check Fluid template syntax</label>
 			<label index="syntax.php">Check PHP file syntax</label>
+			<label index="syntax.profile">Profile Fluid syntax</label>
 			<label index="toggles">Toggles</label>
 			<label index="typeselector">Select script type(s)</label>
 			<label index="warnings.installed">You chose to install the Provider extension - please make sure you clear all caches RIGHT NOW.</label>
