@@ -102,7 +102,8 @@ $GLOBALS['MCONF']['name'] = '_CLI_phpunit';
 	->initializeBackendUser()
 	->initializeBackendAuthentication()
 	->initializeBackendUserMounts()
-	->initializeLanguageObject();
+	->initializeLanguageObject()
+	->disableCoreAndClassesCache();
 
 require PATH_site . 'typo3conf/ext/phpunit/Composer/vendor/autoload.php';
 
