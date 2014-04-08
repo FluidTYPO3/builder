@@ -14,7 +14,7 @@ class GlobUtility {
 	 * @return array
 	 */
 	public static function globExtensionAndPath($extensionKey, $path) {
-		$realPath = t3lib_extMgm::extPath($extensionKey, $path);
+		$realPath = ExtensionManagementUtility::extPath($extensionKey, $path);
 		return self::globPath($realPath);
 	}
 
