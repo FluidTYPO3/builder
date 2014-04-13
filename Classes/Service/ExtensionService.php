@@ -45,7 +45,6 @@ class ExtensionService implements SingletonInterface {
 
 	/**
 	 * @var ObjectManagerInterface
-	 * @inject
 	 */
 	protected $objectManager;
 
