@@ -1,9 +1,31 @@
 <?php
 namespace FluidTYPO3\Builder\CodeGeneration\Extension;
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ * ************************************************************* */
 
 use FluidTYPO3\Builder\CodeGeneration\AbstractCodeGenerator;
 use FluidTYPO3\Builder\CodeGeneration\CodeGeneratorInterface;
-use Exception;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class ExtensionGenerator
 	extends AbstractCodeGenerator
@@ -45,7 +67,7 @@ class ExtensionGenerator
 
 	/**
 	 * @return string
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function generate() {
 		$extensionKey = $this->configuration['extensionKey'];
@@ -53,7 +75,7 @@ class ExtensionGenerator
 			$this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
 		}
 		if (TRUE === is_dir($this->targetFolder)) {
-			throw new Exception('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
+			throw new \Exception('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
 		}
 		$filesToBeWritten = array(
 			$this->targetFolder . '/ext_emconf.php' => $this->getPreparedCodeTemplate(self::TEMPLATE_EMCONF, $this->configuration)->render()
@@ -95,7 +117,7 @@ class ExtensionGenerator
 	protected function appendTypoScriptConfiguration(&$files) {
 		$templateVariables = array(
 			'extension' => $this->configuration['extensionKey'],
-			'signature' => \t3lib_extMgm::getCN($this->configuration['extensionKey'])
+			'signature' => ExtensionManagementUtility::getCN($this->configuration['extensionKey'])
 		);
 		$folder = $this->targetFolder . '/Configuration/TypoScript';
 		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
@@ -109,7 +131,7 @@ class ExtensionGenerator
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
 		$templateVariables = array(
-			'configuration' => '\t3lib_extMgm::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
 			'pages' => '',
 			'content' => '',
 			'backend' => ''

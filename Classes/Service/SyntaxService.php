@@ -1,14 +1,36 @@
 <?php
 namespace FluidTYPO3\Builder\Service;
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ * ************************************************************* */
 
+use FluidTYPO3\Builder\Result\FluidParserResult;
 use FluidTYPO3\Builder\Utility\GlobUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
-use FluidTYPO3\Builder\Result\FluidParserResult;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
-use Exception;
+
 
 class SyntaxService implements SingletonInterface {
 
@@ -51,18 +73,19 @@ class SyntaxService implements SingletonInterface {
 	 *
 	 * @param string $filePathAndFilename
 	 * @return FluidParserResult
+     * @throws \Exception
 	 */
 	public function syntaxCheckFluidTemplateFile($filePathAndFilename) {
-		/** @var $result FluidParserResult */
+		/** @var FluidParserResult $result */
 		$result = $this->objectManager->get('FluidTYPO3\Builder\Result\FluidParserResult');
-		/** @var $context RenderingContext */
+		/** @var RenderingContext $context */
 		$context = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Rendering\RenderingContext');
 		try {
 			$parsedTemplate = $this->templateParser->parse(file_get_contents($filePathAndFilename));
 			$result->setLayoutName($parsedTemplate->getLayoutName($context));
 			$result->setNamespaces($this->templateParser->getNamespaces());
 			$result->setCompilable($parsedTemplate->isCompilable());
-		} catch (Exception $error) {
+		} catch (\Exception $error) {
 			$result->setError($error);
 			$result->setValid(FALSE);
 		}
@@ -85,17 +108,18 @@ class SyntaxService implements SingletonInterface {
 
 	/**
 	 * @param string $filePathAndFilename
-	 * @return ParserResult
+	 * @return FluidParserResult
+     * @throws \Exception
 	 */
 	public function syntaxCheckPhpFile($filePathAndFilename) {
-		/** @var $result FluidParserResult */
+		/** @var FluidParserResult $result */
 		$result = $this->objectManager->get('FluidTYPO3\Builder\Result\FluidParserResult');
 		$command = 'php --define error_reporting=0 -le ' . $filePathAndFilename;
 		$code = $this->executeCommandAndReturnZeroOrStringMessage($command);
 		if (0 !== $code) {
 			$output = array();
 			$this->executeCommandAndReturnZeroOrStringMessage('php -l ' . $filePathAndFilename . ' 2>&1', $output);
-			$error = new Exception(array_shift($output), $code);
+			$error = new \Exception(array_shift($output), $code);
 			$result->setValid(FALSE);
 			$result->setError($error);
 		}
@@ -104,7 +128,7 @@ class SyntaxService implements SingletonInterface {
 
 	/**
 	 * @param string $extensionKey
-	 * @return ParserResult[]
+	 * @return FluidParserResult[]
 	 */
 	public function syntaxCheckPhpFilesInExtension($extensionKey) {
 		$path = ExtensionManagementUtility::extPath($extensionKey);
@@ -113,7 +137,7 @@ class SyntaxService implements SingletonInterface {
 
 	/**
 	 * @param string $path
-	 * @return ParserResult[]
+	 * @return FluidParserResult[]
 	 */
 	public function syntaxCheckPhpFilesInPath($path) {
 		$files = GlobUtility::getFilesRecursive($path, 'php');
@@ -126,7 +150,7 @@ class SyntaxService implements SingletonInterface {
 	}
 
 	/**
-	 * @param ParserResult[] $results
+	 * @param FluidParserResult[] $results
 	 * @return integer
 	 */
 	public function countErrorsInResultCollection(array $results) {

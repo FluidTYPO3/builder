@@ -1,23 +1,45 @@
 <?php
 namespace FluidTYPO3\Builder\Command;
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ * ************************************************************* */
 
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\GlobUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
-use RuntimeException;
 
 class BuilderCommandController extends CommandController {
 
 	/**
-	 * @var Tx_Builder_Service_SyntaxService
+	 * @var SyntaxService
 	 */
 	protected $syntaxService;
 
 	/**
-	 * @var Tx_Builder_Service_ExtensionService
+	 * @var ExtensionService
 	 */
 	protected $extensionService;
 
@@ -50,7 +72,7 @@ class BuilderCommandController extends CommandController {
 	 * @param string $path file or folder path (if extensionKey is included, path is relative to this extension)
 	 * @param string $extensions If provided, this CSV list of file extensions are considered Fluid templates
 	 * @param boolean $verbose If TRUE, outputs more information about each file check - default is to only output errors
-	 * @throws RuntimeException
+	 * @throws \RuntimeException
 	 * @return void
 	 */
 	public function fluidSyntaxCommand($extension = NULL, $path = NULL, $extensions = 'html,xml,txt', $verbose = FALSE) {
@@ -62,11 +84,11 @@ class BuilderCommandController extends CommandController {
 		} else {
 			// no extension key given, let's lint it all
 			if (6 > substr(TYPO3_version, 0, 1)) {
-				throw new RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+				throw new \RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
 			}
 			$files = array();
-			/** @var Tx_Builder_Service_ExtensionService $extensionService */
-			$extensionService = $this->objectManager->get('Tx_Builder_Service_ExtensionService');
+			/** @var ExtensionService $extensionService */
+			$extensionService = $this->objectManager->get('FluidTYPO3\Builder\Service\ExtensionService');
 			$extensionInformation = $extensionService->getComputableInformation();
 			foreach ($extensionInformation as $extensionName => $extensionInfo) {
 				// Syntax service declines linting of inactive extensions
@@ -74,7 +96,7 @@ class BuilderCommandController extends CommandController {
 					continue;
 				}
 				$path = GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
-				$files = array_merge($files, Tx_Builder_Utility_GlobUtility::getFilesRecursive($path, $extensions));
+				$files = array_merge($files, GlobUtility::getFilesRecursive($path, $extensions));
 			}
 		}
 		$files = array_values($files);
@@ -148,7 +170,7 @@ class BuilderCommandController extends CommandController {
 		if (6 > substr(TYPO3_version, 0, 1)) {
 			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
 		}
-		/** @var $service \TYPO3\CMS\Extensionmanager\Utility\InstallUtility */
+		/** @var $service InstallUtility */
 		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
 		$service->install($extensionKey);
 	}
@@ -160,12 +182,12 @@ class BuilderCommandController extends CommandController {
 	 * @param boolean $active If TRUE, the command will give information about active extensions only
 	 * @param boolean $inactive If TRUE, the command will give information about inactive extensions only
 	 * @param boolean $json If TRUE, the command will return a json object-string
-	 * @throws RuntimeException
+	 * @throws \Exception
 	 * @return void
 	 */
 	public function listCommand($detail = FALSE, $active = NULL, $inactive = FALSE, $json = FALSE) {
 		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
+			throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
 		}
 
 		$detail = (boolean) $detail;
@@ -198,14 +220,14 @@ class BuilderCommandController extends CommandController {
 	 *
 	 * @param string $extensionKey
 	 * @return void
-	 * @throws RuntimeException
+	 * @throws \Exception
 	 */
 	public function uninstallCommand($extensionKey) {
 		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new RuntimeException('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
+			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
 		}
-		/** @var $service \TYPO3\CMS\Extensionmanager\Utility\InstallUtility */
-		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
+		/** @var $service InstallUtility */
+		$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\InstallUtility');
 		$service->uninstall($extensionKey);
 	}
 
@@ -298,14 +320,14 @@ class BuilderCommandController extends CommandController {
 	protected function getClassNamesInExtension($combinedExtensionKey) {
 		$allViewHelperClassNames = array();
 		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
-		$path = t3lib_extMgm::extPath($extensionKey, 'Classes/ViewHelpers/');
-		$filesInPath = t3lib_div::getAllFilesAndFoldersInPath(array(), $path, 'php');
+		$path = ExtensionManagementUtility::extPath($extensionKey, 'Classes/ViewHelpers/');
+		$filesInPath = GeneralUtility::getAllFilesAndFoldersInPath(array(), $path, 'php');
 		foreach ($filesInPath as $filePathAndFilename) {
 			$className = $this->getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filePathAndFilename);
 			if (class_exists($className)) {
 				$parent = $className;
 				while ($parent = get_parent_class($parent)) {
-					if ($parent === 'Tx_Fluid_Core_ViewHelper_AbstractViewHelper' || $parent === 'TYPO3\\CMS\\Fluid\Core\\ViewHelper\\AbstractViewHelper') {
+					if ($parent === 'Tx_Fluid_Core_ViewHelper_AbstractViewHelper' || $parent === 'TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper') {
 						array_push($allViewHelperClassNames, $className);
 					}
 				}
@@ -313,10 +335,11 @@ class BuilderCommandController extends CommandController {
 		}
 		$affectedViewHelperClassNames = array();
 		foreach ($allViewHelperClassNames as $viewHelperClassName) {
-			$classReflection = new ReflectionClass($viewHelperClassName);
+			$classReflection = new \ReflectionClass($viewHelperClassName);
 			if ($classReflection->isAbstract() === TRUE) {
 				continue;
 			}
+            $namespace = $classReflection->getNamespaceName();
 			if (strncmp($namespace, $viewHelperClassName, strlen($namespace)) === 0) {
 				$affectedViewHelperClassNames[] = $viewHelperClassName;
 			}
@@ -337,7 +360,7 @@ class BuilderCommandController extends CommandController {
 	 * @param string $combinedExtensionKey
 	 * @param string $filename
 	 * @return string
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected function getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filename) {
 		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
@@ -345,7 +368,7 @@ class BuilderCommandController extends CommandController {
 		$stripped = substr($filename, 0, -4);
 		if ($vendor) {
 			$classNamePart = str_replace('/', '\\', $stripped);
-			$className = $vendor . '\\' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '\\ViewHelpers\\' . $classNamePart;
+			$className = $vendor . '\\' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '\ViewHelpers\\' . $classNamePart;
 		} else {
 			$classNamePart = str_replace('/', '_', $stripped);
 			$className = 'Tx_' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '_ViewHelpers_' . $classNamePart;
@@ -361,7 +384,7 @@ class BuilderCommandController extends CommandController {
 		if (FALSE !== strpos($extensionKey, '.')) {
 			list ($vendor, $extensionKey) = explode('.', $extensionKey);
 			if ('TYPO3' === $vendor) {
-				$vendor = 'TYPO3\\CMS';
+				$vendor = 'TYPO3\CMS';
 			}
 		} else {
 			$vendor = NULL;
