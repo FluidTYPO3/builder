@@ -3,8 +3,7 @@ namespace FluidTYPO3\Builder\Service;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2013 Cedric Ziel <cedric@cedric-ziel.com>, Internetdienstleistungen & EDV
- *
+ *  (c) 2014 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,11 +23,12 @@ namespace FluidTYPO3\Builder\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-use FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
+use FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator;
 
 /**
  * Service to compute Extension Manager api
@@ -44,16 +44,16 @@ class ExtensionService implements SingletonInterface {
 	const STATE_ALL = 2;
 
 	/**
-	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
+	 * @var ObjectManagerInterface
 	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
-	 * @param \TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager
+	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
-	public function injectObjectManager(\TYPO3\CMS\Extbase\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager( ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -69,7 +69,7 @@ class ExtensionService implements SingletonInterface {
 	 * @param boolean $useVhs Include VHS as dependency
 	 * @param boolean $git Generate Git repository and initial commits
 	 * @param boolean $travis Generate Travis build file for Continuous Integration through travis-ci.org
-	 * @return Tx_Builder_CodeGeneration_Extension_ExtensionGenerator
+     * @return ExtensionGenerator
 	 */
 	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE, $git = FALSE, $travis = FALSE) {
 		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
@@ -96,8 +96,8 @@ class ExtensionService implements SingletonInterface {
 		foreach ($dependencies as $dependency) {
 			$dependenciesArrayString .= "\n\t\t\t'" . $dependency . "' => '',";
 		}
-		list ($nameAndEmail, $companyName) = \t3lib_div::trimExplode(',', $author);
-		list ($name, $email) = \t3lib_div::trimExplode('<', $nameAndEmail);
+		list ($nameAndEmail, $companyName) = GeneralUtility::trimExplode(',', $author);
+		list ($name, $email) = GeneralUtility::trimExplode('<', $nameAndEmail);
 		$email = trim($email, '>');
 		$minimumVersion = 4.5;
 		$extensionVariables = array(
@@ -116,7 +116,7 @@ class ExtensionService implements SingletonInterface {
 			'git' => $git,
 			'travis' => $travis,
 		);
-		/** @var $extensionGenerator ExtensionGenerator */
+		/** @var ExtensionGenerator $extensionGenerator */
 		$extensionGenerator = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator');
 		$extensionGenerator->setConfiguration($extensionVariables);
 		return $extensionGenerator;
@@ -165,7 +165,7 @@ class ExtensionService implements SingletonInterface {
 	 */
 	private function gatherInformation() {
 		/** @var ListUtility $service */
-		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\ListUtility');
+		$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\ListUtility');
 
 		$extensionInformation = $service->getAvailableExtensions();
 		foreach ($extensionInformation as $extensionKey => $info) {
