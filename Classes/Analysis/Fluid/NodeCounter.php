@@ -1,15 +1,34 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis\Fluid;
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ * ************************************************************* */
 
-use FluidTYPO3\Builder\Analysis\Fluid\Message\UncompilableMessage;
 use FluidTYPO3\Builder\Analysis\Metric;
-use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use FluidTYPO3\Builder\Parser\ExposedTemplateCompiler;
-use TYPO3\CMS\Core\Error\DebugExceptionHandler;
-use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use FluidTYPO3\Builder\Analysis\MessageInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
-use TYPO3\CMS\Fluid\Core\Compiler\TemplateCompiler;
+use FluidTYPO3\Builder\Analysis\Fluid\Message\UncompilableMessage;
+use FluidTYPO3\Builder\Parser\ExposedTemplateCompiler;
+use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
@@ -222,6 +241,7 @@ class NodeCounter {
 		$sectionNodeCounts = array();
 		foreach ($nodes as $node) {
 			if (TRUE === $node instanceof ViewHelperNode) {
+                /** @var ViewHelperNode $node */
 				$instance = $node->getUninitializedViewHelper();
 				if (TRUE === $instance instanceof SectionViewHelper) {
 					array_push($sectionNodeCounts, $this->countNodesRecursive($node->getChildNodes()));
@@ -291,6 +311,7 @@ class NodeCounter {
 	protected function determineMaximumArgumentCount($nodes) {
 		foreach ($nodes as $node) {
 			if (TRUE === $node instanceof ViewHelperNode) {
+                /** @var ViewHelperNode $node */
 				$arguments = $node->getArguments();
 				$this->get(self::METRIC_MAXIMUM_ARGUMENT_COUNT)->setOnlyIfHigher(count($arguments));
 				$this->determineMaximumArgumentCount($arguments);
