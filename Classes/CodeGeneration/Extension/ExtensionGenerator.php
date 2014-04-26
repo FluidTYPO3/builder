@@ -131,7 +131,7 @@ class ExtensionGenerator
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
 		$templateVariables = array(
-			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
 			'pages' => '',
 			'content' => '',
 			'backend' => ''
