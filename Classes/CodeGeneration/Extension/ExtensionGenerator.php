@@ -83,7 +83,7 @@ class ExtensionGenerator
 		$foldersToBeCreated = array($this->targetFolder);
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
 			$this->appendPageFiles($filesToBeWritten);
-			array_push($folderPathToBeCreated, $this->targetFolder . '/Resources/Public/Icons');
+			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons');
 		}
 		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
 			$this->appendContentFiles($filesToBeWritten);
