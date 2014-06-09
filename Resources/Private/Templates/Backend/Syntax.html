@@ -1,4 +1,4 @@
-{namespace v=Tx_Vhs_ViewHelpers}
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
 
 <f:layout name="Backend" />
 
@@ -21,7 +21,7 @@
 		</f:for>
 		<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
 			<f:for each="{files}" as="filterFile">
-				<v:form.select.option value="{filterFile}" selected="{v:if.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}">
+				<v:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}">
 					{filterFile -> v:format.substring(start: basePathLength)}
 				</v:form.select.option>
 			</f:for>
@@ -54,22 +54,22 @@
 </f:section>
 
 <f:section name="PayloadMetrics">
-	<v:var.set name="map" value="{0: 'ok', 1: 'error', -2: 'warning'}" />
+	<v:variable.set name="map" value="{0: 'ok', 1: 'error', -2: 'warning'}" />
 	<h6>{filePathAndFilename}</h6>
 	<f:for each="{result.payload}" as="metric" key="metricName">
 		<f:for each="{metric.messages}" as="message">
-			{metricName -> v:var.set(name: 'title')}
-			{v:var.get(name: 'map.{message.severity}') -> v:var.set(name: 'class')}
-			{message.payload -> v:var.convert(type: 'array') -> v:var.set(name: 'payload')}
-			{message.message -> f:format.printf(arguments: payload) -> v:var.set(name: 'body')}
+			{metricName -> v:variable.set(name: 'title')}
+			{v:variable.get(name: 'map.{message.severity}') -> v:variable.set(name: 'class')}
+			{message.payload -> v:variable.convert(type: 'array') -> v:variable.set(name: 'payload')}
+			{message.message -> f:format.printf(arguments: payload) -> v:variable.set(name: 'body')}
 			<f:render section="FlashMessage" arguments="{_all}" />
 		</f:for>
 	</f:for>
 </f:section>
 
 <f:section name="PayloadFlashMessage">
-	{f:if(condition: result.valid, then: 'ok', else: 'error') -> v:var.set(name: 'class')}
-	{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:var.set(name: 'body')}
+	{f:if(condition: result.valid, then: 'ok', else: 'error') -> v:variable.set(name: 'class')}
+	{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:variable.set(name: 'body')}
 	<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
 </f:section>
 
