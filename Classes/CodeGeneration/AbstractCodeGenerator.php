@@ -77,13 +77,11 @@ abstract class AbstractCodeGenerator implements CodeGeneratorInterface {
 		if (TRUE === $this->dry) {
 			return TRUE;
 		}
-        try {
-            GeneralUtility::mkdir_deep($folderPath);
-        }
-		catch ( \InvalidArgumentException $e ) {
-            throw new \Exception('Unable to create directory "' . $folderPath . '"', 1371692697);
-        }
-
+		try {
+			GeneralUtility::mkdir_deep($folderPath);
+		} catch (\InvalidArgumentException $exception) {
+			throw new \Exception('Unable to create directory "' . $folderPath . '"', 1371692697);
+		}
 		return TRUE;
 	}
 
