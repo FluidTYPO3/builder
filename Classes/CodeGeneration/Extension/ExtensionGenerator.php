@@ -137,13 +137,13 @@ class ExtensionGenerator
 			'backend' => ''
 		);
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
-			$templateVariables['pages'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Page\');';
+			$templateVariables['pages'] = 'FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Page\');';
 		}
 		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
-			$templateVariables['content'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Content\');';
+			$templateVariables['content'] = 'FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Content\');';
 		}
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
-			$templateVariables['backend'] = 'Tx_Flux_Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
+			$templateVariables['backend'] = 'FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
 		}
 		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
 	}
