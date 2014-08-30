@@ -1,5 +1,5 @@
 {
-	"name": "ft3/builder",
+	"name": "fluidtypo3/builder",
 	"require": {
 		"composer/installers": "*"
 	},
