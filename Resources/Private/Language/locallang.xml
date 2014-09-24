@@ -37,7 +37,7 @@
 			<label index="providerextension.title">Brief title</label>
 			<label index="providerextension.travis">Create Travis continuous integration configuration file</label>
 			<label index="providerextension.verbose">Be verbose about actions taken</label>
-			<label index="providerextension.vhs">Set the VHS extension as depedency</label>
+			<label index="providerextension.vhs">Set the VHS extension as dependency</label>
 			<label index="submit.provider">Create provider extension</label>
 			<label index="submit.validate">Perform validations</label>
 			<label index="syntax.fluid">Check Fluid template syntax</label>
