@@ -4,5 +4,5 @@
 		"composer/installers": "*"
 	},
 	"type": "typo3-cms-extension",
-	"version": "0.11.0"
+	"version": "0.12.0"
 }
