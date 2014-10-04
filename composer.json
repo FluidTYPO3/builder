@@ -1,8 +1,6 @@
 {
 	"name": "fluidtypo3/builder",
-	"require": {
-		"composer/installers": "*"
-	},
+	"description": "The builder package from FluidTYPO3",
 	"type": "typo3-cms-extension",
-	"version": "0.12.0"
+	"version": "0.13.0"
 }
