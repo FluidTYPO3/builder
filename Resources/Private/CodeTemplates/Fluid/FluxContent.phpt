@@ -2,7 +2,7 @@
 <f:layout name="###layout###" />
 
 <f:section name="###configurationSectionName###">
-	<flux:form id="###id###" label="###label###" icon="###icon###">
+	<flux:form id="###id###" label="###label###" options="{icon: '###icon###'}">
 		<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
 	</flux:form>
 </f:section>
@@ -13,5 +13,8 @@
 </f:section>
 
 <f:section name="###section###">
-	Hello world!
+	<h3>I am a content element!</h3>
+	<p>
+		My template file is EXT:###extension###/Resources/Private/###placement###.
+	</p>
 </f:section>

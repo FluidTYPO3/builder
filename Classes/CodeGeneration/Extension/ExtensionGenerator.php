@@ -35,6 +35,7 @@ class ExtensionGenerator
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
 	const TEMPLATE_CONTENT = 'Fluid/FluxContent';
+	const TEMPLATE_PAGE = 'Fluid/FluxPage';
 	const TEMPLATE_FLUXFORM = 'Fluid/FluxForm';
 	const TEMPLATE_TYPOSCRIPTCONSTANTS = 'Extension/TypoScript/constants';
 	const TEMPLATE_TYPOSCRIPTSETUP = 'Extension/TypoScript/setup';
@@ -104,7 +105,12 @@ class ExtensionGenerator
 			$this->createFile($fileToBeWritten, $fileContentToBeWritten);
 		}
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
-			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Page.gif');
+			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons/Page');
+			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Page/Standard.gif');
+		}
+		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
+			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons/Content');
+			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Content/Example.gif');
 		}
 		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
 		return 'Built extension "' . $extensionKey . '"';
@@ -156,7 +162,7 @@ class ExtensionGenerator
 		$layoutName = 'Backend';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, 'Backend');
-		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/MyModule.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html');
 	}
 
 	/**
@@ -167,7 +173,7 @@ class ExtensionGenerator
 		$layoutName = 'Content';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, $layoutName);
-		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/MyContentElement.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html');
 	}
 
 	/**
@@ -178,7 +184,7 @@ class ExtensionGenerator
 		$layoutName = 'Page';
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, $layoutName);
-		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Page/MyPageTemplate.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_PAGE, $layoutName, $sectionName, 'Page/Standard.html');
 	}
 
 	/**
@@ -196,7 +202,9 @@ class ExtensionGenerator
 			'configurationSectionName' => 'Configuration',
 			'id' => str_replace('/', '', strtolower($identifier)),
 			'label' => $identifier,
-			'icon' => 'Icons/Page.gif'
+			'icon' => 'Icons/' . substr($placement, 0, -4) . 'gif',
+			'extension' => $this->configuration['extensionKey'],
+			'placement' => $placement
 		);
 		$templatePathAndFilename = $this->targetFolder . '/Resources/Private/Templates/' . $placement;
 		$files[$templatePathAndFilename] = $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
