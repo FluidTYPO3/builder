@@ -39,6 +39,7 @@ class ExtensionGenerator
 	const TEMPLATE_FLUXFORM = 'Fluid/Form';
 	const TEMPLATE_TYPOSCRIPTCONSTANTS = 'Extension/TypoScript/constants';
 	const TEMPLATE_TYPOSCRIPTSETUP = 'Extension/TypoScript/setup';
+	const TEMPLATE_LANGUAGEFILE = 'Extension/Language/locallang.xlf';
 
 	/**
 	 * @var array
@@ -82,12 +83,16 @@ class ExtensionGenerator
 			$this->targetFolder . '/ext_emconf.php' => $this->getPreparedCodeTemplate(self::TEMPLATE_EMCONF, $this->configuration)->render()
 		);
 		$foldersToBeCreated = array($this->targetFolder);
-		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
+		$hasFluidpages = TRUE === in_array('fluidpages', $this->configuration['dependencies']);
+		$hasFluidcontent = TRUE === in_array('fluidcontent', $this->configuration['dependencies']);
+		if (TRUE === $hasFluidpages) {
 			$this->appendPageFiles($filesToBeWritten);
-			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons');
 		}
-		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
+		if (TRUE === $hasFluidcontent) {
 			$this->appendContentFiles($filesToBeWritten);
+		}
+		if (TRUE === $hasFluidpages || TRUE === $hasFluidcontent) {
+			$this->appendLanguageFile($filesToBeWritten);
 		}
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
 			$this->appendBackendFiles($filesToBeWritten);
@@ -97,6 +102,9 @@ class ExtensionGenerator
 		}
 		$this->appendTypoScriptConfiguration($filesToBeWritten);
 		$this->appendExtensionTablesFile($filesToBeWritten);
+		if (TRUE === $hasFluidcontent || TRUE === $hasFluidpages) {
+			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Private/Language');
+		}
 		$foldersToBeCreated = array_unique($foldersToBeCreated);
 		foreach ($foldersToBeCreated as $folderPathToBeCreated) {
 			$this->createFolder($folderPathToBeCreated);
@@ -104,12 +112,10 @@ class ExtensionGenerator
 		foreach ($filesToBeWritten as $fileToBeWritten => $fileContentToBeWritten) {
 			$this->createFile($fileToBeWritten, $fileContentToBeWritten);
 		}
-		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
-			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons/Page');
+		if (TRUE === $hasFluidpages) {
 			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Page/Standard.gif');
 		}
-		if (TRUE === in_array('fluidcontent', $this->configuration['dependencies'])) {
-			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Public/Icons/Content');
+		if (TRUE === $hasFluidcontent) {
 			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Content/Example.gif');
 		}
 		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
@@ -163,6 +169,19 @@ class ExtensionGenerator
 		$sectionName = 'Main';
 		$this->appendLayoutFile($files, 'Backend');
 		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html');
+	}
+
+	/**
+	 * @param array $files
+	 * @return void
+	 */
+	protected function appendLanguageFile(&$files) {
+		$variables = array(
+			'extension' => $this->configuration['extensionKey'],
+			'date' => date('c')
+		);
+		$filePathAndFilename = $this->targetFolder . '/Resources/Private/Language/locallang.xlf';
+		$files[$filePathAndFilename] = $this->getPreparedCodeTemplate(self::TEMPLATE_LANGUAGEFILE, $variables)->render();
 	}
 
 	/**
