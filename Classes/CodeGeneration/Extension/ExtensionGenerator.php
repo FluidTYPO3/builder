@@ -34,9 +34,9 @@ class ExtensionGenerator
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
-	const TEMPLATE_CONTENT = 'Fluid/FluxContent';
-	const TEMPLATE_PAGE = 'Fluid/FluxPage';
-	const TEMPLATE_FLUXFORM = 'Fluid/FluxForm';
+	const TEMPLATE_CONTENT = 'Fluid/Content';
+	const TEMPLATE_PAGE = 'Fluid/Page';
+	const TEMPLATE_FLUXFORM = 'Fluid/Form';
 	const TEMPLATE_TYPOSCRIPTCONSTANTS = 'Extension/TypoScript/constants';
 	const TEMPLATE_TYPOSCRIPTSETUP = 'Extension/TypoScript/setup';
 
