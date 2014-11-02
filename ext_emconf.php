@@ -11,7 +11,7 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Builder: Development Support for Fluid Templates and Extbase extensions',
+	'title' => 'Builder: FluidTYPO3 Development Support',
 	'description' => 'Various development supports for building and working with Fluid templates and Extbase extensions',
 	'category' => 'misc',
 	'shy' => 0,
