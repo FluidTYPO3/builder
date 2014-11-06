@@ -1,19 +1,18 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
+  - 5.6
 
 env:
-  - DB=mysql TYPO3=master INTEGRATION=master
-  - DB=mysql TYPO3=TYPO3_6-1 INTEGRATION=master
+  - DB=mysql TYPO3=master INTEGRATION=master INTRODUCTION=master
+  - DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master INTRODUCTION=master
 
 matrix:
-   fast_finish: true
    include:
-     - php: 5.6
-       env: DB=mysql TYPO3=master INTEGRATION=master
+     - php: 5.3
+       env: DB=mysql TYPO3=TYPO3_6-2 INTEGRATION=master INTRODUCTION=master
 
 before_script:
   - cd ..
