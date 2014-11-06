@@ -6,7 +6,7 @@
 			<trans-unit id="flux.fluidcontent">
 				<source>Fluid content element example</source>
 			</trans-unit>
-			<trans-unit id="flux.fluidpage.description">
+			<trans-unit id="flux.fluidcontent.description">
 				<source>Description can be entered in LLL file locallang.xlf of extension ###extension###</source>
 			</trans-unit>
 			<trans-unit id="flux.fluidpage">
