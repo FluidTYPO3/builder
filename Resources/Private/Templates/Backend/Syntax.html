@@ -1,83 +1,87 @@
-{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+<div xmlns="http://www.w3.org/1999/xhtml"
+	 xmlns:f="http://typo3.org/ns/fluid/ViewHelpers"
+	 xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers">
 
-<f:layout name="Backend" />
+	<f:layout name="Backend" />
 
-<f:section name="ButtonsLeft">
+	<f:section name="ButtonsLeft">
 
-</f:section>
+	</f:section>
 
-<f:section name="Content">
-	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/jqplot.min.css')}" />
-	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/plotter.css')}" />
-	<f:form action="syntax" class="re-run">
-		<f:for each="{syntax}" as="syntaxName">
-			<f:form.hidden name="syntax[]" value="{syntaxName}" />
-		</f:for>
-		<f:for each="{formats}" as="formatName">
-			<f:form.hidden name="formats[]" value="{formatName}" />
-		</f:for>
-		<f:for each="{extensions}" as="extensionName">
-			<f:form.hidden name="extensions[]" value="{extensionName}" />
-		</f:for>
-		<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
-			<f:for each="{files}" as="filterFile">
-				<v:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}">
-					{filterFile -> v:format.substring(start: basePathLength)}
-				</v:form.select.option>
+	<f:section name="Content">
+		<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/jqplot.min.css')}" />
+		<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/plotter.css')}" />
+		<f:form action="syntax" class="re-run">
+			<f:for each="{syntax}" as="syntaxName">
+				<f:form.hidden name="syntax[]" value="{syntaxName}" />
 			</f:for>
-		</v:form.select><br />
-		<button type="submit">Re-run</button>
-	</f:form>
-	<h2>{f:translate(key: 'header.reports')}</h2>
-	<f:for each="{reports}" as="extensionReports" key="extensionKey">
-		<h4>{extensionKey}</h4>
-		<f:if condition="{extensionReports}">
-			<f:else>
-				<f:translate key="noreports" />
-			</f:else>
-			<f:then>
-				<f:for each="{extensionReports}" as="formatReports" key="format">
-					<h5>{format -> v:format.case(case: 'ucfirst')}</h5>
-					<f:if condition="{formatReports.json}">
-						<div class="storage storage-{format}">
-							{formatReports.json -> f:format.raw()}
-						</div>
-						<div class="graph"></div>
-					</f:if>
-					<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
-						<f:render section="Payload{result.payloadType}" arguments="{_all}" />
-					</f:for>
+			<f:for each="{formats}" as="formatName">
+				<f:form.hidden name="formats[]" value="{formatName}" />
+			</f:for>
+			<f:for each="{extensions}" as="extensionName">
+				<f:form.hidden name="extensions[]" value="{extensionName}" />
+			</f:for>
+			<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
+				<f:for each="{files}" as="filterFile">
+					<v:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}">
+						{filterFile -> v:format.substring(start: basePathLength)}
+					</v:form.select.option>
 				</f:for>
-			</f:then>
-		</f:if>
-	</f:for>
-</f:section>
-
-<f:section name="PayloadMetrics">
-	<v:variable.set name="map" value="{0: 'ok', 1: 'error', -2: 'warning'}" />
-	<h6>{filePathAndFilename}</h6>
-	<f:for each="{result.payload}" as="metric" key="metricName">
-		<f:for each="{metric.messages}" as="message">
-			{metricName -> v:variable.set(name: 'title')}
-			{v:variable.get(name: 'map.{message.severity}') -> v:variable.set(name: 'class')}
-			{message.payload -> v:variable.convert(type: 'array') -> v:variable.set(name: 'payload')}
-			{message.message -> f:format.printf(arguments: payload) -> v:variable.set(name: 'body')}
-			<f:render section="FlashMessage" arguments="{_all}" />
+			</v:form.select><br />
+			<button type="submit">Re-run</button>
+		</f:form>
+		<h2>{f:translate(key: 'header.reports')}</h2>
+		<f:for each="{reports}" as="extensionReports" key="extensionKey">
+			<h4>{extensionKey}</h4>
+			<f:if condition="{extensionReports}">
+				<f:else>
+					<f:translate key="noreports" />
+				</f:else>
+				<f:then>
+					<f:for each="{extensionReports}" as="formatReports" key="format">
+						<h5>{format -> v:format.case(case: 'ucfirst')}</h5>
+						<f:if condition="{formatReports.json}">
+							<div class="storage storage-{format}">
+								{formatReports.json -> f:format.raw()}
+							</div>
+							<div class="graph"></div>
+						</f:if>
+						<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
+							<f:render section="Payload{result.payloadType}" arguments="{_all}" />
+						</f:for>
+					</f:for>
+				</f:then>
+			</f:if>
 		</f:for>
-	</f:for>
-</f:section>
+	</f:section>
 
-<f:section name="PayloadFlashMessage">
-	{f:if(condition: result.valid, then: 'ok', else: 'error') -> v:variable.set(name: 'class')}
-	{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:variable.set(name: 'body')}
-	<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
-</f:section>
+	<f:section name="PayloadMetrics">
+		<v:variable.set name="map" value="{0: 'ok', 1: 'error', -2: 'warning'}" />
+		<h6>{filePathAndFilename}</h6>
+		<f:for each="{result.payload}" as="metric" key="metricName">
+			<f:for each="{metric.messages}" as="message">
+				{metricName -> v:variable.set(name: 'title')}
+				{v:variable.get(name: 'map.{message.severity}') -> v:variable.set(name: 'class')}
+				{message.payload -> v:variable.convert(type: 'array') -> v:variable.set(name: 'payload')}
+				{message.message -> f:format.printf(arguments: payload) -> v:variable.set(name: 'body')}
+				<f:render section="FlashMessage" arguments="{_all}" />
+			</f:for>
+		</f:for>
+	</f:section>
 
-<f:section name="FlashMessage">
-	<div class="typo3-message message-{class}">
-		<div class="message-header">{title}</div>
-		<div class="message-body">
-			<pre>{body}</pre>
+	<f:section name="PayloadFlashMessage">
+		{f:if(condition: result.valid, then: 'ok', else: 'error') -> v:variable.set(name: 'class')}
+		{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:variable.set(name: 'body')}
+		<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
+	</f:section>
+
+	<f:section name="FlashMessage">
+		<div class="typo3-message message-{class}">
+			<div class="message-header">{title}</div>
+			<div class="message-body">
+				<pre>{body}</pre>
+			</div>
 		</div>
-	</div>
-</f:section>
+	</f:section>
+
+</div>
