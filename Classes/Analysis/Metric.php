@@ -117,6 +117,21 @@ class Metric {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function getPayload() {
+		return $this->payload;
+	}
+
+	/**
+	 * @param array $payload
+	 * @return void
+	 */
+	public function setPayload(array $payload) {
+		$this->payload = $payload;
+	}
+
+	/**
 	 * Attempt to increment $this->value if it is numeric in any way.
 	 *
 	 * @param mixed $value
