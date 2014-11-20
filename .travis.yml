@@ -4,6 +4,7 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - 5.6
 
 env:
   - TYPO3=6.2.*
@@ -18,9 +19,6 @@ matrix:
       env: TYPO3=dev-master
     - php: 5.5
       env: TYPO3=dev-master
-  include:
-    - env: TYPO3=dev-master
-      php: 5.6
 
 before_script:
   - composer require typo3/cms:$TYPO3
