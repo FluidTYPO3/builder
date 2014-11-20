@@ -28,7 +28,7 @@ before_script:
   - mkdir -p build/logs
 
 script:
-  - ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-cover=build/logs/clover.xml
+  - ./vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=build/logs/clover.xml
 
 after_script:
   - mkdir -p src/FluidTYPO3/Builder
