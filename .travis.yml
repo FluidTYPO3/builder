@@ -5,8 +5,19 @@ php:
   - 5.4
   - 5.5
 
+env:
+  - TYPO3=6.2.*
+  - TYPO3=dev-master
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 5.6
+      env: TYPO3=dev-master
+
 before_script:
-  - composer install
+  - composer require typo3/cms:$TYPO3
+  - composer install --prefer-dist
 
 script:
   - ./vendor/bin/phpunit -c phpunit.xml.dist
