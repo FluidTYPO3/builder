@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f3ccf13307dd6198faf22355d35f88ab",
+    "hash": "7e8ed6254976128f9b9e06dc424f8acd",
     "packages": [],
     "packages-dev": [
         {
@@ -1255,12 +1255,6 @@
                 "url": "git://git.typo3.org/Packages/TYPO3.CMS.git",
                 "reference": "a34edf6b58cd8d799a67fb20c1a67bff6aa374e9"
             },
-            "dist": {
-                "type": "tar",
-                "url": "http://get.typo3.org/6.2.6",
-                "reference": "6.2.6",
-                "shasum": "72ce60bf85951cbf99dcbaee37e7c2e1477bd050"
-            },
             "require": {
                 "ext-fileinfo": "*",
                 "ext-pcre": "*",
@@ -1370,67 +1364,6 @@
                 "typo3"
             ],
             "time": "2014-10-22 09:09:54"
-        },
-        {
-            "name": "typo3/cms-composer-installers",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/TYPO3/CmsComposerInstallers.git",
-                "reference": "5865cd2a4b089edb2c52b678d7099dce3ad136da"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/TYPO3/CmsComposerInstallers/zipball/5865cd2a4b089edb2c52b678d7099dce3ad136da",
-                "reference": "5865cd2a4b089edb2c52b678d7099dce3ad136da",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "1.0.0"
-            },
-            "replace": {
-                "lw/typo3cms-installers": "*",
-                "netresearch/composer-installers": "*"
-            },
-            "require-dev": {
-                "composer/composer": "1.*"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "TYPO3\\CMS\\Composer\\Installer\\Plugin",
-                "branch-alias": {
-                    "dev-master": "1.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "": "Classes/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Opitz",
-                    "email": "christian.opitz@netresearch.de"
-                },
-                {
-                    "name": "Lars Peipmann",
-                    "email": "lars@peipmann.de"
-                }
-            ],
-            "description": "TYPO3 CMS Installers",
-            "homepage": "http://forge.typo3.org/projects/team-composer",
-            "keywords": [
-                "cms",
-                "core",
-                "extension",
-                "installer",
-                "typo3"
-            ],
-            "time": "2014-05-26 08:48:48"
         }
     ],
     "aliases": [],
