@@ -12,4 +12,6 @@ script:
   - ./vendor/bin/phpunit -c phpunit.xml.dist
 
 after_script:
+  - mkdir -p src/FluidTYPO3/Builder
+  - ln -s Classes src/FluidTYPO3/Builder
   - vendor/bin/coveralls
