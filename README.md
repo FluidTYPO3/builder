@@ -1,7 +1,7 @@
 # EXT:builder
 ## Extbase/Fluid Dev Support Utilities
 
-[![Build Status](https://travis-ci.org/FluidTYPO3/builder.png?branch=master)](https://travis-ci.org/FluidTYPO3/builder)
+[![Build Status](https://travis-ci.org/FluidTYPO3/builder.png?branch=master)](https://travis-ci.org/FluidTYPO3/builder) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder.svg)](https://coveralls.io/r/FluidTYPO3/builder)
 
 Utilities to make your dev-life easier.
 
@@ -64,7 +64,7 @@ OPTIONS:
 
 DESCRIPTION:
   Syntax check Fluid template
-  
+
   Checks one template file, all templates in
   an extension or a sub-path (which can be used
 ```
@@ -72,7 +72,7 @@ DESCRIPTION:
 #### PHP Syntax checker
 
 ```
-php typo3/cli_dispatch.phpsh extbase help builder:phpsyntax  
+php typo3/cli_dispatch.phpsh extbase help builder:phpsyntax
 
 Syntax check PHP code
 
@@ -92,7 +92,7 @@ OPTIONS:
 
 DESCRIPTION:
   Syntax check PHP code
-  
+
   Checks PHP source files in $path, if extension
   key is also given, only files in that path relative
 ```
@@ -122,17 +122,17 @@ OPTIONS:
 
 DESCRIPTION:
   Makes simple VH unit test class(es)
-  
+
   Saves a file only if it does not already exist. Which means
   if you have to rebuild your files, remove the old ones first.
-  
+
   If an extension key is provided but no class name, every
   ViewHelper in the provided extension is considered.
-  
+
   The default location of generated test case classes is:
-  
+
   EXT:<ext>/Tests/Unit/ViewHelpers/<class>Test.php
-  
+
   Where <ext> is the extension key detected from the class name
   and <class> is the last part of the ViewHelper class filename
 ```
@@ -140,7 +140,7 @@ DESCRIPTION:
 #### Install Extension via CLI
 
 ```bash
-php typo3/cli_dispatch.phpsh extbase help builder:install       
+php typo3/cli_dispatch.phpsh extbase help builder:install
 
 Installs an extension by key
 
@@ -151,11 +151,11 @@ USAGE:
   ./cli_dispatch.phpsh extbase builder:install <extension key>
 
 ARGUMENTS:
-  --extension-key      
+  --extension-key
 
 DESCRIPTION:
   Installs an extension by key
-  
+
   The extension files must be present in one of the
 ```
 
@@ -173,11 +173,11 @@ USAGE:
   ./cli_dispatch.phpsh extbase builder:uninstall <extension key>
 
 ARGUMENTS:
-  --extension-key      
+  --extension-key
 
 DESCRIPTION:
   Uninstalls an extension by key
-  
+
   The extension files must be present in one of the
 ```
 
@@ -187,7 +187,7 @@ This may be the most important command available. It allows you to generate a st
 of being used as provider for fluidpages, fluidcontent and fluidbackend extensions.
 
 ```bash
-php typo3/cli_dispatch.phpsh extbase help builder:providerextension 
+php typo3/cli_dispatch.phpsh extbase help builder:providerextension
 
 Builds a ProviderExtension
 
@@ -237,7 +237,7 @@ OPTIONS:
 
 DESCRIPTION:
   Builds a ProviderExtension
-  
+
   The resulting extension will contain source code
   and configuration options needed by the various
   toggles. Each of these toggles enable/disable
