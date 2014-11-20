@@ -7,12 +7,20 @@ php:
 
 env:
   - TYPO3=6.2.*
+  - TYPO3=dev-master
 
 matrix:
   fast_finish: true
+  exclude:
+    - php: 5.3
+      env: TYPO3=dev-master
+    - php: 5.4
+      env: TYPO3=dev-master
+    - php: 5.5
+      env: TYPO3=dev-master
   include:
-    - php: 5.6
     - env: TYPO3=dev-master
+      php: 5.6
 
 before_script:
   - composer require typo3/cms:$TYPO3
