@@ -1,7 +1,7 @@
 # EXT:builder
 ## Extbase/Fluid Dev Support Utilities
 
-[![Build Status](https://travis-ci.org/FluidTYPO3/builder.png?branch=master)](https://travis-ci.org/FluidTYPO3/builder) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder.svg)](https://coveralls.io/r/FluidTYPO3/builder)
+[![Build Status](https://travis-ci.org/FluidTYPO3/builder.png?branch=development)](https://travis-ci.org/FluidTYPO3/builder) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder.svg?branch=development)](https://coveralls.io/r/FluidTYPO3/builder)
 
 Utilities to make your dev-life easier.
 
