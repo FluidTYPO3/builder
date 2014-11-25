@@ -24,5 +24,4 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'] = array(
 \TYPO3\CMS\Core\Core\Bootstrap::getInstance()
 	->baseSetup('typo3/')
 	->initializeClassLoader()
-	->initializeCachingFramework()
-;
+	->initializeCachingFramework();
