@@ -1,7 +1,7 @@
 # EXT:builder
 ## Extbase/Fluid Dev Support Utilities
 
-[![Build Status](https://jenkins.fluidtypo3.org/buildStatus/icon?job=builder)](https://jenkins.fluidtypo3.org/job/builder/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder.svg?branch=development)](https://coveralls.io/r/FluidTYPO3/builder)
+[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.fluidtypo3.org/builder.svg?style=flat-square)](https://jenkins.fluidtypo3.org/job/builder/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder/development.svg?style=flat-square)](https://coveralls.io/r/FluidTYPO3/builder)
 
 Utilities to make your dev-life easier.
 
