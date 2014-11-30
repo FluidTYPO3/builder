@@ -86,12 +86,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FluidTYPO3/fluidtypo3-development.git",
-                "reference": "7cf328f631f791d48559fd105b80223bffe93bb3"
+                "reference": "3580e86e59159ec9e81e0cbfa5d4ed38bb4d6199"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/7cf328f631f791d48559fd105b80223bffe93bb3",
-                "reference": "7cf328f631f791d48559fd105b80223bffe93bb3",
+                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/3580e86e59159ec9e81e0cbfa5d4ed38bb4d6199",
+                "reference": "3580e86e59159ec9e81e0cbfa5d4ed38bb4d6199",
                 "shasum": ""
             },
             "require": {
@@ -129,7 +129,7 @@
                 "php",
                 "typo3"
             ],
-            "time": "2014-11-30 03:01:31"
+            "time": "2014-11-30 11:09:01"
         },
         {
             "name": "guzzle/guzzle",
