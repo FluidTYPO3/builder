@@ -86,12 +86,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FluidTYPO3/fluidtypo3-development.git",
-                "reference": "8f81249e763485357de9c85a17b5ef79d7cdb8ca"
+                "reference": "0892fc289c17118c612b8799895daf427788c7c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/8f81249e763485357de9c85a17b5ef79d7cdb8ca",
-                "reference": "8f81249e763485357de9c85a17b5ef79d7cdb8ca",
+                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/0892fc289c17118c612b8799895daf427788c7c8",
+                "reference": "0892fc289c17118c612b8799895daf427788c7c8",
                 "shasum": ""
             },
             "require": {
@@ -104,6 +104,12 @@
             "replace": {
                 "typo3/cms-composer-installers": "*"
             },
+            "bin": [
+                "bin/checkcommits",
+                "bin/checkstyle",
+                "bin/runtests",
+                "bin/make"
+            ],
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -123,7 +129,7 @@
                 "php",
                 "typo3"
             ],
-            "time": "2014-11-29 13:06:55"
+            "time": "2014-11-30 01:39:04"
         },
         {
             "name": "guzzle/guzzle",
