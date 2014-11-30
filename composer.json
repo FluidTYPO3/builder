@@ -1,24 +1,18 @@
 {
-	"name": "fluidtypo3/builder",
-	"description": "The builder package from FluidTYPO3",
-	"type": "typo3-cms-extension",
-	"version": "0.15.0",
-	"require-dev": {
-		"satooshi/php-coveralls": "dev-master",
-		"typo3/cms": "6.2.*",
-		"phpunit/phpunit": "4.2.*",
-		"mikey179/vfsStream": "~1.3.0"
-	},
-	"replace": {
-		"typo3/cms-composer-installers": "*"
-	},
-	"autoload": {
-		"psr-4": {
-			"FluidTYPO3\\Builder\\": "Classes/"
-		},
-		"classmap": [
-			"Tests/",
-			"vendor/typo3/cms/typo3/sysext"
-		]
-	}
+    "name": "fluidtypo3/builder",
+    "description": "The builder package from FluidTYPO3",
+    "type": "typo3-cms-extension",
+    "version": "0.15.0",
+    "require-dev": {
+        "fluidtypo3/development": "dev-master",
+        "typo3/cms": "6.2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "FluidTYPO3\\Builder\\": "Classes/"
+        },
+        "classmap": [
+            "vendor/typo3/cms/typo3/sysext"
+        ]
+    }
 }
