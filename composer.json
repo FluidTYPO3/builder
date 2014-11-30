@@ -27,10 +27,5 @@
         "classmap": [
             "vendor/typo3/cms/typo3/sysext"
         ]
-    },
-    "config": {
-        "preferred-install": "dist",
-        "cache-dir": "/tmp",
-        "cache-files-maxsize": "700M"
     }
 }
