@@ -4,9 +4,22 @@
     "type": "typo3-cms-extension",
     "version": "0.15.0",
     "require-dev": {
-        "fluidtypo3/development": "dev-master",
-        "typo3/cms": "6.2.*"
+        "typo3/cms": "6.2.7",
+        "fluidtypo3/development": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "typo3/cms",
+                "version": "6.2.7",
+                "dist": {
+                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/6.2.7.zip",
+                    "type": "zip"
+                }
+            }
+        }
+    ],
     "autoload": {
         "psr-4": {
             "FluidTYPO3\\Builder\\": "Classes/"
@@ -14,5 +27,10 @@
         "classmap": [
             "vendor/typo3/cms/typo3/sysext"
         ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "cache-dir": "/tmp",
+        "cache-files-maxsize": "700M"
     }
 }
