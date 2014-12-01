@@ -60,9 +60,10 @@ class ExtensionGeneratorTest extends UnitTestCase {
 		$instance->setDry(TRUE);
 		$instance->setConfiguration(array(
 			'dependencies' => array('fluidpages', 'fluidcontent', 'fluidbackend'),
-			'controllers' => TRUE,
+			'controllers' => TRUE, 'extensionKey' => 'dummy'
 		));
 		$result = $instance->generate();
+		$this->assertEquals('Built extension "dummy"', $result);
 	}
 
 	/**
