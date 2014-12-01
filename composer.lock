@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2e2cfba19848ceddaecf76d38507d5e1",
+    "hash": "1ad0317b9d903190db8c95d06aa84192",
     "packages": [],
     "packages-dev": [
         {
@@ -82,7 +82,7 @@
         },
         {
             "name": "fluidtypo3/development",
-            "version": "dev-master",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FluidTYPO3/fluidtypo3-development.git",
@@ -1402,9 +1402,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "fluidtypo3/development": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "platform": [],
     "platform-dev": []

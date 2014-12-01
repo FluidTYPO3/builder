@@ -5,7 +5,7 @@
     "version": "0.15.0",
     "require-dev": {
         "typo3/cms": "6.2.7",
-        "fluidtypo3/development": "dev-master"
+        "fluidtypo3/development": "*"
     },
     "repositories": [
         {
