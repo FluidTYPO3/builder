@@ -77,7 +77,7 @@ class ExtensionGenerator
 			$this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
 		}
 		if (TRUE === is_dir($this->targetFolder)) {
-			throw new \Exception('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
+			throw new \RuntimeException('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
 		}
 		$filesToBeWritten = array(
 			$this->targetFolder . '/ext_emconf.php' => $this->getPreparedCodeTemplate(self::TEMPLATE_EMCONF, $this->configuration)->render()
