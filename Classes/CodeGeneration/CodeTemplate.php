@@ -76,12 +76,20 @@ class CodeTemplate {
 		if (NULL === $identifier) {
 			return NULL;
 		}
-		$filePathAndFilename = ExtensionManagementUtility::extPath('builder', 'Resources/Private/CodeTemplates/' . $identifier . '.phpt');
+		$filePathAndFilename = $this->getFilePath('Resources/Private/CodeTemplates/' . $identifier . '.phpt');
 		$content = file_get_contents($filePathAndFilename);
 		foreach ($variables as $name => $value) {
 			$content = str_replace('###' . $name . '###', $value, $content);
 		}
 		return $content;
+	}
+
+	/**
+	 * @param string $path
+	 * @return string
+	 */
+	protected function getFilePath($path) {
+		return ExtensionManagementUtility::extPath('builder', $path);
 	}
 
 }

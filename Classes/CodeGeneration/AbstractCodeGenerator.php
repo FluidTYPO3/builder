@@ -120,12 +120,19 @@ abstract class AbstractCodeGenerator implements CodeGeneratorInterface {
 		if (FALSE === is_dir($folderPath)) {
 			$this->createFolder($folderPath);
 		}
-		$localFile = ExtensionManagementUtility::extPath('builder', $localRelativePathAndFilename);
+		$localFile = $this->getBuilderExtensionPath() . $localRelativePathAndFilename;
 		$fileCopied = copy($localFile, $destinationPathAndFilename);
 		if (FALSE === $fileCopied) {
 			throw new \Exception('Unable to copy file "' . $localFile . '" to "' . $destinationPathAndFilename . '"', 1371695897);
 		}
 		return TRUE;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getBuilderExtensionPath() {
+		return rtrim(ExtensionManagementUtility::extPath('builder'), '/') . '/';
 	}
 
 	/**
