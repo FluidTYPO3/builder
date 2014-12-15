@@ -20,7 +20,7 @@
             }
         }
     ],
-    "autoload": {
+    "autoload-dev": {
         "psr-4": {
             "FluidTYPO3\\Builder\\": "Classes/"
         },
