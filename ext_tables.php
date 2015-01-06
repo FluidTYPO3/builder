@@ -17,7 +17,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
 	),
 	array(
 		'access' => 'user,group',
-		'icon'   => 'EXT:' . $_EXTKEY . '/ext_icon.gif',
+		'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/' .
+			(\TYPO3\CMS\Core\Utility\GeneralUtility::compat_version('7.0') ? 'module_builder.png' : 'builder.gif'),
 		'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xml',
 	)
 );
