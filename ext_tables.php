@@ -14,12 +14,17 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = '
 	'tx_builder_module',
 	'',
 	array(
-		'Backend' => 'index,syntax,build',
+		'Backend' => 'index,syntax,build,buildForm',
 	),
 	array(
 		'access' => 'user,group',
 		'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/' .
 			(6.2 === (float) substr(TYPO3_version, 0, 3) ? 'builder.gif' : 'module_builder.png'),
-		'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xml',
+		'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf',
 	)
+);
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
+	'builder',
+	'EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf'
 );
