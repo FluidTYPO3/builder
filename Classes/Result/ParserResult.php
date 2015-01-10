@@ -23,6 +23,9 @@ namespace FluidTYPO3\Builder\Result;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+/**
+ * Class ParserResult
+ */
 class ParserResult implements ParserResultInterface {
 
 	const PAYLOAD_FLASHMESSAGE = 'FlashMessage';
@@ -42,6 +45,11 @@ class ParserResult implements ParserResultInterface {
 	 * @var array
 	 */
 	protected $payload = array();
+
+	/**
+	 * @var array
+	 */
+	protected $viewHelpers = array();
 
 	/**
 	 * @var string
@@ -106,6 +114,21 @@ class ParserResult implements ParserResultInterface {
 	 */
 	public function getPayloadType() {
 		return $this->payloadType;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getViewHelpers() {
+		return $this->viewHelpers;
+	}
+
+	/**
+	 * @param array $viewHelpers
+	 * @return void
+	 */
+	public function setViewHelpers(array $viewHelpers) {
+		$this->viewHelpers = $viewHelpers;
 	}
 
 }
