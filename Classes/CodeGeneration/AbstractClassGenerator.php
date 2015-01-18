@@ -26,6 +26,10 @@ namespace FluidTYPO3\Builder\CodeGeneration;
 use FluidTYPO3\Builder\Service\ClassAnalysisService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class AbstractClassGenerator
+ * @package FluidTYPO3\Builder\CodeGeneration
+ */
 abstract class AbstractClassGenerator extends AbstractCodeGenerator implements ClassGeneratorInterface {
 
 	/**

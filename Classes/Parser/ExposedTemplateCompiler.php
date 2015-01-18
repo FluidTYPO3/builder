@@ -26,6 +26,10 @@ namespace FluidTYPO3\Builder\Parser;
 use TYPO3\CMS\Fluid\Core\Compiler\TemplateCompiler;
 use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
 
+/**
+ * Class ExposedTemplateCompiler
+ * @package FluidTYPO3\Builder\Parser
+ */
 class ExposedTemplateCompiler extends TemplateCompiler {
 
 	/**

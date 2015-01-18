@@ -26,6 +26,10 @@ namespace FluidTYPO3\Builder\Analysis\Fluid\Message;
 use FluidTYPO3\Builder\Analysis\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 
+/**
+ * Class UncompilableMessage
+ * @package FluidTYPO3\Builder\Analysis\Fluid\Message
+ */
 class UncompilableMessage extends AbstractMessage {
 
 	/**

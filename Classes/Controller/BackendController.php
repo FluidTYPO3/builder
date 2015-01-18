@@ -34,6 +34,10 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Backend\Template\DocumentTemplate;
 
+/**
+ * Class BackendController
+ * @package FluidTYPO3\Builder\Controller
+ */
 class BackendController extends ActionController {
 
 	/**

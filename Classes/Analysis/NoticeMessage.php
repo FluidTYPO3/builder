@@ -25,6 +25,10 @@ namespace FluidTYPO3\Builder\Analysis;
 
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 
+/**
+ * Class NoticeMessage
+ * @package FluidTYPO3\Builder\Analysis
+ */
 class NoticeMessage extends AbstractMessage {
 
 	/**
