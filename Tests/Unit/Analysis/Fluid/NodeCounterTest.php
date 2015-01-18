@@ -24,7 +24,6 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis\Fluid;
  ***************************************************************/
 
 use FluidTYPO3\Builder\Analysis\Fluid\NodeCounter;
-use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
