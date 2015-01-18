@@ -25,6 +25,10 @@ namespace FluidTYPO3\Builder\CodeGeneration;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
+/**
+ * Class CodeTemplate
+ * @package FluidTYPO3\Builder\CodeGeneration
+ */
 class CodeTemplate {
 
 	/**

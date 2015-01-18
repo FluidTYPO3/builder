@@ -28,6 +28,10 @@ use TYPO3\CMS\Fluid\Core\Parser\Exception;
 use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
 use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 
+/**
+ * Class ExposedTemplateParser
+ * @package FluidTYPO3\Builder\Parser
+ */
 class ExposedTemplateParser extends TemplateParser {
 
 	/**

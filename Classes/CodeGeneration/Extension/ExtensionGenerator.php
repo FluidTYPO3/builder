@@ -27,6 +27,10 @@ use FluidTYPO3\Builder\CodeGeneration\AbstractCodeGenerator;
 use FluidTYPO3\Builder\CodeGeneration\CodeGeneratorInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
+/**
+ * Class ExtensionGenerator
+ * @package FluidTYPO3\Builder\CodeGeneration\Extension
+ */
 class ExtensionGenerator
 	extends AbstractCodeGenerator
 	implements CodeGeneratorInterface {

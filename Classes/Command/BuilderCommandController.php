@@ -31,6 +31,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
+/**
+ * Class BuilderCommandController
+ * @package FluidTYPO3\Builder\Command
+ */
 class BuilderCommandController extends CommandController {
 
 	/**

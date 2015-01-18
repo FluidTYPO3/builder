@@ -26,6 +26,10 @@ use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use FluidTYPO3\Builder\Result\ParserResult;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
+/**
+ * Class TemplateAnalyzer
+ * @package FluidTYPO3\Builder\Analysis\Fluid
+ */
 class TemplateAnalyzer {
 
 	/**
