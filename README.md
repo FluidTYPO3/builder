@@ -97,46 +97,6 @@ DESCRIPTION:
   key is also given, only files in that path relative
 ```
 
-#### ViewHelper Unit Test Generator
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:unitviewhelper
-
-Makes simple VH unit test class(es)
-
-COMMAND:
-  builder:builder:unitviewhelper
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:unitviewhelper [<options>]
-
-OPTIONS:
-  --extension          The extension key, if class is not used
-  --class              The class name, if extension key is not used
-  --author             The author to be set in the class doc comment
-  --overwrite          If TRUE, allows existing files to be overridden - USE
-                       CAUTION!
-  --dry                If TRUE, performs a dry run and reports files that would
-                       change
-  --verbose            If TRUE, outputs more information about actions taken
-
-DESCRIPTION:
-  Makes simple VH unit test class(es)
-
-  Saves a file only if it does not already exist. Which means
-  if you have to rebuild your files, remove the old ones first.
-
-  If an extension key is provided but no class name, every
-  ViewHelper in the provided extension is considered.
-
-  The default location of generated test case classes is:
-
-  EXT:<ext>/Tests/Unit/ViewHelpers/<class>Test.php
-
-  Where <ext> is the extension key detected from the class name
-  and <class> is the last part of the ViewHelper class filename
-```
-
 #### Install Extension via CLI
 
 ```bash
