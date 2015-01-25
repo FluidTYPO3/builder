@@ -31,9 +31,6 @@ EXTENSION "BUILDER":
 -------------------------------------------------------------------------------
   builder:fluidsyntax                      Syntax check Fluid template
   builder:phpsyntax                        Syntax check PHP code
-  builder:unitviewhelper                   Makes simple VH unit test class(es)
-  builder:install                          Installs an extension by key
-  builder:uninstall                        Uninstalls an extension by key
   builder:providerextension                Builds a ProviderExtension
 
 See './cli_dispatch.phpsh extbase help <command identifier>' for more information about a specific command.
@@ -95,50 +92,6 @@ DESCRIPTION:
 
   Checks PHP source files in $path, if extension
   key is also given, only files in that path relative
-```
-
-#### Install Extension via CLI
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:install
-
-Installs an extension by key
-
-COMMAND:
-  builder:builder:install
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:install <extension key>
-
-ARGUMENTS:
-  --extension-key
-
-DESCRIPTION:
-  Installs an extension by key
-
-  The extension files must be present in one of the
-```
-
-#### UnInstall Extension via CLI
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:uninstall
-
-Uninstalls an extension by key
-
-COMMAND:
-  builder:builder:uninstall
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:uninstall <extension key>
-
-ARGUMENTS:
-  --extension-key
-
-DESCRIPTION:
-  Uninstalls an extension by key
-
-  The extension files must be present in one of the
 ```
 
 #### Generate a FluidTYPO3 provider extension

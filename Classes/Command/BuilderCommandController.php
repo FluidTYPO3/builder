@@ -161,25 +161,6 @@ class BuilderCommandController extends CommandController {
 	}
 
 	/**
-	 * Installs an extension by key
-	 *
-	 * The extension files must be present in one of the
-	 * recognised extension folder paths in TYPO3.
-	 *
-	 * @param string $extensionKey
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function installCommand($extensionKey) {
-		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
-		}
-		/** @var $service InstallUtility */
-		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
-		$service->install($extensionKey);
-	}
-
-	/**
 	 * Lists installed Extensions. The output defaults to text and is new-line separated.
 	 *
 	 * @param boolean $detail If TRUE, the command will give detailed information such as version and state
@@ -214,25 +195,6 @@ class BuilderCommandController extends CommandController {
 		$this->response->setContent(
 			$this->extensionService->getPrintableInformation($format, $detail, $state)
 		);
-	}
-
-	/**
-	 * Uninstalls an extension by key
-	 *
-	 * The extension files must be present in one of the
-	 * recognised extension folder paths in TYPO3.
-	 *
-	 * @param string $extensionKey
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function uninstallCommand($extensionKey) {
-		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
-		}
-		/** @var $service InstallUtility */
-		$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\InstallUtility');
-		$service->uninstall($extensionKey);
 	}
 
 	/**
