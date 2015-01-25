@@ -156,6 +156,7 @@ abstract class AbstractCodeGenerator implements CodeGeneratorInterface {
 	protected function getPreparedCodeTemplate($identifier, $variables) {
 		/** @var CodeTemplate $template */
 		$template = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\CodeTemplate');
+		$template->setPath(ExtensionManagementUtility::extPath('builder', 'Resources/Private/CodeTemplates/'));
 		$template->setIdentifier($identifier);
 		$template->setVariables($variables);
 		return $template;

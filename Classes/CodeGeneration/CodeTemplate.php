@@ -34,6 +34,16 @@ class CodeTemplate {
 	/**
 	 * @var string
 	 */
+	protected $path = NULL;
+
+	/**
+	 * @var string
+	 */
+	protected $suffix = '.phpt';
+
+	/**
+	 * @var string
+	 */
 	protected $identifier = NULL;
 
 	/**
@@ -74,26 +84,48 @@ class CodeTemplate {
 	/**
 	 * @return string
 	 */
+	public function getPath() {
+		return $this->path;
+	}
+
+	/**
+	 * @param string $path
+	 * @return void
+	 */
+	public function setPath($path) {
+		$this->path = $path;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSuffix() {
+		return $this->suffix;
+	}
+
+	/**
+	 * @param string $suffix
+	 * @return void
+	 */
+	public function setSuffix($suffix) {
+		$this->suffix = $suffix;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function render() {
 		$identifier = $this->getIdentifier();
 		$variables = $this->getVariables();
 		if (NULL === $identifier) {
 			return NULL;
 		}
-		$filePathAndFilename = $this->getFilePath('Resources/Private/CodeTemplates/' . $identifier . '.phpt');
+		$filePathAndFilename = $this->getPath() . $identifier . $this->getSuffix();
 		$content = file_get_contents($filePathAndFilename);
 		foreach ($variables as $name => $value) {
 			$content = str_replace('###' . $name . '###', $value, $content);
 		}
 		return $content;
-	}
-
-	/**
-	 * @param string $path
-	 * @return string
-	 */
-	protected function getFilePath($path) {
-		return ExtensionManagementUtility::extPath('builder', $path);
 	}
 
 }
