@@ -1,5 +1,7 @@
-# EXT:builder
-## Extbase/Fluid Dev Support Utilities
+<img src="https://fluidtypo3.org/logo.svgz" width="100%" />
+
+Builder: Development Support Utilities
+======================================
 
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.fluidtypo3.org/builder.svg?style=flat-square)](https://jenkins.fluidtypo3.org/job/builder/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder/development.svg?style=flat-square)](https://coveralls.io/r/FluidTYPO3/builder)
 
