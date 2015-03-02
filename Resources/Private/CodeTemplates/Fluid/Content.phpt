@@ -5,7 +5,7 @@
 	<f:layout name="###layout###" />
 
 	<f:section name="###configurationSectionName###">
-		<flux:form id="###id###" options="{icon: '###icon###', group: 'FCE'}">
+		<flux:form id="###id###" options="{group: 'FCE'}">
 			<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
 		</flux:form>
 	</f:section>

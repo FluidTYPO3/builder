@@ -6,7 +6,7 @@
 	<f:layout name="###layout###" />
 
 	<f:section name="###configurationSectionName###">
-		<flux:form id="###id###" options="{icon: '###icon###'}">
+		<flux:form id="###id###">
 			<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:form tag -->
 		</flux:form>
 		<flux:grid>
