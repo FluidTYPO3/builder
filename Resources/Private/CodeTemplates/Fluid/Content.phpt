@@ -1,8 +1,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" lang="en"
 	xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
-	f:schemaLocation="https://fluidtypo3.org/schemas/fluid-master.xsd"
-	xmlns:flux="http://typo3.org/ns/FluidTYPO3/Flux/ViewHelpers"
-	flux:schemaLocation="https://fluidtypo3.org/schemas/flux-master.xsd">
+	xmlns:flux="http://typo3.org/ns/FluidTYPO3/Flux/ViewHelpers">
+
 	<f:layout name="###layout###" />
 
 	<f:section name="###configurationSectionName###">
