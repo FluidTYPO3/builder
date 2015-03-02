@@ -1,5 +1,5 @@
 plugin.###signature###.view {
-	templateRootPath = {$plugin.###signature###.view.templateRootPath}
-	partialRootPath = {$plugin.###signature###.view.partialRootPath}
-	layoutRootPath = {$plugin.###signature###.view.layoutRootPath}
+	templateRootPaths.0 = {$plugin.###signature###.view.templateRootPaths.default}
+	partialRootPaths.0 = {$plugin.###signature###.view.partialRootPaths.default}
+	layoutRootPaths.0 = {$plugin.###signature###.view.layoutRootPaths.default}
 }

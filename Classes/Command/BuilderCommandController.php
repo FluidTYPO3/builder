@@ -217,11 +217,9 @@ class BuilderCommandController extends CommandController {
 	 * @param boolean $controllers If TRUE, generates controllers for each enabled feature. Enabling $backend will always generate a controller regardless of this toggle.
 	 * @param boolean $dry If TRUE, performs a dry run: does not write any files but reports which files would have been written
 	 * @param boolean $verbose If FALSE, suppresses a lot of the otherwise output messages (to STDOUT)
-	 * @param boolean $git If TRUE, initialises the newly created extension directory as a Git repository and commits all files. You can then "git add remote origin <URL>" and "git push origin master -u" to push the initial state
-	 * @param boolean $travis If TRUE, generates a Travis-CI build script which uses Fluid Powered TYPO3 coding standards analysis and code inspections to automate testing on Travis-CI
 	 * @return void
 	 */
-	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE, $git = FALSE, $travis = FALSE) {
+	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE) {
 		$useVhs = (boolean) $useVhs;
 		$pages = (boolean) $pages;
 		$content = (boolean) $content;
@@ -229,9 +227,7 @@ class BuilderCommandController extends CommandController {
 		$controllers = (boolean) $controllers;
 		$verbose = (boolean) $verbose;
 		$dry = (boolean) $dry;
-		$git = (boolean) $git;
-		$travis = (boolean) $travis;
-		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs, $git, $travis);
+		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs);
 		$extensionGenerator->setDry($dry);
 		$extensionGenerator->setVerbose($verbose);
 		$extensionGenerator->generate();
