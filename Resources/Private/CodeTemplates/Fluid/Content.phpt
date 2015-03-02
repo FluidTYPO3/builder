@@ -11,8 +11,7 @@
 	</f:section>
 
 	<f:section name="Preview">
-		<!-- uncomment this to use a grid for nested content elements -->
-		<!-- <flux:widget.grid /> -->
+		<!-- If you wish, place custom backend preview content here -->
 	</f:section>
 
 	<f:section name="###section###">
