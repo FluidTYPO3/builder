@@ -10,5 +10,11 @@
         "psr-4": {
             "FluidTYPO3\\Builder\\": "Classes/"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/TYPO3/TYPO3.CMS"
+        }
+    ]
 }
