@@ -228,15 +228,13 @@ class FrontendController extends ActionController {
 		$content = TRUE;
 		$backend = FALSE;
 		$vhs = TRUE;
-		$git = FALSE;
-		$travis = FALSE;
 		$dry = FALSE;
 		$verbose = FALSE;
 		$temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
 		$temporaryFolder =  $temporaryBaseFolder . '/' . $extensionKey;
 		$archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
 		GeneralUtility::mkdir_deep($temporaryBaseFolder);
-		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose);
+		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		$generator->setTargetFolder($temporaryFolder);
