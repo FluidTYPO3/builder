@@ -99,15 +99,13 @@ class BackendController extends ActionController {
 	 * @param boolean $content
 	 * @param boolean $backend
 	 * @param boolean $vhs
-	 * @param boolean $git
-	 * @param boolean $travis
 	 * @param boolean $dry
 	 * @param boolean $verbose
 	 * @param boolean $install
 	 * @return void
 	 */
-	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose, $install) {
-		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose);
+	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose, $install) {
+		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
