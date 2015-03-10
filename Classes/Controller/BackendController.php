@@ -101,20 +101,14 @@ class BackendController extends ActionController {
 	 * @param boolean $vhs
 	 * @param boolean $dry
 	 * @param boolean $verbose
-	 * @param boolean $install
 	 * @return void
 	 */
-	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose, $install) {
+	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose) {
 		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
 			$generator->generate();
-			if (TRUE === $install) {
-				/** @var InstallUtility $service */
-				$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\InstallUtility');
-				$service->install($name);
-			}
 		}
 		$this->view->assign('boolean', TRUE);
 		$this->view->assign('attributes', $this->arguments->getArrayCopy());
