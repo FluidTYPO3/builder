@@ -26,6 +26,7 @@ namespace FluidTYPO3\Builder\CodeGeneration\Extension;
 use FluidTYPO3\Builder\CodeGeneration\AbstractCodeGenerator;
 use FluidTYPO3\Builder\CodeGeneration\CodeGeneratorInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class ExtensionGenerator
@@ -35,6 +36,7 @@ class ExtensionGenerator
 	extends AbstractCodeGenerator
 	implements CodeGeneratorInterface {
 
+	const TEMPLATE_CONTROLLER = 'Controller/Controller';
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
@@ -73,10 +75,33 @@ class ExtensionGenerator
 
 	/**
 	 * @return string
+	 */
+	protected function getExtensionKeyFromSettings() {
+		$extensionKey = $this->configuration['extensionKey'];
+		if (FALSE !== strpos($extensionKey, '.')) {
+			$extensionKey = array_pop(explode('.', $extensionKey));
+		}
+		return GeneralUtility::camelCaseToLowerCaseUnderscored($extensionKey);
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getExtensionNamespaceFromSettings() {
+		$extensionKey = $this->configuration['extensionKey'];
+		if (FALSE !== strpos($extensionKey, '.')) {
+			list ($vendor, $extensionName) = explode('.', $extensionKey);
+			return $vendor . '\\' . $extensionName . '\\';
+		}
+		return GeneralUtility::underscoredToUpperCamelCase($extensionKey) . '\\';
+	}
+
+	/**
+	 * @return string
 	 * @throws \Exception
 	 */
 	public function generate() {
-		$extensionKey = $this->configuration['extensionKey'];
+		$extensionKey = $this->getExtensionKeyFromSettings();
 		if (NULL === $this->targetFolder) {
 			$this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
 		}
@@ -89,6 +114,7 @@ class ExtensionGenerator
 		$foldersToBeCreated = array($this->targetFolder);
 		$hasFluidpages = TRUE === in_array('fluidpages', $this->configuration['dependencies']);
 		$hasFluidcontent = TRUE === in_array('fluidcontent', $this->configuration['dependencies']);
+		$hasFluidbackend = TRUE === in_array('fluidbackend', $this->configuration['dependencies']);
 		if (TRUE === $hasFluidpages) {
 			$this->appendPageFiles($filesToBeWritten);
 		}
@@ -98,11 +124,27 @@ class ExtensionGenerator
 		if (TRUE === $hasFluidpages || TRUE === $hasFluidcontent) {
 			$this->appendLanguageFile($filesToBeWritten);
 		}
-		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
+		if (TRUE === $hasFluidbackend) {
 			$this->appendBackendFiles($filesToBeWritten);
 		}
 		if (TRUE === $this->configuration['controllers']) {
-			array_push($foldersToBeCreated, $this->targetFolder . '/Classes/Controller');
+			$controllerFolder = $this->targetFolder . '/Classes/Controller/';
+			array_push($foldersToBeCreated, $controllerFolder);
+			if (TRUE === $hasFluidcontent) {
+				$this->appendControllerClassFile($filesToBeWritten,
+					'Content', 'FluidTYPO3\\Fluidcontent\\Controller\\ContentController', $controllerFolder
+				);
+			}
+			if (TRUE === $hasFluidpages) {
+				$this->appendControllerClassFile($filesToBeWritten,
+					'Page', 'FluidTYPO3\\Fluidpages\\Controller\\PageController', $controllerFolder
+				);
+			}
+			if (TRUE === $hasFluidbackend) {
+				$this->appendControllerClassFile($filesToBeWritten,
+					'Backend', 'FluidTYPO3\\Fluidbackend\\Controller\\BackendController', $controllerFolder
+				);
+			}
 		}
 		$this->appendTypoScriptConfiguration($filesToBeWritten);
 		$this->appendExtensionTablesFile($filesToBeWritten);
@@ -124,6 +166,21 @@ class ExtensionGenerator
 		}
 		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
 		return 'Built extension "' . $extensionKey . '"';
+	}
+
+	/**
+	 * @param array $files
+	 * @param string $controllerName
+	 * @param string $parentControllerClassName
+	 * @param string $folder
+	 */
+	protected function appendControllerClassFile(&$files, $controllerName, $parentControllerClassName, $folder) {
+		$templateVariables = $this->configuration;
+		$templateVariables['controllerName'] = $controllerName;
+		$templateVariables['parentControllerClass'] = $parentControllerClassName;
+		$templateVariables['namespace'] = $this->getExtensionNamespaceFromSettings() . 'Controller';
+		$files[$folder . $controllerName . 'Controller.php'] =
+			$this->getPreparedCodeTemplate(self::TEMPLATE_CONTROLLER, $templateVariables)->render();
 	}
 
 	/**
@@ -152,6 +209,9 @@ class ExtensionGenerator
 			'content' => '',
 			'backend' => ''
 		);
+		// note: the following code uses the provided "extensionKey" *directly* because
+		// for these registrations, we require the full Vendor.ExtensionName if that
+		// is the format used. Otherwise, legacy class names would be expected.
 		if (TRUE === in_array('fluidpages', $this->configuration['dependencies'])) {
 			$templateVariables['pages'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Page\');';
 		}
