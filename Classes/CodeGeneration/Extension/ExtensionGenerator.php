@@ -231,8 +231,11 @@ class ExtensionGenerator
 	protected function appendBackendFiles(&$files) {
 		$layoutName = 'Backend';
 		$sectionName = 'Main';
+		$variables = array(
+			'formId' => 'module'
+		);
 		$this->appendLayoutFile($files, 'Backend');
-		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html', $variables);
 	}
 
 	/**
@@ -241,7 +244,7 @@ class ExtensionGenerator
 	 */
 	protected function appendLanguageFile(&$files) {
 		$variables = array(
-			'extension' => $this->configuration['extensionKey'],
+			'extension' => $this->getExtensionKeyFromSettings(),
 			'date' => date('c')
 		);
 		$filePathAndFilename = $this->targetFolder . '/Resources/Private/Language/locallang.xlf';
@@ -255,8 +258,11 @@ class ExtensionGenerator
 	protected function appendContentFiles(&$files) {
 		$layoutName = 'Content';
 		$sectionName = 'Main';
+		$variables = array(
+			'formId' => 'example'
+		);
 		$this->appendLayoutFile($files, $layoutName);
-		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html', $variables);
 	}
 
 	/**
@@ -265,9 +271,11 @@ class ExtensionGenerator
 	 */
 	protected function appendPageFiles(&$files) {
 		$layoutName = 'Page';
-		$sectionName = 'Main';
+		$sectionName = 'Main';$variables = array(
+			'formId' => 'standard'
+		);
 		$this->appendLayoutFile($files, $layoutName);
-		$this->appendTemplateFile($files, self::TEMPLATE_PAGE, $layoutName, $sectionName, 'Page/Standard.html');
+		$this->appendTemplateFile($files, self::TEMPLATE_PAGE, $layoutName, $sectionName, 'Page/Standard.html', $variables);
 	}
 
 	/**
@@ -276,9 +284,10 @@ class ExtensionGenerator
 	 * @param string $layout
 	 * @param string $section
 	 * @param string $placement
+	 * @param array $variables
 	 * @return void
 	 */
-	protected function appendTemplateFile(&$files, $identifier, $layout, $section, $placement) {
+	protected function appendTemplateFile(&$files, $identifier, $layout, $section, $placement, array $variables) {
 		$templateVariables = array(
 			'layout' => $layout,
 			'section' => $section,
@@ -286,9 +295,10 @@ class ExtensionGenerator
 			'id' => str_replace('/', '', strtolower($identifier)),
 			'label' => $identifier,
 			'icon' => 'Icons/' . substr($placement, 0, -4) . 'gif',
-			'extension' => $this->configuration['extensionKey'],
+			'extension' => $this->getExtensionKeyFromSettings(),
 			'placement' => $placement
 		);
+		$templateVariables = array_merge_recursive($variables, $templateVariables);
 		$templatePathAndFilename = $this->targetFolder . '/Resources/Private/Templates/' . $placement;
 		$files[$templatePathAndFilename] = $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
 	}
