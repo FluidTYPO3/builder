@@ -70,7 +70,7 @@ class CodeTemplateTest extends UnitTestCase {
 		$subject = new CodeTemplate();
 		$subject->setVariables(array('foo' => $marker));
 		$subject->setIdentifier('CodeTemplate');
-		$subject->setPath('Tests/Fixtures/Templates/');
+		$subject->setPath($fixture = ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
 		$this->assertEquals($expectedOutput, trim($subject->render()));
 	}
 

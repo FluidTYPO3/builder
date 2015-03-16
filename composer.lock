@@ -82,16 +82,16 @@
         },
         {
             "name": "fluidtypo3/development",
-            "version": "1.1.9",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FluidTYPO3/fluidtypo3-development.git",
-                "reference": "97bdf7fec76386261186a882385ad93c3bd3dcf7"
+                "reference": "cbc20c32d206572056b0a773ce2efd6d9848145b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/97bdf7fec76386261186a882385ad93c3bd3dcf7",
-                "reference": "97bdf7fec76386261186a882385ad93c3bd3dcf7",
+                "url": "https://api.github.com/repos/FluidTYPO3/fluidtypo3-development/zipball/cbc20c32d206572056b0a773ce2efd6d9848145b",
+                "reference": "cbc20c32d206572056b0a773ce2efd6d9848145b",
                 "shasum": ""
             },
             "require": {
@@ -136,7 +136,7 @@
                 "php",
                 "typo3"
             ],
-            "time": "2015-02-19 15:53:48"
+            "time": "2015-03-16 00:31:28"
         },
         {
             "name": "guzzle/guzzle",
@@ -315,16 +315,16 @@
         },
         {
             "name": "namelesscoder/typo3-repository-client",
-            "version": "1.0.3",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NamelessCoder/typo3-repository-client.git",
-                "reference": "0b8d42d50e5c96e48ea6cde28fce918c8bfa6bb0"
+                "reference": "51e4b17dd685c30c0434493d70400b6bf9a19723"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NamelessCoder/typo3-repository-client/zipball/0b8d42d50e5c96e48ea6cde28fce918c8bfa6bb0",
-                "reference": "0b8d42d50e5c96e48ea6cde28fce918c8bfa6bb0",
+                "url": "https://api.github.com/repos/NamelessCoder/typo3-repository-client/zipball/51e4b17dd685c30c0434493d70400b6bf9a19723",
+                "reference": "51e4b17dd685c30c0434493d70400b6bf9a19723",
                 "shasum": ""
             },
             "require-dev": {
@@ -354,7 +354,7 @@
                 }
             ],
             "description": "Client for interacting with the official TYPO3 Extension Repository (TER). Contains API and CLI scripts.",
-            "time": "2015-02-28 16:14:49"
+            "time": "2015-03-15 02:00:17"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -1157,20 +1157,21 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "b301c98f19414d836fdaa678648745fcca5aeb4f"
+                "reference": "5046b0e01c416fc2b06df961d0673c85bcdc896c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b301c98f19414d836fdaa678648745fcca5aeb4f",
-                "reference": "b301c98f19414d836fdaa678648745fcca5aeb4f",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/5046b0e01c416fc2b06df961d0673c85bcdc896c",
+                "reference": "5046b0e01c416fc2b06df961d0673c85bcdc896c",
                 "shasum": ""
             },
             "require": {
                 "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
                 "php": ">=5.1.2"
             },
             "bin": [
@@ -1178,6 +1179,11 @@
                 "scripts/phpcbf"
             ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "classmap": [
                     "CodeSniffer.php",
@@ -1221,7 +1227,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2015-01-21 22:44:05"
+            "time": "2015-03-04 02:07:03"
         },
         {
             "name": "symfony/config",

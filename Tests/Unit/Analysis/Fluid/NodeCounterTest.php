@@ -25,6 +25,7 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis\Fluid;
 
 use FluidTYPO3\Builder\Analysis\Fluid\NodeCounter;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -54,7 +55,7 @@ class NodeCounterTest extends UnitTestCase {
 	protected function getPreparedFixtures() {
 		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		$template = $objectManager->get('FluidTYPO3\\Builder\\Parser\\ExposedTemplateParser');
-		$fixture = 'Tests/Fixtures/Templates/AnalysisFixture.html';
+		$fixture = ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/AnalysisFixture.html');
 		$parsedTemplate = $template->parse(file_get_contents($fixture));
 		/** @var NodeCounter $nodeCounter */
 		$nodeCounter = $objectManager->get('FluidTYPO3\\Builder\\Analysis\\Fluid\\NodeCounter');
