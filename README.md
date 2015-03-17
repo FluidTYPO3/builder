@@ -11,8 +11,6 @@ Framework status:
 
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.fluidtypo3.org/fluidtypo3-testing.svg?style=flat-square)](https://jenkins.fluidtypo3.org/job/fluidtypo3-testing/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/fluidtypo3-testing/master.svg?style=flat-square)](https://coveralls.io/r/FluidTYPO3/fluidtypo3-testing)
 
-Utilities to make your dev-life easier.
-
 ## Usage
 
 Execution is done via CommandControllers. Those are invoked by executing the TYPO3 cli-script:
