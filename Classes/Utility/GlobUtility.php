@@ -26,6 +26,10 @@ namespace FluidTYPO3\Builder\Utility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class GlobUtility
+ * @package FluidTYPO3\Builder\Utility
+ */
 class GlobUtility {
 
 	/**

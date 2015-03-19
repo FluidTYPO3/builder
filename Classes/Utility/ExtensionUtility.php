@@ -25,6 +25,10 @@ namespace FluidTYPO3\Builder\Utility;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
+/**
+ * Class ExtensionUtility
+ * @package FluidTYPO3\Builder\Utility
+ */
 class ExtensionUtility {
 
 	/**

@@ -31,6 +31,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
+/**
+ * Class BuilderCommandController
+ * @package FluidTYPO3\Builder\Command
+ */
 class BuilderCommandController extends CommandController {
 
 	/**
@@ -157,25 +161,6 @@ class BuilderCommandController extends CommandController {
 	}
 
 	/**
-	 * Installs an extension by key
-	 *
-	 * The extension files must be present in one of the
-	 * recognised extension folder paths in TYPO3.
-	 *
-	 * @param string $extensionKey
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function installCommand($extensionKey) {
-		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
-		}
-		/** @var $service InstallUtility */
-		$service = $this->objectManager->get('TYPO3\\CMS\\Extensionmanager\\Utility\\InstallUtility');
-		$service->install($extensionKey);
-	}
-
-	/**
 	 * Lists installed Extensions. The output defaults to text and is new-line separated.
 	 *
 	 * @param boolean $detail If TRUE, the command will give detailed information such as version and state
@@ -213,25 +198,6 @@ class BuilderCommandController extends CommandController {
 	}
 
 	/**
-	 * Uninstalls an extension by key
-	 *
-	 * The extension files must be present in one of the
-	 * recognised extension folder paths in TYPO3.
-	 *
-	 * @param string $extensionKey
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function uninstallCommand($extensionKey) {
-		if (6 > substr(TYPO3_version, 0, 1)) {
-			throw new \Exception('Installing/uninstalling extensions only works on 6.0+ currently', 1371468427);
-		}
-		/** @var $service InstallUtility */
-		$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\InstallUtility');
-		$service->uninstall($extensionKey);
-	}
-
-	/**
 	 * Builds a ProviderExtension
 	 *
 	 * The resulting extension will contain source code
@@ -251,11 +217,9 @@ class BuilderCommandController extends CommandController {
 	 * @param boolean $controllers If TRUE, generates controllers for each enabled feature. Enabling $backend will always generate a controller regardless of this toggle.
 	 * @param boolean $dry If TRUE, performs a dry run: does not write any files but reports which files would have been written
 	 * @param boolean $verbose If FALSE, suppresses a lot of the otherwise output messages (to STDOUT)
-	 * @param boolean $git If TRUE, initialises the newly created extension directory as a Git repository and commits all files. You can then "git add remote origin <URL>" and "git push origin master -u" to push the initial state
-	 * @param boolean $travis If TRUE, generates a Travis-CI build script which uses Fluid Powered TYPO3 coding standards analysis and code inspections to automate testing on Travis-CI
 	 * @return void
 	 */
-	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE, $git = FALSE, $travis = FALSE) {
+	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE) {
 		$useVhs = (boolean) $useVhs;
 		$pages = (boolean) $pages;
 		$content = (boolean) $content;
@@ -263,9 +227,7 @@ class BuilderCommandController extends CommandController {
 		$controllers = (boolean) $controllers;
 		$verbose = (boolean) $verbose;
 		$dry = (boolean) $dry;
-		$git = (boolean) $git;
-		$travis = (boolean) $travis;
-		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs, $git, $travis);
+		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs);
 		$extensionGenerator->setDry($dry);
 		$extensionGenerator->setVerbose($verbose);
 		$extensionGenerator->generate();

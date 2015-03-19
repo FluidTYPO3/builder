@@ -31,7 +31,10 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 
-
+/**
+ * Class SyntaxService
+ * @package FluidTYPO3\Builder\Service
+ */
 class SyntaxService implements SingletonInterface {
 
 	/**
