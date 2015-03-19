@@ -4,32 +4,35 @@
     "type": "typo3-cms-extension",
     "version": "0.16.0",
     "require-dev": {
-        "typo3/cms": "6.2.7",
         "fluidtypo3/development": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "FluidTYPO3\\Builder\\": "Classes/"
+        }
     },
     "repositories": [
         {
             "type": "package",
             "package": {
                 "name": "typo3/cms",
-                "version": "6.2.7",
+                "version": "6.2.10",
                 "dist": {
-                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/6.2.7.zip",
+                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/6.2.10.zip",
+                    "type": "zip"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "typo3/cms",
+                "version": "7.1.0",
+                "dist": {
+                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/7.1.0.zip",
                     "type": "zip"
                 }
             }
         }
-    ],
-    "autoload-dev": {
-        "psr-4": {
-            "FluidTYPO3\\Builder\\": "Classes/"
-        },
-        "classmap": [
-            "vendor/typo3/cms/typo3/sysext/extbase",
-            "vendor/typo3/cms/typo3/sysext/fluid",
-            "vendor/typo3/cms/typo3/sysext/core",
-            "vendor/typo3/cms/typo3/sysext/backend",
-            "vendor/typo3/cms/typo3/sysext/frontend"
-        ]
-    }
+    ]
 }

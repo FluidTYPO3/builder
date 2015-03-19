@@ -1,9 +1,15 @@
-# EXT:builder
-## Extbase/Fluid Dev Support Utilities
+<img src="https://fluidtypo3.org/logo.svgz" width="100%" />
+
+Builder: Development Support Utilities
+======================================
+
+Package status:
 
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.fluidtypo3.org/builder.svg?style=flat-square)](https://jenkins.fluidtypo3.org/job/builder/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/builder/development.svg?style=flat-square)](https://coveralls.io/r/FluidTYPO3/builder)
 
-Utilities to make your dev-life easier.
+Framework status:
+
+[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.fluidtypo3.org/fluidtypo3-testing.svg?style=flat-square)](https://jenkins.fluidtypo3.org/job/fluidtypo3-testing/) [![Coverage Status](https://img.shields.io/coveralls/FluidTYPO3/fluidtypo3-testing/master.svg?style=flat-square)](https://coveralls.io/r/FluidTYPO3/fluidtypo3-testing)
 
 ## Usage
 
@@ -31,9 +37,6 @@ EXTENSION "BUILDER":
 -------------------------------------------------------------------------------
   builder:fluidsyntax                      Syntax check Fluid template
   builder:phpsyntax                        Syntax check PHP code
-  builder:unitviewhelper                   Makes simple VH unit test class(es)
-  builder:install                          Installs an extension by key
-  builder:uninstall                        Uninstalls an extension by key
   builder:providerextension                Builds a ProviderExtension
 
 See './cli_dispatch.phpsh extbase help <command identifier>' for more information about a specific command.
@@ -95,90 +98,6 @@ DESCRIPTION:
 
   Checks PHP source files in $path, if extension
   key is also given, only files in that path relative
-```
-
-#### ViewHelper Unit Test Generator
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:unitviewhelper
-
-Makes simple VH unit test class(es)
-
-COMMAND:
-  builder:builder:unitviewhelper
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:unitviewhelper [<options>]
-
-OPTIONS:
-  --extension          The extension key, if class is not used
-  --class              The class name, if extension key is not used
-  --author             The author to be set in the class doc comment
-  --overwrite          If TRUE, allows existing files to be overridden - USE
-                       CAUTION!
-  --dry                If TRUE, performs a dry run and reports files that would
-                       change
-  --verbose            If TRUE, outputs more information about actions taken
-
-DESCRIPTION:
-  Makes simple VH unit test class(es)
-
-  Saves a file only if it does not already exist. Which means
-  if you have to rebuild your files, remove the old ones first.
-
-  If an extension key is provided but no class name, every
-  ViewHelper in the provided extension is considered.
-
-  The default location of generated test case classes is:
-
-  EXT:<ext>/Tests/Unit/ViewHelpers/<class>Test.php
-
-  Where <ext> is the extension key detected from the class name
-  and <class> is the last part of the ViewHelper class filename
-```
-
-#### Install Extension via CLI
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:install
-
-Installs an extension by key
-
-COMMAND:
-  builder:builder:install
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:install <extension key>
-
-ARGUMENTS:
-  --extension-key
-
-DESCRIPTION:
-  Installs an extension by key
-
-  The extension files must be present in one of the
-```
-
-#### UnInstall Extension via CLI
-
-```bash
-php typo3/cli_dispatch.phpsh extbase help builder:uninstall
-
-Uninstalls an extension by key
-
-COMMAND:
-  builder:builder:uninstall
-
-USAGE:
-  ./cli_dispatch.phpsh extbase builder:uninstall <extension key>
-
-ARGUMENTS:
-  --extension-key
-
-DESCRIPTION:
-  Uninstalls an extension by key
-
-  The extension files must be present in one of the
 ```
 
 #### Generate a FluidTYPO3 provider extension

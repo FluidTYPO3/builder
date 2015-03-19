@@ -28,12 +28,35 @@ use TYPO3\CMS\Fluid\Core\Parser\Exception;
 use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
 use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 
+/**
+ * Class ExposedTemplateParser
+ */
 class ExposedTemplateParser extends TemplateParser {
 
 	/**
 	 * @var array
 	 */
 	protected $splitTemplate = array();
+
+	/**
+	 * @var array
+	 */
+	protected $viewHelpersUsed = array();
+
+	/**
+	 * @return array
+	 */
+	public function getUniqueViewHelpersUsed() {
+		$names = array();
+		foreach ($this->viewHelpersUsed as $metadata) {
+			list ($namespace, $viewhelper, , ) = array_values($metadata);
+			$id = $namespace . ':' . $viewhelper;
+			if (FALSE === in_array($id, $names)) {
+				$names[] = $id;
+			}
+		}
+		return $names;
+	}
 
 	/**
 	 * Parses a given template string and returns a parsed template object.
@@ -64,6 +87,54 @@ class ExposedTemplateParser extends TemplateParser {
 		}
 
 		return $parsingState;
+	}
+
+	/**
+	 * Initialize the given ViewHelper and adds it to the current node and to
+	 * the stack.
+	 *
+	 * @param \TYPO3\CMS\Fluid\Core\Parser\ParsingState $state Current parsing state
+	 * @param string $namespaceIdentifier Namespace identifier - being looked up in $this->namespaces
+	 * @param string $methodIdentifier Method identifier
+	 * @param array $argumentsObjectTree Arguments object tree
+	 * @return void
+	 * @throws \TYPO3\CMS\Fluid\Core\Parser\Exception
+	 */
+	protected function initializeViewHelperAndAddItToStack(\TYPO3\CMS\Fluid\Core\Parser\ParsingState $state, $namespaceIdentifier, $methodIdentifier, $argumentsObjectTree) {
+		if (!array_key_exists($namespaceIdentifier, $this->namespaces)) {
+			throw new \TYPO3\CMS\Fluid\Core\Parser\Exception('Namespace could not be resolved. This exception should never be thrown!', 1224254792);
+		}
+		$viewHelper = $this->objectManager->get($this->resolveViewHelperName($namespaceIdentifier, $methodIdentifier));
+		$this->viewHelperNameToImplementationClassNameRuntimeCache[$namespaceIdentifier][$methodIdentifier] = get_class($viewHelper);
+
+		// The following three checks are only done *in an uncached template*, and not needed anymore in the cached version
+		$expectedViewHelperArguments = $viewHelper->prepareArguments();
+		$this->abortIfUnregisteredArgumentsExist($expectedViewHelperArguments, $argumentsObjectTree);
+		$this->abortIfRequiredArgumentsAreMissing($expectedViewHelperArguments, $argumentsObjectTree);
+		$this->rewriteBooleanNodesInArgumentsObjectTree($expectedViewHelperArguments, $argumentsObjectTree);
+
+		$currentViewHelperNode = $this->objectManager->get(\TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $viewHelper, $argumentsObjectTree);
+
+		$state->getNodeFromStack()->addChildNode($currentViewHelperNode);
+
+		if ($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface && !($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface)) {
+			$state->setCompilable(FALSE);
+		}
+
+		// PostParse Facet
+		if ($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface) {
+			// Don't just use $viewHelper::postParseEvent(...),
+			// as this will break with PHP < 5.3.
+			call_user_func(array($viewHelper, 'postParseEvent'), $currentViewHelperNode, $argumentsObjectTree, $state->getVariableContainer());
+		}
+
+		$this->callInterceptor($currentViewHelperNode, \TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_OPENING_VIEWHELPER, $state);
+
+		$state->pushNodeToStack($currentViewHelperNode);
+		$this->viewHelpersUsed[] = array(
+			'namespace' => $namespaceIdentifier,
+			'viewhelper' => $methodIdentifier
+		);
 	}
 
 	/**

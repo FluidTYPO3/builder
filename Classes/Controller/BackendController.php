@@ -34,6 +34,10 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Backend\Template\DocumentTemplate;
 
+/**
+ * Class BackendController
+ * @package FluidTYPO3\Builder\Controller
+ */
 class BackendController extends ActionController {
 
 	/**
@@ -95,24 +99,16 @@ class BackendController extends ActionController {
 	 * @param boolean $content
 	 * @param boolean $backend
 	 * @param boolean $vhs
-	 * @param boolean $git
-	 * @param boolean $travis
 	 * @param boolean $dry
 	 * @param boolean $verbose
-	 * @param boolean $install
 	 * @return void
 	 */
-	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose, $install) {
-		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $git, $travis, $dry, $verbose);
+	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose) {
+		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
 			$generator->generate();
-			if (TRUE === $install) {
-				/** @var InstallUtility $service */
-				$service = $this->objectManager->get('TYPO3\CMS\Extensionmanager\Utility\InstallUtility');
-				$service->install($name);
-			}
 		}
 		$this->view->assign('boolean', TRUE);
 		$this->view->assign('attributes', $this->arguments->getArrayCopy());

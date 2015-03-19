@@ -26,6 +26,10 @@ namespace FluidTYPO3\Builder\Service;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
+/**
+ * Class ClassAnalysisService
+ * @package FluidTYPO3\Builder\Service
+ */
 class ClassAnalysisService implements SingletonInterface {
 
 	/**

@@ -22,10 +22,14 @@ namespace FluidTYPO3\Builder\Analysis\Fluid;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
+
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use FluidTYPO3\Builder\Result\ParserResult;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 
+/**
+ * Class TemplateAnalyzer
+ */
 class TemplateAnalyzer {
 
 	/**
@@ -44,6 +48,11 @@ class TemplateAnalyzer {
 	protected $messages = array();
 
 	/**
+	 * @var ExposedTemplateParser
+	 */
+	protected $parser;
+
+	/**
 	 * @param ObjectManagerInterface $objectManager
 	 * @return void
 	 */
@@ -56,18 +65,35 @@ class TemplateAnalyzer {
 	 * @param string $templatePathAndFilename
 	 * @return ParserResult
 	 */
-	public function analyze($templatePathAndFilename) {
+	public function analyzePathAndFilename($templatePathAndFilename) {
 		$templateString = file_get_contents($templatePathAndFilename);
+		return $this->analyze($templateString);
+	}
+
+	/**
+	 * @param string $templateString
+	 * @return ParserResult
+	 */
+	public function analyze($templateString) {
 		/** @var ExposedTemplateParser $parser */
 		$parser = $this->objectManager->get('FluidTYPO3\Builder\Parser\ExposedTemplateParser');
 		$parsedTemplate = $parser->parse($templateString);
 		$metrics = $this->nodeCounter->count($parser, $parsedTemplate);
 		$this->messages = $this->nodeCounter->getMessages();
 		$result = new ParserResult();
+		$result->setViewHelpers($parser->getUniqueViewHelpersUsed());
 		$result->setPayload($metrics);
 		$result->setValid(TRUE);
 		$result->setPayloadType(ParserResult::PAYLOAD_METRICS);
+		$this->parser = $parser;
 		return $result;
+	}
+
+	/**
+	 * @return ExposedTemplateParser
+	 */
+	public function getParser() {
+		return $this->parser;
 	}
 
 }

@@ -66,11 +66,9 @@ class ExtensionService implements SingletonInterface {
 	 * @param boolean $content Include use of fluidcontent
 	 * @param boolean $backend Include use of fluidbackend
 	 * @param boolean $useVhs Include VHS as dependency
-	 * @param boolean $git Generate Git repository and initial commits
-	 * @param boolean $travis Generate Travis build file for Continuous Integration through travis-ci.org
      * @return ExtensionGenerator
 	 */
-	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE, $git = FALSE, $travis = FALSE) {
+	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE) {
 		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
 		if (NULL === $title) {
 			$title = $defaultTitle;
@@ -111,9 +109,7 @@ class ExtensionService implements SingletonInterface {
 			'controllers' => $controllers,
 			'dependencies' => $dependencies,
 			'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
-			'dependenciesArray' => $dependenciesArrayString,
-			'git' => $git,
-			'travis' => $travis,
+			'dependenciesArray' => $dependenciesArrayString
 		);
 		/** @var ExtensionGenerator $extensionGenerator */
 		$extensionGenerator = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator');

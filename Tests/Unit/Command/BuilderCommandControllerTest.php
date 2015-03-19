@@ -1,5 +1,5 @@
 <?php
-namespace FluidTYPO3\Builder\Analysis;
+namespace FluidTYPO3\Builder\Tests\Unit\Command;
 /***************************************************************
  *  Copyright notice
  *
@@ -21,24 +21,31 @@ namespace FluidTYPO3\Builder\Analysis;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
+ ***************************************************************/
 
-use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Tests\BaseTestCase;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class NoticeMessage
- * @package FluidTYPO3\Builder\Analysis
+ * Class BuilderCommandControllerTest
  */
-class NoticeMessage extends AbstractMessage {
+class BuilderCommandControllerTest extends BaseTestCase {
 
 	/**
-	 * @var integer
+	 * @test
 	 */
-	protected $severity = FlashMessage::NOTICE;
+	public function injectsExpectedProperties() {
+		$class = $this->getInstanceClassName();
+		$instance = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get($class);
+		$this->assertAttributeInstanceOf('FluidTYPO3\\Builder\\Service\\SyntaxService', 'syntaxService', $instance);
+		$this->assertAttributeInstanceOf('FluidTYPO3\\Builder\\Service\\ExtensionService', 'extensionService', $instance);
+	}
 
 	/**
-	 * @var string
+	 * @return string
 	 */
-	protected $message = 'Metric value (%s) is above safe base level (notice: %s, warning: %s) value but not high enough to cause major concern.';
+	protected function getInstanceClassName() {
+		return substr(str_replace('Tests\\Unit\\', '', get_class($this)), 0, -4);
+	}
 
 }

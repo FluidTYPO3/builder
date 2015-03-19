@@ -1,9 +1,11 @@
 <?php
-namespace FluidTYPO3\Builder\Analysis;
+namespace ###namespace###;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2015 ###author### <###email###>
+ *
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -21,24 +23,16 @@ namespace FluidTYPO3\Builder\Analysis;
  *  GNU General Public License for more details.
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
+ ***************************************************************/
 
-use TYPO3\CMS\Core\Messaging\FlashMessage;
+use ###parentControllerClass### as AbstractController;
 
 /**
- * Class NoticeMessage
- * @package FluidTYPO3\Builder\Analysis
+ * ###controllerName### Controller
+ *
+ * @route off
  */
-class NoticeMessage extends AbstractMessage {
+class ###controllerName###Controller extends AbstractController {
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::NOTICE;
-
-	/**
-	 * @var string
-	 */
-	protected $message = 'Metric value (%s) is above safe base level (notice: %s, warning: %s) value but not high enough to cause major concern.';
 
 }
