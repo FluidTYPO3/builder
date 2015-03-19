@@ -4,8 +4,8 @@ $EM_CONF[$_EXTKEY] = array (
   'description' => 'Various development supports for building and working with Fluid templates and Extbase extensions',
   'category' => 'misc',
   'shy' => 0,
-  'version' => '0.16.0',
-  'dependencies' => 'cms,extbase,fluid',
+  'version' => '0.18.0',
+  'dependencies' => 'cms',
   'conflicts' => '',
   'priority' => '',
   'loadOrder' => '',
@@ -26,6 +26,7 @@ $EM_CONF[$_EXTKEY] = array (
     'depends' =>
     array (
       'typo3' => '6.2.0-7.1.99',
+      'cms' => '',
       'vhs' => '2.2.0-2.3.99',
     ),
     'conflicts' =>
