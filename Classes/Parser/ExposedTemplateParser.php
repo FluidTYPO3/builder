@@ -113,7 +113,7 @@ class ExposedTemplateParser extends TemplateParser {
 		$this->abortIfRequiredArgumentsAreMissing($expectedViewHelperArguments, $argumentsObjectTree);
 		$this->rewriteBooleanNodesInArgumentsObjectTree($expectedViewHelperArguments, $argumentsObjectTree);
 
-		$currentViewHelperNode = $this->objectManager->get(\TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode::class, $viewHelper, $argumentsObjectTree);
+		$currentViewHelperNode = $this->objectManager->get('TYPO3\\CMS\\Fluid\\Core\\Parser\\SyntaxTree\\ViewHelperNode', $viewHelper, $argumentsObjectTree);
 
 		$state->getNodeFromStack()->addChildNode($currentViewHelperNode);
 
