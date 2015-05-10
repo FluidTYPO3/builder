@@ -14,13 +14,11 @@ $EM_CONF[$_EXTKEY] = array (
   'uploadfolder' => 0,
   'createDirs' => '',
   'modify_tables' => '',
-  'clearcacheonload' => 1,
+  'clearCacheOnLoad' => 1,
   'lockType' => '',
   'author' => 'FluidTYPO3 Team',
   'author_email' => 'claus@namelesscoder.net',
   'author_company' => '',
-  'CGLcompliance' => '',
-  'CGLcompliance_note' => '',
   'constraints' =>
   array (
     'depends' =>
