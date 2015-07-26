@@ -3,9 +3,9 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Frontend', array('Frontend' => 'build'), array('Frontend' => 'build'));
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Doodle', array('Frontend' => 'doodle,renderFluid'), array('Frontend' => 'renderFluid'));
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Render', array('Frontend' => 'renderFluid'), array('Frontend' => 'renderFluid'));
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Frontend', ['Frontend' => 'build'], ['Frontend' => 'build']);
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Doodle', ['Frontend' => 'doodle,renderFluid'], ['Frontend' => 'renderFluid']);
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Render', ['Frontend' => 'renderFluid'], ['Frontend' => 'renderFluid']);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup('
 [GLOBAL]

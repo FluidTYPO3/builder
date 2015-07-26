@@ -50,7 +50,7 @@ class ExtensionGenerator
 	/**
 	 * @var array
 	 */
-	private $configuration = array();
+	private $configuration = [];
 
 	/**
 	 * @var string
@@ -108,10 +108,10 @@ class ExtensionGenerator
 		if (TRUE === is_dir($this->targetFolder)) {
 			throw new \RuntimeException('Extension key "' . $extensionKey . '" already has a folder in "' . $this->targetFolder . '"', 1371692599);
 		}
-		$filesToBeWritten = array(
+		$filesToBeWritten = [
 			$this->targetFolder . '/ext_emconf.php' => $this->getPreparedCodeTemplate(self::TEMPLATE_EMCONF, $this->configuration)->render()
-		);
-		$foldersToBeCreated = array($this->targetFolder);
+		];
+		$foldersToBeCreated = [$this->targetFolder];
 		$hasFluidpages = TRUE === in_array('fluidpages', $this->configuration['dependencies']);
 		$hasFluidcontent = TRUE === in_array('fluidcontent', $this->configuration['dependencies']);
 		$hasFluidbackend = TRUE === in_array('fluidbackend', $this->configuration['dependencies']);
@@ -188,10 +188,10 @@ class ExtensionGenerator
 	 * @return void
 	 */
 	protected function appendTypoScriptConfiguration(&$files) {
-		$templateVariables = array(
+		$templateVariables = [
 			'extension' => $this->configuration['extensionKey'],
 			'signature' => ExtensionManagementUtility::getCN($this->configuration['extensionKey'])
-		);
+		];
 		$folder = $this->targetFolder . '/Configuration/TypoScript';
 		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
 		$files[$folder . '/setup.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTSETUP, $templateVariables)->render();
@@ -203,12 +203,12 @@ class ExtensionGenerator
 	 */
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
-		$templateVariables = array(
+		$templateVariables = [
 			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
 			'pages' => '',
 			'content' => '',
 			'backend' => ''
-		);
+		];
 		// note: the following code uses the provided "extensionKey" *directly* because
 		// for these registrations, we require the full Vendor.ExtensionName if that
 		// is the format used. Otherwise, legacy class names would be expected.
@@ -231,9 +231,9 @@ class ExtensionGenerator
 	protected function appendBackendFiles(&$files) {
 		$layoutName = 'Backend';
 		$sectionName = 'Main';
-		$variables = array(
+		$variables = [
 			'formId' => 'module'
-		);
+		];
 		$this->appendLayoutFile($files, 'Backend');
 		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html', $variables);
 	}
@@ -243,10 +243,10 @@ class ExtensionGenerator
 	 * @return void
 	 */
 	protected function appendLanguageFile(&$files) {
-		$variables = array(
+		$variables = [
 			'extension' => $this->getExtensionKeyFromSettings(),
 			'date' => date('c')
-		);
+		];
 		$filePathAndFilename = $this->targetFolder . '/Resources/Private/Language/locallang.xlf';
 		$files[$filePathAndFilename] = $this->getPreparedCodeTemplate(self::TEMPLATE_LANGUAGEFILE, $variables)->render();
 	}
@@ -258,9 +258,9 @@ class ExtensionGenerator
 	protected function appendContentFiles(&$files) {
 		$layoutName = 'Content';
 		$sectionName = 'Main';
-		$variables = array(
+		$variables = [
 			'formId' => 'example'
-		);
+		];
 		$this->appendLayoutFile($files, $layoutName);
 		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html', $variables);
 	}
@@ -271,9 +271,9 @@ class ExtensionGenerator
 	 */
 	protected function appendPageFiles(&$files) {
 		$layoutName = 'Page';
-		$sectionName = 'Main';$variables = array(
+		$sectionName = 'Main';$variables = [
 			'formId' => 'standard'
-		);
+		];
 		$this->appendLayoutFile($files, $layoutName);
 		$this->appendTemplateFile($files, self::TEMPLATE_PAGE, $layoutName, $sectionName, 'Page/Standard.html', $variables);
 	}
@@ -288,7 +288,7 @@ class ExtensionGenerator
 	 * @return void
 	 */
 	protected function appendTemplateFile(&$files, $identifier, $layout, $section, $placement, array $variables) {
-		$templateVariables = array(
+		$templateVariables = [
 			'layout' => $layout,
 			'section' => $section,
 			'configurationSectionName' => 'Configuration',
@@ -297,7 +297,7 @@ class ExtensionGenerator
 			'icon' => 'Icons/' . substr($placement, 0, -4) . 'gif',
 			'extension' => $this->getExtensionKeyFromSettings(),
 			'placement' => $placement
-		);
+		];
 		$templateVariables = array_merge_recursive($variables, $templateVariables);
 		$templatePathAndFilename = $this->targetFolder . '/Resources/Private/Templates/' . $placement;
 		$files[$templatePathAndFilename] = $this->getPreparedCodeTemplate($identifier, $templateVariables)->render();
@@ -310,10 +310,10 @@ class ExtensionGenerator
 	 * @return void
 	 */
 	protected function appendLayoutFile(&$files, $layoutName, $layoutSectionRenderName = 'Main') {
-		$layoutVariables = array(
+		$layoutVariables = [
 			'name' => $layoutName,
 			'section' => $layoutSectionRenderName
-		);
+		];
 		$layoutPathAndFilename = $this->targetFolder . '/Resources/Private/Layouts/' . $layoutName . '.html';
 		$files[$layoutPathAndFilename] = $this->getPreparedCodeTemplate(self::TEMPLATE_LAYOUT, $layoutVariables)->render();
 	}

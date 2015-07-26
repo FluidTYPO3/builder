@@ -61,7 +61,7 @@ class GlobUtility {
 		if ('/' !== substr($path, -1)) {
 			$path .= '/';
 		}
-		$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $path, $extensions);
+		$files = GeneralUtility::getAllFilesAndFoldersInPath([], $path, $extensions);
 		return array_values($files);
 	}
 

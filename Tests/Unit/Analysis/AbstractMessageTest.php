@@ -48,11 +48,11 @@ class AbstractMessageTest extends UnitTestCase {
 	 * @return array
 	 */
 	public function getGetterAndSetterTestValues() {
-		return array(
-			array('message', 'I am a message'),
-			array('severity', 1),
-			array('payload', array('foo' => 'bar'))
-		);
+		return [
+			['message', 'I am a message'],
+			['severity', 1],
+			['payload', ['foo' => 'bar']]
+		];
 	}
 
 }

@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 	'Tx_Builder_CodeGeneration_Extension_ExtensionGenerator' => 'FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator',
 	'Tx_Builder_CodeGeneration_Testing_ViewHelperTestCaseGenerator' => 'FluidTYPO3\Builder\CodeGeneration\Testing\ViewHelperTestCaseGenerator',
 	'Tx_Builder_CodeGeneration_AbstractClassGenerator' => 'FluidTYPO3\Builder\CodeGeneration\AbstractClassGenerator',
@@ -18,4 +18,4 @@ return array(
 	'Tx_Builder_Service_SyntaxService' => 'FluidTYPO3\Builder\Service\SyntaxService',
 	'Tx_Builder_Utility_ExtensionUtility' => 'FluidTYPO3\Builder\Utility\ExtensionUtility',
 	'Tx_Builder_Utility_GlobUtility' => 'FluidTYPO3\Builder\Utility\GlobUtility',
-);
+];

@@ -102,7 +102,7 @@ class SyntaxService implements SingletonInterface {
 	 */
 	public function syntaxCheckFluidTemplateFilesInPath($path, $formats) {
 		$files = GlobUtility::getFilesRecursive($path, $formats);
-		$results = array();
+		$results = [];
 		foreach ($files as $filePathAndFilename) {
 			$results[$filePathAndFilename] = $this->syntaxCheckFluidTemplateFile($filePathAndFilename);
 		}
@@ -120,7 +120,7 @@ class SyntaxService implements SingletonInterface {
 		$command = 'php --define error_reporting=0 -le ' . $filePathAndFilename;
 		$code = $this->executeCommandAndReturnZeroOrStringMessage($command);
 		if (0 !== $code) {
-			$output = array();
+			$output = [];
 			$this->executeCommandAndReturnZeroOrStringMessage('php -l ' . $filePathAndFilename . ' 2>&1', $output);
 			$error = new \Exception(array_shift($output), $code);
 			$result->setValid(FALSE);
@@ -145,7 +145,7 @@ class SyntaxService implements SingletonInterface {
 	public function syntaxCheckPhpFilesInPath($path) {
 		$files = GlobUtility::getFilesRecursive($path, 'php');
 		$files = array_values($files);
-		$results = array();
+		$results = [];
 		foreach ($files as $filePathAndFilename) {
 			$results[$filePathAndFilename] = $this->syntaxCheckPhpFile($filePathAndFilename);
 		}
@@ -171,7 +171,7 @@ class SyntaxService implements SingletonInterface {
 	 * @param array $output
 	 * @return integer
 	 */
-	protected function executeCommandAndReturnZeroOrStringMessage($command, &$output = array()) {
+	protected function executeCommandAndReturnZeroOrStringMessage($command, &$output = []) {
 		$code = 0;
 		exec($command, $output, $code);
 		return $code;

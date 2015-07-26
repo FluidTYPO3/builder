@@ -45,7 +45,7 @@ class TemplateAnalyzer {
 	/**
 	 * @var array
 	 */
-	protected $messages = array();
+	protected $messages = [];
 
 	/**
 	 * @var ExposedTemplateParser

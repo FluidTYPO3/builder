@@ -15,7 +15,7 @@ class DummyConfigurationManager extends BackendConfigurationManager implements C
 	 */
 	public function getContentObject() {
 		$builder = new \PHPUnit_Framework_MockObject_Generator();
-		$renderer = $builder->getMock('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer', array('RECORDS'));
+		$renderer = $builder->getMock('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer', ['RECORDS']);
 		return $renderer;
 	}
 
@@ -26,14 +26,14 @@ class DummyConfigurationManager extends BackendConfigurationManager implements C
 	 * @return array
 	 */
 	public function getConfiguration($type, $extensionName = NULL, $pluginName = NULL) {
-		return array(
-			'plugin.' => array(
-				'tx_builder.' => array(
-					'view.' => array(),
-					'settings.' => array(),
-				)
-			)
-		);
+		return [
+			'plugin.' => [
+				'tx_builder.' => [
+					'view.' => [],
+					'settings.' => [],
+				]
+			]
+		];
 	}
 
 	/**

@@ -36,7 +36,7 @@ class NodeCounterTest extends UnitTestCase {
 	/**
 	 * @var array
 	 */
-	protected $expectedMetricValues = array(
+	protected $expectedMetricValues = [
 		NodeCounter::METRIC_TOTAL_SPLITS => 8,
 		NodeCounter::METRIC_TOTAL_NODES => 12,
 		NodeCounter::METRIC_VIEWHELPERS => 3,
@@ -47,7 +47,7 @@ class NodeCounterTest extends UnitTestCase {
 		NodeCounter::METRIC_CACHED_SIZE => 3.39999999999,
 		NodeCounter::METRIC_MAXIMUM_ARGUMENT_COUNT => 3,
 		NodeCounter::METRIC_MAXIMUM_NESTING_LEVEL => 2
-	);
+	];
 
 	/**
 	 * @return array
@@ -59,7 +59,7 @@ class NodeCounterTest extends UnitTestCase {
 		$parsedTemplate = $template->parse(file_get_contents($fixture));
 		/** @var NodeCounter $nodeCounter */
 		$nodeCounter = $objectManager->get('FluidTYPO3\\Builder\\Analysis\\Fluid\\NodeCounter');
-		return array($nodeCounter, $template, $parsedTemplate);
+		return [$nodeCounter, $template, $parsedTemplate];
 	}
 
 	/**

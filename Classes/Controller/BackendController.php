@@ -73,7 +73,7 @@ class BackendController extends ActionController {
 	public function indexAction($view = 'Index') {
 		$extensions = ExtensionUtility::getAllInstalledFluidEnabledExtensions();
 		$selectorOptions = ExtensionUtility::getAllInstalledFluidEnabledExtensionsAsSelectorOptions();
-		$formats = array(
+		$formats = [
 			'html' => TRUE,
 			'xml' => FALSE,
 			'txt' => FALSE,
@@ -81,7 +81,7 @@ class BackendController extends ActionController {
 			'yaml' => FALSE,
 			'css' => FALSE,
 			'js' => FALSE,
-		);
+		];
 		$this->view->assign('view', $view);
 		$this->view->assign('extensions', $extensions);
 		$this->view->assign('extensionSelectorOptions', $selectorOptions);
@@ -124,7 +124,7 @@ class BackendController extends ActionController {
 	 * @param array $formats
 	 * @param array $filteredFiles
 	 */
-	public function syntaxAction(array $syntax, array $extensions, array $formats, array $filteredFiles = array()) {
+	public function syntaxAction(array $syntax, array $extensions, array $formats, array $filteredFiles = []) {
 		/** @var DocumentTemplate $document */
 		$document = &$GLOBALS['TBE_TEMPLATE'];
 		$resourcePath = $document->backPath . ExtensionManagementUtility::extRelPath('builder') . 'Resources/Public/';
@@ -137,25 +137,25 @@ class BackendController extends ActionController {
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.barRenderer.min.js');
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.pointLabels.min.js');
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/plotter.js');
-		$reports = array();
+		$reports = [];
 		$csvFormats = trim(implode(',', $formats), ',');
 		foreach ($extensions as $extensionKey) {
 			if (TRUE === empty($extensionKey)) {
 				continue;
 			}
 			$extensionFolder = ExtensionManagementUtility::extPath($extensionKey);
-			$reports[$extensionKey] = array();
+			$reports[$extensionKey] = [];
 			foreach ($syntax as $syntaxName) {
 				if (TRUE === empty($syntaxName)) {
 					continue;
 				}
-				$reportsForSyntaxName = array();
+				$reportsForSyntaxName = [];
 				if ('php' === $syntaxName) {
 					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes', $filteredFiles);
 				} elseif ('fluid' === $syntaxName) {
 					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats, $filteredFiles);
 				} elseif ('profile' === $syntaxName) {
-					$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $extensionFolder, $csvFormats);
+					$files = GeneralUtility::getAllFilesAndFoldersInPath([], $extensionFolder, $csvFormats);
 					if (0 === count($filteredFiles)) {
 						$filteredFiles = $files;
 					}
@@ -190,7 +190,7 @@ class BackendController extends ActionController {
 	protected function encodeMetricsToJson($metrics) {
 		foreach ($metrics as $index => $metric) {
 			$values = $metric->getPayload();
-			$metrics[$index] = array();
+			$metrics[$index] = [];
 			foreach ($values as $value) {
 				$metrics[$index][$value->getName()] = $value->getValue();
 			}

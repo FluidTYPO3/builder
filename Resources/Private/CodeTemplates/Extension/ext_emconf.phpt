@@ -10,7 +10,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
 	'title' => '###title###',
 	'description' => '###description###',
 	'category' => 'misc',
@@ -32,21 +32,21 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => '###company###',
 	'CGLcompliance' => '',
 	'CGLcompliance_note' => '',
-	'constraints' => array(
-		'depends' => array(
+	'constraints' => [
+		'depends' => [
 			'typo3' => '###coreMinor###-7.1.99',
 			'cms' => '',
 			'extbase' => '',
 			'fluid' => '',
 			'flux' => '',
 			###dependenciesArray###
-		),
-		'conflicts' => array(
-		),
-		'suggests' => array(
-		),
-	),
+		],
+		'conflicts' => [
+		],
+		'suggests' => [
+		],
+	],
 	'_md5_values_when_last_written' => 'a:0:{}',
-	'suggests' => array(
-	),
-);
+	'suggests' => [
+	],
+];

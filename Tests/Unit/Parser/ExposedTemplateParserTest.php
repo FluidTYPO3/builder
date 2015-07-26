@@ -46,12 +46,12 @@ class ExposedTemplateParserTest extends UnitTestCase {
 	 * @return array
 	 */
 	public function getInvalidTemplateStringTestValues() {
-		return array(
-			array(1),
-			array(new \stdClass()),
-			array(NULL),
-			array(FALSE)
-		);
+		return [
+			[1],
+			[new \stdClass()],
+			[NULL],
+			[FALSE]
+		];
 	}
 
 }

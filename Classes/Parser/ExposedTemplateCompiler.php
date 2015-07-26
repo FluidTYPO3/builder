@@ -50,7 +50,7 @@ class ExposedTemplateCompiler extends TemplateCompiler {
 			}
 		}
 		$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($parsingState->getRootNode()), 'render', 'Main Render function');
-		$convertedLayoutNameNode = $parsingState->hasLayout() ? $this->convert($parsingState->getLayoutNameNode()) : array('initialization' => '', 'execution' => 'NULL');
+		$convertedLayoutNameNode = $parsingState->hasLayout() ? $this->convert($parsingState->getLayoutNameNode()) : ['initialization' => '', 'execution' => 'NULL'];
 
 		$classDefinition = 'class FluidCache_' . $identifier . ' extends \TYPO3\CMS\Fluid\Core\Compiler\AbstractCompiledTemplate';
 

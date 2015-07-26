@@ -53,12 +53,12 @@ class CodeTemplateTest extends UnitTestCase {
 	 * @return array
 	 */
 	public function getGetterAndSetterTestValues() {
-		return array(
-			array('identifier', 'test'),
-			array('variables', array('test' => 'test')),
-			array('path', 'test'),
-			array('suffix', 'path')
-		);
+		return [
+			['identifier', 'test'],
+			['variables', ['test' => 'test']],
+			['path', 'test'],
+			['suffix', 'path']
+		];
 	}
 
 	/**
@@ -68,7 +68,7 @@ class CodeTemplateTest extends UnitTestCase {
 	 */
 	public function testRender($marker, $expectedOutput) {
 		$subject = new CodeTemplate();
-		$subject->setVariables(array('foo' => $marker));
+		$subject->setVariables(['foo' => $marker]);
 		$subject->setIdentifier('CodeTemplate');
 		$subject->setPath($fixture = ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
 		$this->assertEquals($expectedOutput, trim($subject->render()));
@@ -78,10 +78,10 @@ class CodeTemplateTest extends UnitTestCase {
 	 * @return array
 	 */
 	public function getRenderTestValues() {
-		return array(
-			array('bar', 'content: bar'),
-			array('baz', 'content: baz')
-		);
+		return [
+			['bar', 'content: bar'],
+			['baz', 'content: baz']
+		];
 	}
 
 }

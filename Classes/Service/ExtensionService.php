@@ -76,7 +76,7 @@ class ExtensionService implements SingletonInterface {
 		if (NULL === $description) {
 			$description = $defaultTitle;
 		}
-		$dependencies = array();
+		$dependencies = [];
 		if (TRUE === $pages) {
 			array_push($dependencies, 'fluidpages');
 		}
@@ -97,7 +97,7 @@ class ExtensionService implements SingletonInterface {
 		list ($name, $email) = GeneralUtility::trimExplode('<', $nameAndEmail);
 		$email = trim($email, '>');
 		$minimumVersion = 4.5;
-		$extensionVariables = array(
+		$extensionVariables = [
 			'extensionKey' => $extensionKey,
 			'title' => $title,
 			'description' => $description,
@@ -110,7 +110,7 @@ class ExtensionService implements SingletonInterface {
 			'dependencies' => $dependencies,
 			'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
 			'dependenciesArray' => $dependenciesArrayString
-		);
+		];
 		/** @var ExtensionGenerator $extensionGenerator */
 		$extensionGenerator = $this->objectManager->get('FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator');
 		$extensionGenerator->setConfiguration($extensionVariables);

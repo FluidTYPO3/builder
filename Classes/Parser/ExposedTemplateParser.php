@@ -36,18 +36,18 @@ class ExposedTemplateParser extends TemplateParser {
 	/**
 	 * @var array
 	 */
-	protected $splitTemplate = array();
+	protected $splitTemplate = [];
 
 	/**
 	 * @var array
 	 */
-	protected $viewHelpersUsed = array();
+	protected $viewHelpersUsed = [];
 
 	/**
 	 * @return array
 	 */
 	public function getUniqueViewHelpersUsed() {
-		$names = array();
+		$names = [];
 		foreach ($this->viewHelpersUsed as $metadata) {
 			list ($namespace, $viewhelper, , ) = array_values($metadata);
 			$id = $namespace . ':' . $viewhelper;
@@ -125,16 +125,16 @@ class ExposedTemplateParser extends TemplateParser {
 		if ($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface) {
 			// Don't just use $viewHelper::postParseEvent(...),
 			// as this will break with PHP < 5.3.
-			call_user_func(array($viewHelper, 'postParseEvent'), $currentViewHelperNode, $argumentsObjectTree, $state->getVariableContainer());
+			call_user_func([$viewHelper, 'postParseEvent'], $currentViewHelperNode, $argumentsObjectTree, $state->getVariableContainer());
 		}
 
 		$this->callInterceptor($currentViewHelperNode, \TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_OPENING_VIEWHELPER, $state);
 
 		$state->pushNodeToStack($currentViewHelperNode);
-		$this->viewHelpersUsed[] = array(
+		$this->viewHelpersUsed[] = [
 			'namespace' => $namespaceIdentifier,
 			'viewhelper' => $methodIdentifier
-		);
+		];
 	}
 
 	/**

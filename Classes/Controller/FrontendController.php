@@ -62,7 +62,7 @@ class FrontendController extends ActionController {
 	 * @param array $variables
 	 * @return void
 	 */
-	public function renderFluidAction($fluid = NULL, array $variables = array()) {
+	public function renderFluidAction($fluid = NULL, array $variables = []) {
 		$rejection = 'Your variables or fluid template code was rejected for security reasons. You may have performed ';
 		$rejection .= 'one of the following unsafe actions: variables containing an unsafe value or variable size too large, ';
 		$rejection .= 'fluid template attempts to import a namespace (this happens automatically for Fluid, VHS and Flux in';
@@ -70,23 +70,23 @@ class FrontendController extends ActionController {
 		$rejection .= 'one or more of an undisclosed list of ViewHelpers which are considered unsafe for public execution.';
 		header('Content-type: application/json');
 		if (FALSE === $this->assertSecureVariables($variables) || FALSE === $this->assertSecureFluidTemplate($fluid)) {
-			$response = array(
+			$response = [
 				'message' => $rejection,
 				'code' => self::ERROR_SECURITY
-			);
+			];
 			echo json_encode($response);
 		} elseif (FALSE === empty($this->settings['doodle']['renderer']) && !GeneralUtility::_GET('type')) {
 			// Undocumented setting: use an off-site renderer to do the actual Fluid rendering in a protected scope
 			$renderer = $this->settings['doodle']['renderer'];
 			$url = $renderer . '?type=9967';
-			$query = array('tx_builder_render' => $this->request->getArguments());
-			$context = stream_context_create(array(
-				'http' => array(
+			$query = ['tx_builder_render' => $this->request->getArguments()];
+			$context = stream_context_create([
+				'http' => [
 					'method' => 'POST',
 					'header' => 'Content-type: application/x-www-form-urlencoded',
 					'content' => http_build_query($query)
-				)
-			));
+				]
+			]);
 			echo file_get_contents($url, FALSE, $context);
 		} else {
 			$fluid = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL . $fluid;
@@ -111,26 +111,26 @@ class FrontendController extends ActionController {
 				$rendered = trim($view->render(), PHP_EOL . "\t");
 				$memoryUsageRender = memory_get_usage() - $memoryBefore;
 				$renderTime = microtime(TRUE) - $start;
-				$response = array(
+				$response = [
 					'source' => htmlentities($rendered),
 					'preview' => $rendered,
 					'viewhelpers' => $analysis->getViewHelpers(),
 					'analysis' => array_map(function($item) { return $item->getValue(); }, $analysis->getPayload()),
-					'timing' => array(
+					'timing' => [
 						'parse' => (float) number_format($parseTime * 1000, 2),
 						'render' => (float) number_format($renderTime * 1000, 2)
-					),
-					'memory' => array(
+					],
+					'memory' => [
 						'parse' => (float) number_format($memoryUsage / 1024, 1),
 						'render' => (float) number_format($memoryUsageRender / 1024, 1)
-					),
+					],
 					'variables' => $variables
-				);
+				];
 			} catch (\Exception $error) {
-				$response = array(
+				$response = [
 					'message' => $error->getMessage(),
 					'code' => $error->getCode()
-				);
+				];
 			}
 			echo json_encode($response, JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG);
 		}

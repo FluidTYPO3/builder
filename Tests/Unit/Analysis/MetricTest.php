@@ -50,12 +50,12 @@ class MetricTest extends UnitTestCase {
 	 * @return array
 	 */
 	public function getPropertiesTestValues() {
-		return array(
-			array('name', 'metricname'),
-			array('value', 'metricvalue'),
-			array('messages', array(new Message('test', 1))),
-			array('payload', array('test'))
-		);
+		return [
+			['name', 'metricname'],
+			['value', 'metricvalue'],
+			['messages', [new Message('test', 1)]],
+			['payload', ['test']]
+		];
 	}
 
 	/**

@@ -48,7 +48,7 @@ class Metric {
 	 *
 	 * @var MessageInterface[]
 	 */
-	protected $messages = array();
+	protected $messages = [];
 
 	/**
 	 * Payload: appended with data collected during metrics; data
@@ -57,7 +57,7 @@ class Metric {
 	 *
 	 * @var array
 	 */
-	protected $payload = array();
+	protected $payload = [];
 
 	/**
 	 * @param MessageInterface[] $messages

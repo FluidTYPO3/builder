@@ -49,7 +49,7 @@ class CodeTemplate {
 	/**
 	 * @var array
 	 */
-	protected $variables = array();
+	protected $variables = [];
 
 	/**
 	 * @param string $identifier

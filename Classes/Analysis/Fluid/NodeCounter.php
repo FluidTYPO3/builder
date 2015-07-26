@@ -147,23 +147,23 @@ class NodeCounter {
 	 *
 	 * @var array
 	 */
-	protected $thresholds = array();
+	protected $thresholds = [];
 
 	/**
 	 * @var Metric[]
 	 */
-	protected $metrics = array(
-		self::METRIC_TOTAL_SPLITS => array(150, 300),
-		self::METRIC_TOTAL_NODES => array(100, 250),
-		self::METRIC_VIEWHELPERS => array(50, 100),
-		self::METRIC_SECTIONS => array(8, 15),
-		self::METRIC_CONDITION_NODES => array(10, 25),
-		self::METRIC_NODES_PER_SECTION_AVERAGE => array(8, 15),
-		self::METRIC_NODES_PER_SECTION_MAXIMUM => array(15, 30),
-		self::METRIC_CACHED_SIZE => array(250, 500),
-		self::METRIC_MAXIMUM_ARGUMENT_COUNT => array(8, 12),
-		self::METRIC_MAXIMUM_NESTING_LEVEL => array(15, 25),
-	);
+	protected $metrics = [
+		self::METRIC_TOTAL_SPLITS => [150, 300],
+		self::METRIC_TOTAL_NODES => [100, 250],
+		self::METRIC_VIEWHELPERS => [50, 100],
+		self::METRIC_SECTIONS => [8, 15],
+		self::METRIC_CONDITION_NODES => [10, 25],
+		self::METRIC_NODES_PER_SECTION_AVERAGE => [8, 15],
+		self::METRIC_NODES_PER_SECTION_MAXIMUM => [15, 30],
+		self::METRIC_CACHED_SIZE => [250, 500],
+		self::METRIC_MAXIMUM_ARGUMENT_COUNT => [8, 12],
+		self::METRIC_MAXIMUM_NESTING_LEVEL => [15, 25],
+	];
 
 	/**
 	 * @return void
@@ -226,7 +226,7 @@ class NodeCounter {
 	 */
 	public function getMessages() {
 		/** @var MessageInterface[] $messages */
-		$messages = array();
+		$messages = [];
 		foreach ($this->metrics as $metric) {
 			array_merge($messages, $metric->getMessages());
 		}
@@ -238,7 +238,7 @@ class NodeCounter {
 	 * @return void
 	 */
 	protected function analyzePossibleSectionNodes($nodes) {
-		$sectionNodeCounts = array();
+		$sectionNodeCounts = [];
 		foreach ($nodes as $node) {
 			if (TRUE === $node instanceof ViewHelperNode) {
                 /** @var ViewHelperNode $node */
@@ -338,7 +338,7 @@ class NodeCounter {
 			} else {
 				$message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\WarningMessage');
 			}
-			$message->setPayload(array_merge(array($value), $this->thresholds[$metricName]));
+			$message->setPayload(array_merge([$value], $this->thresholds[$metricName]));
 			$metric->addMessage($message);
 		}
 	}

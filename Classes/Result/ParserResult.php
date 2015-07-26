@@ -44,12 +44,12 @@ class ParserResult implements ParserResultInterface {
 	/**
 	 * @var array
 	 */
-	protected $payload = array();
+	protected $payload = [];
 
 	/**
 	 * @var array
 	 */
-	protected $viewHelpers = array();
+	protected $viewHelpers = [];
 
 	/**
 	 * @var string

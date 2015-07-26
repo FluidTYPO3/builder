@@ -45,7 +45,7 @@ class ExtensionUtility {
 			return self::$cache;
 		}
 		$allExtensions = ExtensionManagementUtility::getLoadedExtensionListArray();
-		$fluidExtensions = array();
+		$fluidExtensions = [];
 		foreach ($allExtensions as $extensionKey) {
 			$fluidTemplateFolderPath = ExtensionManagementUtility::extPath($extensionKey, 'Resources/Private/Templates');
 			$isCore = strpos($fluidTemplateFolderPath, 'sysext');

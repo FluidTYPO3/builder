@@ -50,18 +50,18 @@ class ExtensionGeneratorTest extends UnitTestCase {
 		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		$instance = $this->getMock(
 			'FluidTYPO3\\Builder\\CodeGeneration\\Extension\\ExtensionGenerator',
-			array('getBuilderExtensionPath', 'getPreparedCodeTemplate')
+			['getBuilderExtensionPath', 'getPreparedCodeTemplate']
 		);
-		$codeTemplate = $this->getMock('FluidTYPO3\\Builder\\CodeGeneration\\CodeTemplate', array('getFilePath'));
+		$codeTemplate = $this->getMock('FluidTYPO3\\Builder\\CodeGeneration\\CodeTemplate', ['getFilePath']);
 		$codeTemplate->expects($this->any())->method('getFilePath')->will($this->returnArgument(0));
 		$instance->expects($this->any())->method('getBuilderExtensionPath')->will($this->returnValue(vfsStream::url('temp/')));
 		$instance->expects($this->any())->method('getPreparedCodeTemplate')->will($this->returnValue($codeTemplate));
 		$instance->injectObjectManager($objectManager);
 		$instance->setDry(TRUE);
-		$instance->setConfiguration(array(
-			'dependencies' => array('fluidpages', 'fluidcontent', 'fluidbackend'),
+		$instance->setConfiguration([
+			'dependencies' => ['fluidpages', 'fluidcontent', 'fluidbackend'],
 			'controllers' => TRUE, 'extensionKey' => 'dummy'
-		));
+		]);
 		$result = $instance->generate();
 		$this->assertEquals('Built extension "dummy"', $result);
 	}

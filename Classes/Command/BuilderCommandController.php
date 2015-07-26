@@ -90,7 +90,7 @@ class BuilderCommandController extends CommandController {
 			if (6 > substr(TYPO3_version, 0, 1)) {
 				throw new \RuntimeException('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
 			}
-			$files = array();
+			$files = [];
 			/** @var ExtensionService $extensionService */
 			$extensionService = $this->objectManager->get('FluidTYPO3\Builder\Service\ExtensionService');
 			$extensionInformation = $extensionService->getComputableInformation();
@@ -280,10 +280,10 @@ class BuilderCommandController extends CommandController {
 	 * @return array
 	 */
 	protected function getClassNamesInExtension($combinedExtensionKey) {
-		$allViewHelperClassNames = array();
+		$allViewHelperClassNames = [];
 		list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey($combinedExtensionKey);
 		$path = ExtensionManagementUtility::extPath($extensionKey, 'Classes/ViewHelpers/');
-		$filesInPath = GeneralUtility::getAllFilesAndFoldersInPath(array(), $path, 'php');
+		$filesInPath = GeneralUtility::getAllFilesAndFoldersInPath([], $path, 'php');
 		foreach ($filesInPath as $filePathAndFilename) {
 			$className = $this->getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filePathAndFilename);
 			if (class_exists($className)) {
@@ -295,7 +295,7 @@ class BuilderCommandController extends CommandController {
 				}
 			}
 		}
-		$affectedViewHelperClassNames = array();
+		$affectedViewHelperClassNames = [];
 		foreach ($allViewHelperClassNames as $viewHelperClassName) {
 			$classReflection = new \ReflectionClass($viewHelperClassName);
 			if ($classReflection->isAbstract() === TRUE) {
@@ -352,7 +352,7 @@ class BuilderCommandController extends CommandController {
 			$vendor = NULL;
 		}
 		$extensionKey = strtolower($extensionKey);
-		return array($vendor, $extensionKey);
+		return [$vendor, $extensionKey];
 	}
 
 }

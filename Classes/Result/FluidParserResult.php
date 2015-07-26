@@ -28,7 +28,7 @@ class FluidParserResult extends ParserResult {
 	/**
 	 * @var array
 	 */
-	protected $namespaces = array();
+	protected $namespaces = [];
 
 	/**
 	 * @var string
@@ -74,7 +74,7 @@ class FluidParserResult extends ParserResult {
 	 * @return string
 	 */
 	public function getNamespacesFlattened() {
-		$flat = array();
+		$flat = [];
 		foreach ($this->namespaces as $namespaceAlias => $classPath) {
 			array_push($flat, $namespaceAlias . '=' . $classPath);
 		}

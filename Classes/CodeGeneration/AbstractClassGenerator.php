@@ -55,17 +55,17 @@ abstract class AbstractClassGenerator extends AbstractCodeGenerator implements C
 	/**
 	 * @var array
 	 */
-	protected $attributes = array();
+	protected $attributes = [];
 
 	/**
 	 * @var array
 	 */
-	protected $properties = array();
+	protected $properties = [];
 
 	/**
 	 * @var array
 	 */
-	protected $methods = array();
+	protected $methods = [];
 
 	/**
 	 * @param ClassAnalysisService $classAnalysisService
@@ -115,7 +115,7 @@ abstract class AbstractClassGenerator extends AbstractCodeGenerator implements C
 	 * @return void
 	 * @abstract
 	 */
-	public function appendMethodFromSourceTemplate($templateIdentifier, $variables = array()) {
+	public function appendMethodFromSourceTemplate($templateIdentifier, $variables = []) {
 		$name = TRUE === isset($variables['name']) ? $variables['name'] : basename($templateIdentifier);
 		$template = $this->getPreparedCodeTemplate($templateIdentifier, $variables);
 		$code = $template->render();
@@ -169,7 +169,7 @@ abstract class AbstractClassGenerator extends AbstractCodeGenerator implements C
 		$methods = array_map('trim', $this->methods);
         // @todo check if needed
 		// $this->appendCommonTestMethods();
-		$variables = array(
+		$variables = [
 			'class' => $className,
 			'author' => $this->author,
 			'year' => date('Y', time()),
@@ -177,7 +177,7 @@ abstract class AbstractClassGenerator extends AbstractCodeGenerator implements C
 			'package' => $this->package,
 			'properties' => implode("\n\n\t", $properties),
 			'methods' => implode("\n\n\t", $methods)
-		);
+		];
 		$template = $this->getPreparedCodeTemplate($template, $variables);
 		return $template->render();
 	}

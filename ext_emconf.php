@@ -1,5 +1,5 @@
 <?php
-$EM_CONF[$_EXTKEY] = array (
+$EM_CONF[$_EXTKEY] = [
   'title' => 'Builder: FluidTYPO3 Development Support',
   'description' => 'Various development supports for building and working with Fluid templates and Extbase extensions',
   'category' => 'misc',
@@ -20,22 +20,22 @@ $EM_CONF[$_EXTKEY] = array (
   'author_email' => 'claus@namelesscoder.net',
   'author_company' => '',
   'constraints' =>
-  array (
+  [
     'depends' =>
-    array (
+    [
       'typo3' => '6.2.0-7.1.99',
       'cms' => '',
       'vhs' => '2.2.0-2.3.99',
-    ),
+	],
     'conflicts' =>
-    array (
-    ),
+    [
+	],
     'suggests' =>
-    array (
-    ),
-  ),
+    [
+	],
+  ],
   '_md5_values_when_last_written' => '',
   'suggests' =>
-  array (
-  ),
-);
+  [
+  ],
+];
