@@ -1,46 +1,34 @@
 {namespace v=FluidTYPO3\Vhs\ViewHelpers}
-
-<style type="text/css">
-	label {
-		display: block;
-		margin-top: 0.5em;
-		margin-bottom: 0.5em;
-	}
-	.label.inline {
-		display: inline-block;
-		margin-right: 1em;
-		min-height: 1em;
-	}
-	li {
-		margin-left: 18px !important;
-	}
-</style>
 <f:be.container>
 	<div class="typo3-fullDoc">
 		<div id="typo3-docheader">
-			<div id="typo3-docheader-row1">
-				<div class="buttonsleft">
-					<f:render section="ButtonsLeft" />
+			<div class="typo3-docheader-functions">
+				<div class="left">
+					<f:render section="FunctionsLeft" />
+					<f:form style="display: inline-block">
+						<v:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}">
+							<v:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'Index\'', then: '1', else: '0')}">Syntax</v:form.select.option>
+							<v:form.select.option value="{f:uri.action(action: 'buildForm')}" selected="{f:if(condition: '{view}==\'BuildForm\'', then: '1', else: '0')}">Build provider</v:form.select.option>
+						</v:form.select>
+					 </f:form>
 				</div>
-				<div class="buttonsright">
-					<f:be.buttons.shortcut />
-				</div>
+				<div class="right"></div>
 			</div>
-			<div id="typo3-docheader-row2">
-				<div class="docheader-row2-left">
-				</div>
-				<div class="docheader-row2-right">
-					<f:be.pagePath />
-					<f:be.pageInfo />
+			<div class="typo3-docheader-buttons">
+				<div class="left"><f:render section="ButtonsLeft" /></div>
+				<div class="right">
+					<div class="buttongroup">
+						<f:link.page><span class="t3-icon fa fa-refresh"> </span></f:link.page>
+						<f:be.buttons.shortcut />
+					</div>
 				</div>
 			</div>
 		</div>
+
 		<div id="typo3-docbody">
 			<div id="typo3-inner-docbody">
 				<f:flashMessages class="tx-extbase-flash-message" />
-				<div id="news-administration">
-					<f:render section="Content" />
-				</div>
+				<f:render section="Content" />
 			</div>
 		</div>
 	</div>
