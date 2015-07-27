@@ -167,6 +167,7 @@ class FrontendController extends ActionController {
 		if (FALSE !== strpos($fluid, 'xmlns:')) {
 			return FALSE;
 		}
+		return TRUE;
 	}
 
 	/**
