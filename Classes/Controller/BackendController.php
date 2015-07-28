@@ -118,7 +118,7 @@ class BackendController extends ActionController {
 	 * @return void
 	 */
 	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose) {
-		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose);
+		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
@@ -166,9 +166,9 @@ class BackendController extends ActionController {
 				}
 				$reportsForSyntaxName = array();
 				if ('php' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes', $filteredFiles);
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes');
 				} elseif ('fluid' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats, $filteredFiles);
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats);
 				} elseif ('profile' === $syntaxName) {
 					$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $extensionFolder, $csvFormats);
 					if (0 === count($filteredFiles)) {

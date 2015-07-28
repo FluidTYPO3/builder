@@ -28,7 +28,6 @@ use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\GlobUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**

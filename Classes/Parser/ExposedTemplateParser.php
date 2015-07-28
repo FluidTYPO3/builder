@@ -23,10 +23,15 @@ namespace FluidTYPO3\Builder\Parser;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface;
 use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
 use TYPO3\CMS\Fluid\Core\Parser\Exception;
+use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
 use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface;
 
 /**
  * Class ExposedTemplateParser
@@ -93,16 +98,16 @@ class ExposedTemplateParser extends TemplateParser {
 	 * Initialize the given ViewHelper and adds it to the current node and to
 	 * the stack.
 	 *
-	 * @param \TYPO3\CMS\Fluid\Core\Parser\ParsingState $state Current parsing state
+	 * @param ParsingState $state Current parsing state
 	 * @param string $namespaceIdentifier Namespace identifier - being looked up in $this->namespaces
 	 * @param string $methodIdentifier Method identifier
 	 * @param array $argumentsObjectTree Arguments object tree
 	 * @return void
-	 * @throws \TYPO3\CMS\Fluid\Core\Parser\Exception
+	 * @throws Exception
 	 */
-	protected function initializeViewHelperAndAddItToStack(\TYPO3\CMS\Fluid\Core\Parser\ParsingState $state, $namespaceIdentifier, $methodIdentifier, $argumentsObjectTree) {
+	protected function initializeViewHelperAndAddItToStack(ParsingState $state, $namespaceIdentifier, $methodIdentifier, $argumentsObjectTree) {
 		if (!array_key_exists($namespaceIdentifier, $this->namespaces)) {
-			throw new \TYPO3\CMS\Fluid\Core\Parser\Exception('Namespace could not be resolved. This exception should never be thrown!', 1224254792);
+			throw new Exception('Namespace could not be resolved. This exception should never be thrown!', 1224254792);
 		}
 		$viewHelper = $this->objectManager->get($this->resolveViewHelperName($namespaceIdentifier, $methodIdentifier));
 		$this->viewHelperNameToImplementationClassNameRuntimeCache[$namespaceIdentifier][$methodIdentifier] = get_class($viewHelper);
@@ -113,22 +118,23 @@ class ExposedTemplateParser extends TemplateParser {
 		$this->abortIfRequiredArgumentsAreMissing($expectedViewHelperArguments, $argumentsObjectTree);
 		$this->rewriteBooleanNodesInArgumentsObjectTree($expectedViewHelperArguments, $argumentsObjectTree);
 
+		/** @var ViewHelperNode $currentViewHelperNode */
 		$currentViewHelperNode = $this->objectManager->get('TYPO3\\CMS\\Fluid\\Core\\Parser\\SyntaxTree\\ViewHelperNode', $viewHelper, $argumentsObjectTree);
 
 		$state->getNodeFromStack()->addChildNode($currentViewHelperNode);
 
-		if ($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface && !($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface)) {
+		if ($viewHelper instanceof ChildNodeAccessInterface && !($viewHelper instanceof CompilableInterface)) {
 			$state->setCompilable(FALSE);
 		}
 
 		// PostParse Facet
-		if ($viewHelper instanceof \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface) {
+		if ($viewHelper instanceof PostParseInterface) {
 			// Don't just use $viewHelper::postParseEvent(...),
 			// as this will break with PHP < 5.3.
 			call_user_func(array($viewHelper, 'postParseEvent'), $currentViewHelperNode, $argumentsObjectTree, $state->getVariableContainer());
 		}
 
-		$this->callInterceptor($currentViewHelperNode, \TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface::INTERCEPT_OPENING_VIEWHELPER, $state);
+		$this->callInterceptor($currentViewHelperNode, InterceptorInterface::INTERCEPT_OPENING_VIEWHELPER, $state);
 
 		$state->pushNodeToStack($currentViewHelperNode);
 		$this->viewHelpersUsed[] = array(
