@@ -40,6 +40,7 @@ class ExtensionGenerator
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
+	const TEMPLATE_BACKEND_LAYOUT = 'Fluid/BackendLayout';
 	const TEMPLATE_CONTENT = 'Fluid/Content';
 	const TEMPLATE_PAGE = 'Fluid/Page';
 	const TEMPLATE_FLUXFORM = 'Fluid/Form';
@@ -234,7 +235,7 @@ class ExtensionGenerator
 		$variables = array(
 			'formId' => 'module'
 		);
-		$this->appendLayoutFile($files, 'Backend');
+		$this->appendLayoutFile($files, 'Backend', 'Main', self::TEMPLATE_BACKEND_LAYOUT);
 		$this->appendTemplateFile($files, self::TEMPLATE_FLUXFORM, $layoutName, $sectionName, 'Backend/Module.html', $variables);
 	}
 
@@ -309,13 +310,13 @@ class ExtensionGenerator
 	 * @param string $layoutSectionRenderName
 	 * @return void
 	 */
-	protected function appendLayoutFile(&$files, $layoutName, $layoutSectionRenderName = 'Main') {
+	protected function appendLayoutFile(&$files, $layoutName, $layoutSectionRenderName = 'Main', $layoutType = self::TEMPLATE_LAYOUT) {
 		$layoutVariables = array(
 			'name' => $layoutName,
 			'section' => $layoutSectionRenderName
 		);
 		$layoutPathAndFilename = $this->targetFolder . '/Resources/Private/Layouts/' . $layoutName . '.html';
-		$files[$layoutPathAndFilename] = $this->getPreparedCodeTemplate(self::TEMPLATE_LAYOUT, $layoutVariables)->render();
+		$files[$layoutPathAndFilename] = $this->getPreparedCodeTemplate($layoutType, $layoutVariables)->render();
 	}
 
 }
