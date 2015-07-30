@@ -23,7 +23,7 @@
 	<f:form action="build">
 		<fieldset>
 			<legend>{f:translate(key: 'header.builders')}</legend>
-			<f:render section="Input" arguments="{name: 'name', value: 'Vendor.Myprovider'}" />
+			<f:render section="Input" arguments="{name: 'name', placeholder: 'Vendor.Myprovider', title: 'name.regex', additionalAttributes: {required: '', pattern: '[A-Z]\w+\.[A-Z]\w+'} }" />
 			<f:render section="Input" arguments="{name: 'author', value: author, placeholder: 'Your Name <your@mail.tdl>'}" />
 			<f:render section="Input" arguments="{name: 'title', value: 'My provider extension'}" />
 			<f:render section="Input" arguments="{name: 'description', value: 'Templates for my site'}" />
@@ -57,6 +57,6 @@
 <f:section name="Input">
 	<div class="form-group">
 		<label for="{name}"><f:translate key="providerextension.{name}" /></label>
-		<f:form.textfield id="{name}" name="{name}" value="{value}" size="42" class="form-control" placeholder="{placeholder}" />
+		<f:form.textfield id="{name}" title="{f:translate(key: 'providerextension.{title}')}" name="{name}" value="{value}" size="42" class="form-control" placeholder="{placeholder}" additionalAttributes="{additionalAttributes}"/>
 	</div>
 </f:section>

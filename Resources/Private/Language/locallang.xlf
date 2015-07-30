@@ -37,7 +37,10 @@
 				<source>Perform validations</source>
 			</trans-unit>
 			<trans-unit id="providerextension.name" xml:space="preserve">
-				<source>Extension key (You should follow the pattern Vendor.ExtensionKey and this will generate a folder extension_key and namespaces Vendor\ExtensionKey\Controller)</source>
+				<source>Extension key</source>
+			</trans-unit>
+			<trans-unit id="providerextension.name.regex" xml:space="preserve">
+				<source>You should follow the pattern Vendor.ExtensionKey and this will generate a folder extension_key and namespaces Vendor\ExtensionKey\Controller</source>
 			</trans-unit>
 			<trans-unit id="providerextension.author" xml:space="preserve">
 				<source>Author name and email</source>
