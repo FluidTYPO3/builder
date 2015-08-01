@@ -61,6 +61,7 @@ class FrontendController extends ActionController {
 	 * @param string $fluid
 	 * @param array $variables
 	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function renderFluidAction($fluid = NULL, array $variables = array()) {
 		$rejection = 'Your variables or fluid template code was rejected for security reasons. You may have performed ';
@@ -232,7 +233,7 @@ class FrontendController extends ActionController {
 		$dry = FALSE;
 		$verbose = FALSE;
 		$temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
-		$temporaryFolder =  $temporaryBaseFolder . '/' . $extensionKey;
+		$temporaryFolder = $temporaryBaseFolder . '/' . $extensionKey;
 		$archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
 		GeneralUtility::mkdir_deep($temporaryBaseFolder);
 		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);

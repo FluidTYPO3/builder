@@ -99,7 +99,7 @@ class ExtensionGenerator
 
 	/**
 	 * @return string
-	 * @throws \Exception
+	 * @throws \RuntimeException
 	 */
 	public function generate() {
 		$extensionKey = $this->getExtensionKeyFromSettings();
@@ -180,8 +180,7 @@ class ExtensionGenerator
 		$templateVariables['controllerName'] = $controllerName;
 		$templateVariables['parentControllerClass'] = $parentControllerClassName;
 		$templateVariables['namespace'] = $this->getExtensionNamespaceFromSettings() . 'Controller';
-		$files[$folder . $controllerName . 'Controller.php'] =
-			$this->getPreparedCodeTemplate(self::TEMPLATE_CONTROLLER, $templateVariables)->render();
+		$files[$folder . $controllerName . 'Controller.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_CONTROLLER, $templateVariables)->render();
 	}
 
 	/**

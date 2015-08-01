@@ -95,7 +95,7 @@ class BuilderCommandController extends CommandController {
 			$extensionInformation = $extensionService->getComputableInformation();
 			foreach ($extensionInformation as $extensionName => $extensionInfo) {
 				// Syntax service declines linting of inactive extensions
-				if (0 === intval($installed = $extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
+				if (0 === intval($extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
 					continue;
 				}
 				$path = GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
