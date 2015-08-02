@@ -101,6 +101,8 @@ class BackendController extends ActionController {
 		$this->view->assign('csh', BackendUtility::wrapInHelp('builder', 'modules'));
 		$this->view->assign('view', $view);
 		$this->view->assign('author', $author);
+		$isFluidcontentCoreInstalled = ExtensionManagementUtility::isLoaded('fluidcontent_core') ? "'checked'" : NULL;
+		$this->view->assign('isFluidcontentCoreInstalled', $isFluidcontentCoreInstalled);
 	}
 
 	/**
@@ -113,12 +115,13 @@ class BackendController extends ActionController {
 	 * @param boolean $content
 	 * @param boolean $backend
 	 * @param boolean $vhs
+	 * @param boolean $fluidcontentCore
 	 * @param boolean $dry
 	 * @param boolean $verbose
 	 * @return void
 	 */
-	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose) {
-		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);
+	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $fluidcontentCore, $dry, $verbose) {
+		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $fluidcontentCore);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
