@@ -72,6 +72,9 @@
 			<trans-unit id="providerextension.vhs" xml:space="preserve">
 				<source>Set the VHS extension as dependency</source>
 			</trans-unit>
+			<trans-unit id="providerextension.fluidcontentCore" xml:space="preserve">
+				<source>Set the FluidcontentCore extension as dependency</source>
+			</trans-unit>
 			<trans-unit id="buildBehavior" xml:space="preserve">
 				<source>Build behavior</source>
 			</trans-unit>

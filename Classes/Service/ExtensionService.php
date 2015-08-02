@@ -66,9 +66,10 @@ class ExtensionService implements SingletonInterface {
 	 * @param boolean $content Include use of fluidcontent
 	 * @param boolean $backend Include use of fluidbackend
 	 * @param boolean $useVhs Include VHS as dependency
+	 * @param boolean $useFluidcontentCore Include FluidcontentCore as dependency
 	 * @return ExtensionGenerator
 	 */
-	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE) {
+	public function buildProviderExtensionGenerator($extensionKey, $author, $title = NULL, $description = NULL, $controllers = FALSE, $pages = TRUE, $content = TRUE, $backend = FALSE, $useVhs = TRUE, $useFluidcontentCore = TRUE) {
 		$defaultTitle = 'Provider extension for ' . (TRUE === $pages ? 'pages ' : '') . (TRUE === $content ? 'content ' : '') . (TRUE === $backend ? 'backend' : '');;
 		if (NULL === $title) {
 			$title = $defaultTitle;
@@ -88,6 +89,9 @@ class ExtensionService implements SingletonInterface {
 		}
 		if (TRUE === $useVhs) {
 			array_push($dependencies, 'vhs');
+		}
+		if (TRUE === $useFluidcontentCore) {
+			array_push($dependencies, 'fluidcontent_core');
 		}
 		$dependenciesArrayString = '';
 		foreach ($dependencies as $dependency) {
