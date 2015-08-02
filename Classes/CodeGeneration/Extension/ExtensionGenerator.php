@@ -40,6 +40,7 @@ class ExtensionGenerator
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
+	const TEMPLATE_CONTENT_CORE_LAYOUT = 'Fluid/ContentCoreLayout';
 	const TEMPLATE_BACKEND_LAYOUT = 'Fluid/BackendLayout';
 	const TEMPLATE_CONTENT = 'Fluid/Content';
 	const TEMPLATE_PAGE = 'Fluid/Page';
@@ -116,11 +117,12 @@ class ExtensionGenerator
 		$hasFluidpages = TRUE === in_array('fluidpages', $this->configuration['dependencies']);
 		$hasFluidcontent = TRUE === in_array('fluidcontent', $this->configuration['dependencies']);
 		$hasFluidbackend = TRUE === in_array('fluidbackend', $this->configuration['dependencies']);
+		$hasVhs = TRUE === in_array('vhs', $this->configuration['dependencies']);
 		if (TRUE === $hasFluidpages) {
 			$this->appendPageFiles($filesToBeWritten);
 		}
 		if (TRUE === $hasFluidcontent) {
-			$this->appendContentFiles($filesToBeWritten);
+			$this->appendContentFiles($filesToBeWritten, $hasVhs);
 		}
 		if (TRUE === $hasFluidpages || TRUE === $hasFluidcontent) {
 			$this->appendLanguageFile($filesToBeWritten);
@@ -254,15 +256,21 @@ class ExtensionGenerator
 
 	/**
 	 * @param array $files
+	 * @param boolean $hasVhs
 	 * @return void
 	 */
-	protected function appendContentFiles(&$files) {
+	protected function appendContentFiles(&$files, $hasVhs) {
 		$layoutName = 'Content';
 		$sectionName = 'Main';
 		$variables = array(
 			'formId' => 'example'
 		);
 		$this->appendLayoutFile($files, $layoutName);
+		if (TRUE === $hasVhs) {
+			$variables['vhs'] = 'xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers"';
+			$layoutName = "{v:extension.loaded(extensionName: 'fluidcontent_core', then: 'ContentCore', else: 'Content')}";
+			$this->appendLayoutFile($files, 'ContentCore', 'Main', self::TEMPLATE_CONTENT_CORE_LAYOUT);
+		}
 		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html', $variables);
 	}
 
