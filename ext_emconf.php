@@ -19,23 +19,18 @@ $EM_CONF[$_EXTKEY] = array (
   'author' => 'FluidTYPO3 Team',
   'author_email' => 'claus@namelesscoder.net',
   'author_company' => '',
-  'constraints' =>
-  array (
-    'depends' =>
-    array (
+  'constraints' => array (
+    'depends' => array (
       'typo3' => '6.2.0-7.1.99',
       'cms' => '',
       'vhs' => '2.2.0-2.3.99',
     ),
-    'conflicts' =>
-    array (
+    'conflicts' => array (
     ),
-    'suggests' =>
-    array (
+    'suggests' => array (
     ),
   ),
   '_md5_values_when_last_written' => '',
-  'suggests' =>
-  array (
+  'suggests' => array (
   ),
 );
