@@ -23,6 +23,7 @@ namespace FluidTYPO3\Builder\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -116,7 +117,10 @@ class FrontendController extends ActionController {
 					'source' => htmlentities($rendered),
 					'preview' => $rendered,
 					'viewhelpers' => $analysis->getViewHelpers(),
-					'analysis' => array_map(function($item) { return $item->getValue(); }, $analysis->getPayload()),
+					'analysis' => array_map(function($item) {
+						/** @var Metric $item */
+						return $item->getValue();
+					}, $analysis->getPayload()),
 					'timing' => array(
 						'parse' => (float) number_format($parseTime * 1000, 2),
 						'render' => (float) number_format($renderTime * 1000, 2)

@@ -24,6 +24,8 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis\Fluid;
  ***************************************************************/
 
 use FluidTYPO3\Builder\Analysis\Fluid\NodeCounter;
+use FluidTYPO3\Builder\Analysis\Metric;
+use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -54,6 +56,7 @@ class NodeCounterTest extends UnitTestCase {
 	 */
 	protected function getPreparedFixtures() {
 		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		/** @var ExposedTemplateParser $template */
 		$template = $objectManager->get('FluidTYPO3\\Builder\\Parser\\ExposedTemplateParser');
 		$fixture = ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/AnalysisFixture.html');
 		$parsedTemplate = $template->parse(file_get_contents($fixture));
@@ -66,9 +69,11 @@ class NodeCounterTest extends UnitTestCase {
 	 * @test
 	 */
 	public function testNodeCounterAgainstKnownFixture() {
+		/** @var NodeCounter $nodeCounter */
 		list ($nodeCounter, $template, $parsedTemplate) = $this->getPreparedFixtures();
 		$result = $nodeCounter->count($template, $parsedTemplate);
 		$expectedValues = $this->expectedMetricValues;
+		/** @var Metric $metric */
 		foreach ($result as $metric) {
 			$name = $metric->getName();
 			$this->assertEquals($expectedValues[$name], $metric->getValue(), 'Unexpected value of ' . $name);

@@ -24,6 +24,7 @@ namespace FluidTYPO3\Builder\Controller;
  * ************************************************************* */
 
 use FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer;
+use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Result\ParserResult;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
@@ -210,6 +211,7 @@ class BackendController extends ActionController {
 		foreach ($metrics as $index => $metric) {
 			$values = $metric->getPayload();
 			$metrics[$index] = array();
+			/** @var Metric $value */
 			foreach ($values as $value) {
 				$metrics[$index][$value->getName()] = $value->getValue();
 			}
