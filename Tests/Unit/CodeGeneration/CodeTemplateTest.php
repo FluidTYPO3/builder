@@ -24,12 +24,8 @@ namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration;
  ***************************************************************/
 
 use FluidTYPO3\Builder\CodeGeneration\CodeTemplate;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
-use org\bovigo\vfs\vfsStreamWrapper;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class CodeTemplateTest

@@ -315,7 +315,7 @@ class ExtensionGenerator
 	 * @param array $files
 	 * @param string $layoutName
 	 * @param string $layoutSectionRenderName
-	 * @return void
+	 * @param string $layoutType
 	 */
 	protected function appendLayoutFile(&$files, $layoutName, $layoutSectionRenderName = 'Main', $layoutType = self::TEMPLATE_LAYOUT) {
 		$layoutVariables = array(

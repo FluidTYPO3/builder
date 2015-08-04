@@ -23,12 +23,14 @@ namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration\Extension;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use FluidTYPO3\Builder\CodeGeneration\CodeTemplate;
 use FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamWrapper;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class ExtensionGeneratorTest
@@ -47,7 +49,10 @@ class ExtensionGeneratorTest extends UnitTestCase {
 	 * @test
 	 */
 	public function testDryRun() {
+		/** @var ObjectManager $objectManager */
 		$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+
+		/** @var ExtensionGenerator|\PHPUnit_Framework_MockObject_MockObject $instance */
 		$instance = $this->getMock(
 			'FluidTYPO3\\Builder\\CodeGeneration\\Extension\\ExtensionGenerator',
 			array('getBuilderExtensionPath', 'getPreparedCodeTemplate')
