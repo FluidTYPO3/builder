@@ -2,7 +2,7 @@
     "name": "fluidtypo3/builder",
     "description": "The builder package from FluidTYPO3",
     "type": "typo3-cms-extension",
-    "version": "0.18.0",
+    "version": "0.19.0",
     "require-dev": {
         "fluidtypo3/development": "*"
     },
@@ -10,29 +10,5 @@
         "psr-4": {
             "FluidTYPO3\\Builder\\": "Classes/"
         }
-    },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "typo3/cms",
-                "version": "6.2.10",
-                "dist": {
-                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/6.2.10.zip",
-                    "type": "zip"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "typo3/cms",
-                "version": "7.1.0",
-                "dist": {
-                    "url": "https://github.com/TYPO3/TYPO3.CMS/archive/7.1.0.zip",
-                    "type": "zip"
-                }
-            }
-        }
-    ]
+    }
 }

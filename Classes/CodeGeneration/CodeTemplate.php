@@ -23,8 +23,6 @@ namespace FluidTYPO3\Builder\CodeGeneration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-
 /**
  * Class CodeTemplate
  * @package FluidTYPO3\Builder\CodeGeneration

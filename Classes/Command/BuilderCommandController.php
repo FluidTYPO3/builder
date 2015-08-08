@@ -28,7 +28,6 @@ use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\GlobUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
 /**
@@ -96,7 +95,7 @@ class BuilderCommandController extends CommandController {
 			$extensionInformation = $extensionService->getComputableInformation();
 			foreach ($extensionInformation as $extensionName => $extensionInfo) {
 				// Syntax service declines linting of inactive extensions
-				if (0 === intval($installed = $extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
+				if (0 === intval($extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
 					continue;
 				}
 				$path = GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, NULL);
@@ -211,6 +210,7 @@ class BuilderCommandController extends CommandController {
 	 * @param string $title The title of the resulting extension, by default "Provider extension for $enabledFeaturesList"
 	 * @param string $description The description of the resulting extension, by default "Provider extension for $enabledFeaturesList"
 	 * @param boolean $useVhs If TRUE, adds the VHS extension as dependency - recommended, on by default
+	 * @param boolean $useFluidcontentCore If TRUE, adds the FluidcontentCore extension as dependency - recommended, on by default
 	 * @param boolean $pages If TRUE, generates basic files for implementing Fluid Page templates
 	 * @param boolean $content IF TRUE, generates basic files for implementing Fluid Content templates
 	 * @param boolean $backend If TRUE, generates basic files for implementing Fluid Backend modules
@@ -219,15 +219,16 @@ class BuilderCommandController extends CommandController {
 	 * @param boolean $verbose If FALSE, suppresses a lot of the otherwise output messages (to STDOUT)
 	 * @return void
 	 */
-	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE) {
+	public function providerExtensionCommand($extensionKey, $author, $title = NULL, $description = NULL, $useVhs = TRUE, $useFluidcontentCore = TRUE, $pages = TRUE, $content = TRUE, $backend = FALSE, $controllers = TRUE, $dry = FALSE, $verbose = TRUE) {
 		$useVhs = (boolean) $useVhs;
+		$useFluidcontentCore = (boolean) $useFluidcontentCore;
 		$pages = (boolean) $pages;
 		$content = (boolean) $content;
 		$backend = (boolean) $backend;
 		$controllers = (boolean) $controllers;
 		$verbose = (boolean) $verbose;
 		$dry = (boolean) $dry;
-		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs);
+		$extensionGenerator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $useVhs, $useFluidcontentCore);
 		$extensionGenerator->setDry($dry);
 		$extensionGenerator->setVerbose($verbose);
 		$extensionGenerator->generate();

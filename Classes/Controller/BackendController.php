@@ -24,6 +24,7 @@ namespace FluidTYPO3\Builder\Controller;
  * ************************************************************* */
 
 use FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer;
+use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Result\ParserResult;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
@@ -31,8 +32,8 @@ use FluidTYPO3\Builder\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extensionmanager\Utility\InstallUtility;
 use TYPO3\CMS\Backend\Template\DocumentTemplate;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 
 /**
  * Class BackendController
@@ -82,11 +83,27 @@ class BackendController extends ActionController {
 			'css' => FALSE,
 			'js' => FALSE,
 		);
+		$this->view->assign('csh', BackendUtility::wrapInHelp('builder', 'modules'));
 		$this->view->assign('view', $view);
 		$this->view->assign('extensions', $extensions);
 		$this->view->assign('extensionSelectorOptions', $selectorOptions);
 		$this->view->assign('formats', $formats);
-		$this->view->assign('author', $GLOBALS['BE_USER']->user['realName'] . ' <' . $GLOBALS['BE_USER']->user['email'] . '>');
+	}
+
+	/**
+	 * @param string $view
+	 * @return void
+	 */
+	public function buildFormAction($view = 'BuildForm') {
+		$author = '';
+		if (FALSE === empty($GLOBALS['BE_USER']->user['realName']) && FALSE === empty($GLOBALS['BE_USER']->user['email'])) {
+			$author = $GLOBALS['BE_USER']->user['realName'] . ' <' . $GLOBALS['BE_USER']->user['email'] . '>';
+		}
+		$this->view->assign('csh', BackendUtility::wrapInHelp('builder', 'modules'));
+		$this->view->assign('view', $view);
+		$this->view->assign('author', $author);
+		$isFluidcontentCoreInstalled = ExtensionManagementUtility::isLoaded('fluidcontent_core') ? "'checked'" : NULL;
+		$this->view->assign('isFluidcontentCoreInstalled', $isFluidcontentCoreInstalled);
 	}
 
 	/**
@@ -99,18 +116,20 @@ class BackendController extends ActionController {
 	 * @param boolean $content
 	 * @param boolean $backend
 	 * @param boolean $vhs
+	 * @param boolean $fluidcontentCore
 	 * @param boolean $dry
 	 * @param boolean $verbose
 	 * @return void
 	 */
-	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose) {
-		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $dry, $verbose);
+	public function buildAction($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $fluidcontentCore, $dry, $verbose) {
+		$generator = $this->extensionService->buildProviderExtensionGenerator($name, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs, $fluidcontentCore);
 		$generator->setVerbose($verbose);
 		$generator->setDry($dry);
 		if (FALSE === $dry) {
 			$generator->generate();
 		}
 		$this->view->assign('boolean', TRUE);
+		$this->view->assign('view', 'BuildForm');
 		$this->view->assign('attributes', $this->arguments->getArrayCopy());
 	}
 
@@ -151,9 +170,9 @@ class BackendController extends ActionController {
 				}
 				$reportsForSyntaxName = array();
 				if ('php' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes', $filteredFiles);
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath($extensionFolder . '/Classes');
 				} elseif ('fluid' === $syntaxName) {
-					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats, $filteredFiles);
+					$reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath($extensionFolder . '/Resources', $csvFormats);
 				} elseif ('profile' === $syntaxName) {
 					$files = GeneralUtility::getAllFilesAndFoldersInPath(array(), $extensionFolder, $csvFormats);
 					if (0 === count($filteredFiles)) {
@@ -181,6 +200,7 @@ class BackendController extends ActionController {
 		$this->view->assign('extensions', $extensions);
 		$this->view->assign('formats', $formats);
 		$this->view->assign('syntax', $syntax);
+		$this->view->assign('view', 'Index');
 	}
 
 	/**
@@ -191,6 +211,7 @@ class BackendController extends ActionController {
 		foreach ($metrics as $index => $metric) {
 			$values = $metric->getPayload();
 			$metrics[$index] = array();
+			/** @var Metric $value */
 			foreach ($values as $value) {
 				$metrics[$index][$value->getName()] = $value->getValue();
 			}

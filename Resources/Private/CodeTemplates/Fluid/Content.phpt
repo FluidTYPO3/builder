@@ -1,6 +1,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" lang="en"
 	xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
-	xmlns:flux="http://typo3.org/ns/FluidTYPO3/Flux/ViewHelpers">
+	xmlns:flux="http://typo3.org/ns/FluidTYPO3/Flux/ViewHelpers"
+	###vhs###>
 
 	<f:layout name="###layout###" />
 
