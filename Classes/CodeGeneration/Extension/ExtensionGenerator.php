@@ -190,9 +190,10 @@ class ExtensionGenerator
 	 * @return void
 	 */
 	protected function appendTypoScriptConfiguration(&$files) {
+		$extensionKey = $this->getExtensionKeyFromSettings();
 		$templateVariables = array(
-			'extension' => $this->configuration['extensionKey'],
-			'signature' => ExtensionManagementUtility::getCN($this->getExtensionKeyFromSettings())
+			'extension' => $extensionKey,
+			'signature' => ExtensionManagementUtility::getCN($extensionKey)
 		);
 		$folder = $this->targetFolder . '/Configuration/TypoScript';
 		$files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(self::TEMPLATE_TYPOSCRIPTCONSTANTS, $templateVariables)->render();
