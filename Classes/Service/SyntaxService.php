@@ -76,7 +76,7 @@ class SyntaxService implements SingletonInterface {
 	 *
 	 * @param string $filePathAndFilename
 	 * @return FluidParserResult
-     * @throws \Exception
+	 * @throws \Exception
 	 */
 	public function syntaxCheckFluidTemplateFile($filePathAndFilename) {
 		/** @var FluidParserResult $result */
@@ -112,7 +112,7 @@ class SyntaxService implements SingletonInterface {
 	/**
 	 * @param string $filePathAndFilename
 	 * @return FluidParserResult
-     * @throws \Exception
+	 * @throws \Exception
 	 */
 	public function syntaxCheckPhpFile($filePathAndFilename) {
 		/** @var FluidParserResult $result */

@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="builder" date="2015-03-14T22:24:42+01:00">
+		<header/>
+		<body>
+			<trans-unit id="mlang_tabs_tab" xml:space="preserve">
+				<source>Builder</source>
+			</trans-unit>
+			<trans-unit id="mlang_labels_tablabel" xml:space="preserve">
+				<source>Builder</source>
+			</trans-unit>
+			<trans-unit id="modules.alttitle" xml:space="preserve">
+				<source>Builder</source>
+			</trans-unit>
+			<trans-unit id="modules.description" xml:space="preserve">
+				<source>The Builder provides a syntax tester and a provider extension builder.</source>
+			</trans-unit>
+			<trans-unit id="introduction" xml:space="preserve">
+				<source>In this module you can perform the following actions:</source>
+			</trans-unit>
+			<trans-unit id="extensionselector" xml:space="preserve">
+				<source>Select extension</source>
+			</trans-unit>
+			<trans-unit id="typeselector" xml:space="preserve">
+				<source>Select script type(s)</source>
+			</trans-unit>
+			<trans-unit id="syntax.php" xml:space="preserve">
+				<source>Check PHP file syntax</source>
+			</trans-unit>
+			<trans-unit id="syntax.fluid" xml:space="preserve">
+				<source>Check Fluid template syntax</source>
+			</trans-unit>
+			<trans-unit id="syntax.profile" xml:space="preserve">
+				<source>Profile Fluid syntax</source>
+			</trans-unit>
+			<trans-unit id="submit.validate" xml:space="preserve">
+				<source>Perform validations</source>
+			</trans-unit>
+			<trans-unit id="providerextension.name" xml:space="preserve">
+				<source>Extension key</source>
+			</trans-unit>
+			<trans-unit id="providerextension.name.regex" xml:space="preserve">
+				<source>You should follow the pattern Vendor.ExtensionKey and this will generate a folder extension_key and namespaces Vendor\ExtensionKey\Controller</source>
+			</trans-unit>
+			<trans-unit id="providerextension.author" xml:space="preserve">
+				<source>Author name and email</source>
+			</trans-unit>
+			<trans-unit id="providerextension.title" xml:space="preserve">
+				<source>Brief title</source>
+			</trans-unit>
+			<trans-unit id="providerextension.description" xml:space="preserve">
+				<source>Brief description</source>
+			</trans-unit>
+			<trans-unit id="providerextension.verbose" xml:space="preserve">
+				<source>Be verbose about actions taken</source>
+			</trans-unit>
+			<trans-unit id="toggles" xml:space="preserve">
+				<source>Toggles</source>
+			</trans-unit>
+			<trans-unit id="providerextension.pages" xml:space="preserve">
+				<source>Include page templates</source>
+			</trans-unit>
+			<trans-unit id="providerextension.content" xml:space="preserve">
+				<source>Include content templates</source>
+			</trans-unit>
+			<trans-unit id="providerextension.backend" xml:space="preserve">
+				<source>Include backend module templates</source>
+			</trans-unit>
+			<trans-unit id="providerextension.controllers" xml:space="preserve">
+				<source>Create controllers for enabled FluidTYPO3 features</source>
+			</trans-unit>
+			<trans-unit id="providerextension.vhs" xml:space="preserve">
+				<source>Set the VHS extension as dependency</source>
+			</trans-unit>
+			<trans-unit id="providerextension.fluidcontentCore" xml:space="preserve">
+				<source>Set the FluidcontentCore extension as dependency</source>
+			</trans-unit>
+			<trans-unit id="buildBehavior" xml:space="preserve">
+				<source>Build behavior</source>
+			</trans-unit>
+			<trans-unit id="providerextension.dry" xml:space="preserve">
+				<source>Dry run - do not build actual files</source>
+			</trans-unit>
+			<trans-unit id="submit.provider" xml:space="preserve">
+				<source>Create provider extension</source>
+			</trans-unit>
+			<trans-unit id="warnings.installed" xml:space="preserve">
+				<source>You chose to install the Provider extension - please make sure you clear all caches RIGHT NOW.</source>
+			</trans-unit>
+			<trans-unit id="header.syntax" xml:space="preserve">
+				<source>Builder - Syntax validator</source>
+			</trans-unit>
+			<trans-unit id="header.builder" xml:space="preserve">
+				<source>Builder - Provider extension builder</source>
+			</trans-unit>
+			<trans-unit id="header.builders" xml:space="preserve">
+				<source>Create FluidTYPO3 Provider Extension</source>
+			</trans-unit>
+			<trans-unit id="header.reports" xml:space="preserve">
+				<source>Syntax check reports</source>
+			</trans-unit>
+			<trans-unit id="header.validators" xml:space="preserve">
+				<source>Validator</source>
+			</trans-unit>
+			<trans-unit id="header.built" xml:space="preserve">
+				<source>Build results</source>
+			</trans-unit>
+			<trans-unit id="noreports" xml:space="preserve">
+				<source>No reports</source>
+			</trans-unit>
+			<trans-unit id="passed" xml:space="preserve">
+				<source>Passed!</source>
+			</trans-unit>
+			<trans-unit id="filespassed" xml:space="preserve">
+				<source>%s file(s) passed!</source>
+			</trans-unit>
+			<trans-unit id="booleans.0" xml:space="preserve">
+				<source>No</source>
+			</trans-unit>
+			<trans-unit id="booleans.1" xml:space="preserve">
+				<source>Yes</source>
+			</trans-unit>
+			<trans-unit id="attributes.name" xml:space="preserve">
+				<source>Option</source>
+			</trans-unit>
+			<trans-unit id="attributes.value" xml:space="preserve">
+				<source>Selected value</source>
+			</trans-unit>
+			<trans-unit id="rerun" xml:space="preserve">
+				<source>Re-Run</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

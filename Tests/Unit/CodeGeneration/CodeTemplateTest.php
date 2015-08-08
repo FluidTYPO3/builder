@@ -24,12 +24,8 @@ namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration;
  ***************************************************************/
 
 use FluidTYPO3\Builder\CodeGeneration\CodeTemplate;
-use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamDirectory;
-use org\bovigo\vfs\vfsStreamWrapper;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class CodeTemplateTest
@@ -70,7 +66,7 @@ class CodeTemplateTest extends UnitTestCase {
 		$subject = new CodeTemplate();
 		$subject->setVariables(array('foo' => $marker));
 		$subject->setIdentifier('CodeTemplate');
-		$subject->setPath($fixture = ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
+		$subject->setPath(ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
 		$this->assertEquals($expectedOutput, trim($subject->render()));
 	}
 

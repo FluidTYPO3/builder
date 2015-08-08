@@ -23,6 +23,7 @@ namespace FluidTYPO3\Builder\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -61,6 +62,7 @@ class FrontendController extends ActionController {
 	 * @param string $fluid
 	 * @param array $variables
 	 * @return void
+	 * @throws \RuntimeException
 	 */
 	public function renderFluidAction($fluid = NULL, array $variables = array()) {
 		$rejection = 'Your variables or fluid template code was rejected for security reasons. You may have performed ';
@@ -115,7 +117,10 @@ class FrontendController extends ActionController {
 					'source' => htmlentities($rendered),
 					'preview' => $rendered,
 					'viewhelpers' => $analysis->getViewHelpers(),
-					'analysis' => array_map(function($item) { return $item->getValue(); }, $analysis->getPayload()),
+					'analysis' => array_map(function($item) {
+						/** @var Metric $item */
+						return $item->getValue();
+					}, $analysis->getPayload()),
 					'timing' => array(
 						'parse' => (float) number_format($parseTime * 1000, 2),
 						'render' => (float) number_format($renderTime * 1000, 2)
@@ -167,6 +172,7 @@ class FrontendController extends ActionController {
 		if (FALSE !== strpos($fluid, 'xmlns:')) {
 			return FALSE;
 		}
+		return TRUE;
 	}
 
 	/**
@@ -231,7 +237,7 @@ class FrontendController extends ActionController {
 		$dry = FALSE;
 		$verbose = FALSE;
 		$temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
-		$temporaryFolder =  $temporaryBaseFolder . '/' . $extensionKey;
+		$temporaryFolder = $temporaryBaseFolder . '/' . $extensionKey;
 		$archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
 		GeneralUtility::mkdir_deep($temporaryBaseFolder);
 		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);

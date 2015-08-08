@@ -1,0 +1,63 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+
+<f:layout name="Backend" />
+
+<f:section name="ButtonsLeft">
+
+</f:section>
+
+<f:section name="FunctionsLeft">
+	{csh -> f:format.raw()}
+</f:section>
+
+<f:section name="Content">
+	<f:render section="{view}" arguments="{_all}" />
+</f:section>
+
+<f:section name="BuildForm">
+	<h1>{f:translate(key: 'header.builder')}</h1>
+	<f:render section="ProviderExtension" arguments="{_all}" />
+</f:section>
+
+<f:section name="ProviderExtension">
+	<f:form action="build">
+		<fieldset>
+			<legend>{f:translate(key: 'header.builders')}</legend>
+			<f:render section="Input" arguments="{name: 'name', placeholder: 'Vendor.Myprovider', title: 'name.regex', additionalAttributes: {required: '', pattern: '[A-Z]\w+\.[A-Z]\w+'} }" />
+			<f:render section="Input" arguments="{name: 'author', value: author, placeholder: 'Your Name <your@mail.tdl>'}" />
+			<f:render section="Input" arguments="{name: 'title', value: 'My provider extension'}" />
+			<f:render section="Input" arguments="{name: 'description', value: 'Templates for my site'}" />
+			<h4><f:translate key="toggles" /></h4>
+			<f:render section="Checkbox" arguments="{name: 'pages', checked: 'checked'}" />
+			<f:render section="Checkbox" arguments="{name: 'content', checked: 'checked'}" />
+			<f:render section="Checkbox" arguments="{name: 'backend'}" />
+			<f:render section="Checkbox" arguments="{name: 'controllers'}" />
+			<f:render section="Checkbox" arguments="{name: 'vhs', checked: 'checked'}" />
+			<f:render section="Checkbox" arguments="{name: 'fluidcontentCore', checked: isFluidcontentCoreInstalled}" />
+			<h4><f:translate key="buildBehavior" /></h4>
+			<f:render section="Checkbox" arguments="{name: 'dry', checked: 'checked'}" />
+			<f:render section="Checkbox" arguments="{name: 'verbose'}" />
+			<button name="go" class="btn btn-primary">
+				<span class="t3-icon fa fa-rocket"> </span>
+				{f:translate(key: 'submit.provider')}
+			</button>
+		</fieldset>
+	</f:form>
+</f:section>
+
+
+<f:section name="Checkbox">
+	<div class="form-group">
+		<label for="{name}">
+			<f:translate key="providerextension.{name}" />
+		</label>
+		<f:form.checkbox id="{name}" name="{name}" value="1" checked="{checked}" class="checkbox" />
+	</div>
+</f:section>
+
+<f:section name="Input">
+	<div class="form-group">
+		<label for="{name}"><f:translate key="providerextension.{name}" /></label>
+		<f:form.textfield id="{name}" title="{f:translate(key: 'providerextension.{title}')}" name="{name}" value="{value}" size="42" class="form-control" placeholder="{placeholder}" additionalAttributes="{additionalAttributes}"/>
+	</div>
+</f:section>
