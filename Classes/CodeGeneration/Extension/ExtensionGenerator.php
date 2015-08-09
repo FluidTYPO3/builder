@@ -162,10 +162,10 @@ class ExtensionGenerator
 			$this->createFile($fileToBeWritten, $fileContentToBeWritten);
 		}
 		if (TRUE === $hasFluidpages) {
-			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Page/Standard.gif');
+			$this->copyFile('Resources/Public/Icons/Example.svg', $this->targetFolder . '/Resources/Public/Icons/Page/Standard.svg');
 		}
 		if (TRUE === $hasFluidcontent) {
-			$this->copyFile('ext_icon.gif', $this->targetFolder . '/Resources/Public/Icons/Content/Example.gif');
+			$this->copyFile('Resources/Public/Icons/Example.svg', $this->targetFolder . '/Resources/Public/Icons/Content/Example.svg');
 		}
 		$this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
 		return 'Built extension "' . $extensionKey . '"';
