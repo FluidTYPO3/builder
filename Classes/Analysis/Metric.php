@@ -23,6 +23,9 @@ namespace FluidTYPO3\Builder\Analysis;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+/**
+ * Class Metric
+ */
 class Metric {
 
 	/**

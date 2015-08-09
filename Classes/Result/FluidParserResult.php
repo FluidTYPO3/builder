@@ -23,6 +23,9 @@ namespace FluidTYPO3\Builder\Result;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+/**
+ * Class FluidParserResult
+ */
 class FluidParserResult extends ParserResult {
 
 	/**
