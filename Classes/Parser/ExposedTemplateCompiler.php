@@ -54,7 +54,7 @@ class ExposedTemplateCompiler extends TemplateCompiler {
 
 		$classDefinition = 'class FluidCache_' . $identifier . ' extends \TYPO3\CMS\Fluid\Core\Compiler\AbstractCompiledTemplate';
 
-		$templateCode = <<<EOD
+		$templateCode = '
 %s {
 
 public function getVariableContainer() {
@@ -72,7 +72,7 @@ return %s;
 %s
 
 }
-EOD;
+';
 		$templateCode = sprintf($templateCode,
 			$classDefinition,
 			$convertedLayoutNameNode['initialization'],
