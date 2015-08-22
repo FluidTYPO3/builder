@@ -28,7 +28,7 @@
 				</td>
 				<td>
 					<em>
-						<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}" default="{attribute.value}" />
+						<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}" default="{attribute.value -> f:format.htmlspecialchars()}" />
 					</em>
 				</td>
 			</tr>
