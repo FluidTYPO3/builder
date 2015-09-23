@@ -187,7 +187,7 @@ class BackendController extends ActionController {
 						$shortFilename = substr($file, strlen($extensionFolder . '/Resources/Private'));
 						/** @var TemplateAnalyzer $templateAnalyzer */
 						$templateAnalyzer = $this->objectManager->get('FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer');
-						$reportsForSyntaxName[$shortFilename] = $templateAnalyzer->analyze($file);
+						$reportsForSyntaxName[$shortFilename] = $templateAnalyzer->analyzePathAndFilename($file);
 					}
 					$reports[$extensionKey][$syntaxName]['json'] = $this->encodeMetricsToJson($reportsForSyntaxName);
 				}
