@@ -2,7 +2,7 @@
     "name": "fluidtypo3/builder",
     "description": "The builder package from FluidTYPO3",
     "type": "typo3-cms-extension",
-    "version": "0.20.0",
+    "version": "1.0.0",
     "require-dev": {
         "fluidtypo3/development": "*"
     },
