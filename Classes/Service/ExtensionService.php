@@ -100,6 +100,10 @@ class ExtensionService implements SingletonInterface {
 		list ($nameAndEmail, $companyName) = GeneralUtility::trimExplode(',', $author);
 		list ($name, $email) = GeneralUtility::trimExplode('<', $nameAndEmail);
 		$email = trim($email, '>');
+		$name = addslashes($name);
+		$companyName = addslashes($companyName);
+		$description = addslashes($description);
+		$title = addslashes($title);
 		$minimumVersion = 4.5;
 		$extensionVariables = array(
 			'extensionKey' => $extensionKey,
