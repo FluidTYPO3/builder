@@ -37,6 +37,7 @@ class ExtensionGenerator
 	implements CodeGeneratorInterface {
 
 	const TEMPLATE_CONTROLLER = 'Controller/Controller';
+	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
 	const TEMPLATE_EXTLOCALCONF = 'Extension/ext_localconf';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
@@ -151,6 +152,7 @@ class ExtensionGenerator
 		}
 		$this->appendTypoScriptConfiguration($filesToBeWritten);
 		$this->appendExtensionTablesFile($filesToBeWritten);
+		$this->appendExtensionLocalconfFile($filesToBeWritten);
 		if (TRUE === $hasFluidcontent || TRUE === $hasFluidpages) {
 			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Private/Language');
 		}
@@ -207,7 +209,17 @@ class ExtensionGenerator
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
 		$templateVariables = array(
-			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');'
+		);
+		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
+	}
+
+	/**
+	 * @param array $files
+	 * @return void
+	 */
+	protected function appendExtensionLocalconfFile(&$files) {
+		$templateVariables = array(
 			'pages' => '',
 			'content' => '',
 			'backend' => ''
@@ -225,7 +237,6 @@ class ExtensionGenerator
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
 			$templateVariables['backend'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
 		}
-
 		$files[$this->targetFolder . '/ext_localconf.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTLOCALCONF, $templateVariables)->render();
 	}
 
