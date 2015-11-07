@@ -37,7 +37,7 @@ class ExtensionGenerator
 	implements CodeGeneratorInterface {
 
 	const TEMPLATE_CONTROLLER = 'Controller/Controller';
-	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
+	const TEMPLATE_EXTLOCALCONF = 'Extension/ext_localconf';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
 	const TEMPLATE_CONTENT_CORE_LAYOUT = 'Fluid/ContentCoreLayout';
@@ -212,6 +212,7 @@ class ExtensionGenerator
 			'content' => '',
 			'backend' => ''
 		);
+
 		// note: the following code uses the provided "extensionKey" *directly* because
 		// for these registrations, we require the full Vendor.ExtensionName if that
 		// is the format used. Otherwise, legacy class names would be expected.
@@ -224,7 +225,8 @@ class ExtensionGenerator
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
 			$templateVariables['backend'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
 		}
-		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
+
+		$files[$this->targetFolder . '/ext_localconf.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTLOCALCONF, $templateVariables)->render();
 	}
 
 	/**
