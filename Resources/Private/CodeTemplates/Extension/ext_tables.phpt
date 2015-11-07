@@ -3,6 +3,4 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-###pages###
-###content###
-###backend###
+###configuration###
