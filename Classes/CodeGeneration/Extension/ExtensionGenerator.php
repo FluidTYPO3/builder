@@ -131,9 +131,11 @@ class ExtensionGenerator
 		if (TRUE === $hasFluidbackend) {
 			$this->appendBackendFiles($filesToBeWritten);
 		}
-		if (TRUE === $this->configuration['controllers']) {
-			$controllerFolder = $this->targetFolder . '/Classes/Controller/';
+		$controllerFolder = $this->targetFolder . '/Classes/Controller/';
+		if (TRUE === $this->configuration['controllers'] || TRUE === $hasFluidbackend) {
 			array_push($foldersToBeCreated, $controllerFolder);
+		}
+		if (TRUE === $this->configuration['controllers']) {
 			if (TRUE === $hasFluidcontent) {
 				$this->appendControllerClassFile($filesToBeWritten,
 					'Content', 'FluidTYPO3\\Fluidcontent\\Controller\\ContentController', $controllerFolder
@@ -144,11 +146,12 @@ class ExtensionGenerator
 					'Page', 'FluidTYPO3\\Fluidpages\\Controller\\PageController', $controllerFolder
 				);
 			}
-			if (TRUE === $hasFluidbackend) {
-				$this->appendControllerClassFile($filesToBeWritten,
-					'Backend', 'FluidTYPO3\\Fluidbackend\\Controller\\BackendController', $controllerFolder
-				);
-			}
+		}
+		// backend-module always needs a BackendController
+		if (TRUE === $hasFluidbackend) {
+			$this->appendControllerClassFile($filesToBeWritten,
+				'Backend', 'FluidTYPO3\\Fluidbackend\\Controller\\BackendController', $controllerFolder
+			);
 		}
 		$this->appendTypoScriptConfiguration($filesToBeWritten);
 		$this->appendExtensionTablesFile($filesToBeWritten);
