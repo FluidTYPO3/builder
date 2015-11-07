@@ -268,7 +268,7 @@ class ExtensionGenerator
 		$this->appendLayoutFile($files, $layoutName);
 		if (TRUE === $hasVhs) {
 			$variables['vhs'] = 'xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers"';
-			$layoutName = "{v:extension.loaded(extensionName: 'fluidcontent_core', then: 'ContentCore', else: 'Content')}";
+			$layoutName = 'Content';
 			$this->appendLayoutFile($files, 'ContentCore', 'Main', self::TEMPLATE_CONTENT_CORE_LAYOUT);
 		}
 		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html', $variables);
