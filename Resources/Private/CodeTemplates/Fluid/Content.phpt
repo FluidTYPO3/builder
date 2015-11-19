@@ -8,7 +8,7 @@
 	<f:section name="###configurationSectionName###">
 		<flux:form id="###formId###" options="{group: 'FCE'}">
 			<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
-			<flux:field.inline name="settings.helloWorld" required="true" />
+			<flux:field.input name="settings.helloWorld" required="true" />
 		</flux:form>
 	</f:section>
 
