@@ -38,6 +38,7 @@ class ExtensionGenerator
 
 	const TEMPLATE_CONTROLLER = 'Controller/Controller';
 	const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
+	const TEMPLATE_EXTLOCALCONF = 'Extension/ext_localconf';
 	const TEMPLATE_EMCONF = 'Extension/ext_emconf';
 	const TEMPLATE_LAYOUT = 'Fluid/Layout';
 	const TEMPLATE_CONTENT_CORE_LAYOUT = 'Fluid/ContentCoreLayout';
@@ -130,9 +131,11 @@ class ExtensionGenerator
 		if (TRUE === $hasFluidbackend) {
 			$this->appendBackendFiles($filesToBeWritten);
 		}
-		if (TRUE === $this->configuration['controllers']) {
-			$controllerFolder = $this->targetFolder . '/Classes/Controller/';
+		$controllerFolder = $this->targetFolder . '/Classes/Controller/';
+		if (TRUE === $this->configuration['controllers'] || TRUE === $hasFluidbackend) {
 			array_push($foldersToBeCreated, $controllerFolder);
+		}
+		if (TRUE === $this->configuration['controllers']) {
 			if (TRUE === $hasFluidcontent) {
 				$this->appendControllerClassFile($filesToBeWritten,
 					'Content', 'FluidTYPO3\\Fluidcontent\\Controller\\ContentController', $controllerFolder
@@ -143,14 +146,16 @@ class ExtensionGenerator
 					'Page', 'FluidTYPO3\\Fluidpages\\Controller\\PageController', $controllerFolder
 				);
 			}
-			if (TRUE === $hasFluidbackend) {
-				$this->appendControllerClassFile($filesToBeWritten,
-					'Backend', 'FluidTYPO3\\Fluidbackend\\Controller\\BackendController', $controllerFolder
-				);
-			}
+		}
+		// backend-module always needs a BackendController
+		if (TRUE === $hasFluidbackend) {
+			$this->appendControllerClassFile($filesToBeWritten,
+				'Backend', 'FluidTYPO3\\Fluidbackend\\Controller\\BackendController', $controllerFolder
+			);
 		}
 		$this->appendTypoScriptConfiguration($filesToBeWritten);
 		$this->appendExtensionTablesFile($filesToBeWritten);
+		$this->appendExtensionLocalconfFile($filesToBeWritten);
 		if (TRUE === $hasFluidcontent || TRUE === $hasFluidpages) {
 			array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Private/Language');
 		}
@@ -207,11 +212,22 @@ class ExtensionGenerator
 	protected function appendExtensionTablesFile(&$files) {
 		$title = trim($this->configuration['title']);
 		$templateVariables = array(
-			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');',
+			'configuration' => 'TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'' .  $title . '\');'
+		);
+		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
+	}
+
+	/**
+	 * @param array $files
+	 * @return void
+	 */
+	protected function appendExtensionLocalconfFile(&$files) {
+		$templateVariables = array(
 			'pages' => '',
 			'content' => '',
 			'backend' => ''
 		);
+
 		// note: the following code uses the provided "extensionKey" *directly* because
 		// for these registrations, we require the full Vendor.ExtensionName if that
 		// is the format used. Otherwise, legacy class names would be expected.
@@ -224,7 +240,7 @@ class ExtensionGenerator
 		if (TRUE === in_array('fluidbackend', $this->configuration['dependencies'])) {
 			$templateVariables['backend'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' . $this->configuration['extensionKey'] . '\', \'Backend\');';
 		}
-		$files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTTABLES, $templateVariables)->render();
+		$files[$this->targetFolder . '/ext_localconf.php'] = $this->getPreparedCodeTemplate(self::TEMPLATE_EXTLOCALCONF, $templateVariables)->render();
 	}
 
 	/**
@@ -268,7 +284,7 @@ class ExtensionGenerator
 		$this->appendLayoutFile($files, $layoutName);
 		if (TRUE === $hasVhs) {
 			$variables['vhs'] = 'xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers"';
-			$layoutName = "{v:extension.loaded(extensionName: 'fluidcontent_core', then: 'ContentCore', else: 'Content')}";
+			$layoutName = 'Content';
 			$this->appendLayoutFile($files, 'ContentCore', 'Main', self::TEMPLATE_CONTENT_CORE_LAYOUT);
 		}
 		$this->appendTemplateFile($files, self::TEMPLATE_CONTENT, $layoutName, $sectionName, 'Content/Example.html', $variables);
