@@ -1,17 +1,18 @@
 
 <table class="table table-striped table-hover">
 	<thead>
-	<th><f:translate key="attributes.name" /></th>
-	<th><f:translate key="attributes.value" /></th>
+	<th><f:translate key="attributes.name" extensionName="Builder" /></th>
+	<th><f:translate key="attributes.value" extensionName="Builder" /></th>
 	</thead>
 	<f:for each="{attributes}" as="attribute" key="attributeName" iteration="iteration">
 		<tr>
 			<td>
-				<f:translate key="providerextension.{attributeName}" />
+				<f:translate key="providerextension.{attributeName}" default="{attributeName}" extensionName="Builder" />
 			</td>
 			<td>
 				<em>
-					<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}" default="{attribute.value -> f:format.htmlspecialchars()}" />
+					<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}"
+					             default="{attribute.value -> f:format.htmlspecialchars()}" extensionName="Builder" />
 				</em>
 			</td>
 		</tr>
