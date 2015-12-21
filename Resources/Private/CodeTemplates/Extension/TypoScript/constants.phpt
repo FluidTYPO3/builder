@@ -1,5 +1,5 @@
 plugin.###signature###.view {
-	templateRootPaths.default = EXT:###extension###/Resources/Private/Templates/
-	partialRootPaths.default = EXT:###extension###/Resources/Private/Partials/
-	layoutRootPaths.default = EXT:###extension###/Resources/Private/Layouts/
+	templateRootPaths.0 = EXT:###extension###/Resources/Private/Templates/
+	partialRootPaths.0 = EXT:###extension###/Resources/Private/Partials/
+	layoutRootPaths.0 = EXT:###extension###/Resources/Private/Layouts/
 }
