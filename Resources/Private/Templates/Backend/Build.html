@@ -13,25 +13,5 @@
 <f:section name="Content">
 	<h1>{f:translate(key: 'header.builder')}</h1>
 	<h2>{f:translate(key: 'header.built')}</h2>
-	<f:if condition="{attributes.install.value} > 0">
-		<f:translate key="warnings.installed" />
-	</f:if>
-	<table class="table table-striped table-hover">
-		<thead>
-			<th><f:translate key="attributes.name" /></th>
-			<th><f:translate key="attributes.value" /></th>
-		</thead>
-		<f:for each="{attributes}" as="attribute" key="attributeName" iteration="iteration">
-			<tr>
-				<td>
-					<f:translate key="providerextension.{attributeName}" />
-				</td>
-				<td>
-					<em>
-						<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}" default="{attribute.value -> f:format.htmlspecialchars()}" />
-					</em>
-				</td>
-			</tr>
-		</f:for>
-	</table>
+	<f:render partial="Receipt" arguments="{attributes: attributes}" />
 </f:section>
