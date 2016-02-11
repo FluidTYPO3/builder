@@ -1,0 +1,45 @@
+
+<table class="table table-striped table-hover">
+	<thead>
+	<th><f:translate key="attributes.name" extensionName="Builder" /></th>
+	<th><f:translate key="attributes.value" extensionName="Builder" /></th>
+	</thead>
+	<f:for each="{attributes}" as="attribute" key="attributeName" iteration="iteration">
+		<tr>
+			<td>
+				<f:translate key="providerextension.{attributeName}" default="{attributeName}" extensionName="Builder" />
+			</td>
+			<td>
+				<em>
+					<f:translate key="booleans.{f:if(condition: '{attribute.value} == \'0\'', then: '0', else: attribute.value)}"
+					             default="{attribute.value -> f:format.htmlspecialchars()}" extensionName="Builder" />
+				</em>
+			</td>
+		</tr>
+	</f:for>
+</table>
+<f:if condition="{dry}">
+	<f:else>
+		<h4>Next steps? <em class="muted">Only available in English</em></h4>
+		<p>To begin using your newly created provider extension you should perform the following steps:</p>
+		<ol>
+			<li>Install the extension using the Extension Manager module or TYPO3 CLI commands</li>
+			<li>Include the static TypoScript template in the root template(s) of the TYPO3 site(s) where you wish to use the content/page templates</li>
+			<li>If you included page templates: edit the topmost page(s) where the templates are used and select "Fluidpages" in the "Backend layout" selectors</li>
+			<li>If you included content templates: the templates will automatically be detected and made available in the new content element wizard</li>
+		</ol>
+		<p>Note that if you used EXT:site to generate this provider extension and selected to create pages and resources then all the above steps will have been automatically performed.</p>
+		<p>To begin editing your templates:</p>
+		<ul>
+			<li>Open the <code>Resources/Private/Templates/</code> folder of your generated extensions and start editing</li>
+			<li>Content templates reside in the <code>Content/</code> subfolder</li>
+			<li>Page templates reside in the <code>Page/</code> subfolder</li>
+		</ul>
+		<p>
+			Note that if you used EXT:site to generate this provider extension and selected to create file mount points then you can edit
+			these files through the "file list" module. You can also create such a mount point manually - simply create it as <em>relative</em>
+			to site root and pointing to the <code>typo3conf/ext/{attributes.extensionKey}/Resources/Private/</code> folder.
+		</p>
+		<p>Further documentation can be found online at <a href="https://fluidtypo3.org"><strong>https://fluidtypo3.org</strong></a>.</p>
+	</f:else>
+</f:if>
