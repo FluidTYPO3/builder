@@ -16,7 +16,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'category' => 'misc',
 	'shy' => 0,
 	'version' => '0.0.1',
-	'dependencies' => 'cms,extbase,fluid,flux###dependenciesCsv###',
+	'dependencies' => 'typo3,flux###dependenciesCsv###',
 	'conflicts' => '',
 	'priority' => '',
 	'loadOrder' => '',
@@ -34,10 +34,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'CGLcompliance_note' => '',
 	'constraints' => array(
 		'depends' => array(
-			'typo3' => '###coreMinor###-7.6.99',
-			'cms' => '',
-			'extbase' => '',
-			'fluid' => '',
+			'typo3' => '###coreMinor###-8.1.99',
 			'flux' => '',
 			###dependenciesArray###
 		),
