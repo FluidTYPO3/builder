@@ -23,13 +23,16 @@ namespace FluidTYPO3\Builder\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
+use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
+use FluidTYPO3\Builder\Parser\ExposedTemplateParserLegacy;
 use FluidTYPO3\Builder\Result\FluidParserResult;
 use FluidTYPO3\Builder\Utility\GlobUtility;
+use FluidTYPO3\Flux\Utility\VersionUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Class SyntaxService
@@ -56,14 +59,6 @@ class SyntaxService implements SingletonInterface {
 	}
 
 	/**
-	 * @param TemplateParser $templateParser
-	 * @return void
-	 */
-	public function injectTemplateParser(TemplateParser $templateParser) {
-		$this->templateParser = $templateParser;
-	}
-
-	/**
 	 * Syntax checks a Fluid template file by attempting
 	 * to load the file and retrieve a parsed template, which
 	 * will cause traversal of the entire syntax node tree
@@ -84,9 +79,10 @@ class SyntaxService implements SingletonInterface {
 		/** @var RenderingContext $context */
 		$context = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Rendering\RenderingContext');
 		try {
-			$parsedTemplate = $this->templateParser->parse(file_get_contents($filePathAndFilename));
+			$parser = $this->getTemplateParser($context);
+			$parsedTemplate = $parser->parse(file_get_contents($filePathAndFilename));
 			$result->setLayoutName($parsedTemplate->getLayoutName($context));
-			$result->setNamespaces($this->templateParser->getNamespaces());
+			$result->setNamespaces($parser->getNamespaces());
 			$result->setCompilable($parsedTemplate->isCompilable());
 		} catch (\Exception $error) {
 			$result->setError($error);
@@ -175,6 +171,20 @@ class SyntaxService implements SingletonInterface {
 		$code = 0;
 		exec($command, $output, $code);
 		return $code;
+	}
+
+	/**
+	 * @param RenderingContextInterface $renderingContext
+	 * @return ExposedTemplateParser
+	 */
+	protected function getTemplateParser(RenderingContextInterface $renderingContext) {
+		if (VersionUtility::assertExtensionVersionIsAtLeastVersion('core', 8)) {
+			$exposedTemplateParser = new ExposedTemplateParser();
+			$exposedTemplateParser->setRenderingContext($renderingContext);
+		} else {
+			$exposedTemplateParser = new ExposedTemplateParserLegacy();
+		}
+		return $exposedTemplateParser;
 	}
 
 }

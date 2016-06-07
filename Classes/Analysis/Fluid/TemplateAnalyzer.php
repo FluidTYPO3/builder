@@ -24,8 +24,11 @@ namespace FluidTYPO3\Builder\Analysis\Fluid;
  * ************************************************************* */
 
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
+use FluidTYPO3\Builder\Parser\ExposedTemplateParserLegacy;
 use FluidTYPO3\Builder\Result\ParserResult;
+use FluidTYPO3\Flux\Utility\VersionUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 
 /**
  * Class TemplateAnalyzer
@@ -46,11 +49,6 @@ class TemplateAnalyzer {
 	 * @var array
 	 */
 	protected $messages = array();
-
-	/**
-	 * @var ExposedTemplateParser
-	 */
-	protected $parser;
 
 	/**
 	 * @param ObjectManagerInterface $objectManager
@@ -76,7 +74,7 @@ class TemplateAnalyzer {
 	 */
 	public function analyze($templateString) {
 		/** @var ExposedTemplateParser $parser */
-		$parser = $this->objectManager->get('FluidTYPO3\Builder\Parser\ExposedTemplateParser');
+		$parser = $this->getTemplateParser();
 		$parsedTemplate = $parser->parse($templateString);
 		$metrics = $this->nodeCounter->count($parser, $parsedTemplate);
 		$this->messages = $this->nodeCounter->getMessages();
@@ -92,8 +90,13 @@ class TemplateAnalyzer {
 	/**
 	 * @return ExposedTemplateParser
 	 */
-	public function getParser() {
-		return $this->parser;
+	protected function getTemplateParser() {
+		if (VersionUtility::assertExtensionVersionIsAtLeastVersion('core', 8)) {
+			$exposedTemplateParser = new ExposedTemplateParser();
+			$exposedTemplateParser->setRenderingContext(new RenderingContext());
+		} else {
+			$exposedTemplateParser = new ExposedTemplateParserLegacy();
+		}
+		return $exposedTemplateParser;
 	}
-
 }

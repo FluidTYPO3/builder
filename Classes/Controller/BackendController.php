@@ -29,6 +29,7 @@ use FluidTYPO3\Builder\Result\ParserResult;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -147,7 +148,7 @@ class BackendController extends ActionController {
 		/** @var DocumentTemplate $document */
 		$document = &$GLOBALS['TBE_TEMPLATE'];
 		$resourcePath = $document->backPath . ExtensionManagementUtility::extRelPath('builder') . 'Resources/Public/';
-		$pageRenderer = $document->getPageRenderer();
+		$pageRenderer = new PageRenderer();
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.min.js');
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasTextRenderer.min.js');
 		$pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasAxisTickRenderer.min.js');
