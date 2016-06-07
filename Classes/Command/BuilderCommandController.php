@@ -290,7 +290,7 @@ class BuilderCommandController extends CommandController {
 			if (class_exists($className)) {
 				$parent = $className;
 				while ($parent = get_parent_class($parent)) {
-					if ($parent === 'Tx_Fluid_Core_ViewHelper_AbstractViewHelper' || $parent === 'TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper') {
+					if ($parent === 'TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper' || $parent === 'TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper') {
 						array_push($allViewHelperClassNames, $className);
 					}
 				}
@@ -334,7 +334,7 @@ class BuilderCommandController extends CommandController {
 			$className = $vendor . '\\' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '\ViewHelpers\\' . $classNamePart;
 		} else {
 			$classNamePart = str_replace('/', '_', $stripped);
-			$className = 'Tx_' . ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '_ViewHelpers_' . $classNamePart;
+			$className = ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)) . '\ViewHelpers\\' . $classNamePart;
 		}
 		return $className;
 	}
