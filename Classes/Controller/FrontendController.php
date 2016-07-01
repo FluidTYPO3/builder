@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Controller;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -32,227 +33,246 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 /**
  * Class FrontendController
  */
-class FrontendController extends ActionController {
+class FrontendController extends ActionController
+{
 
-	const MAX_VARIABLE_STRING_BYTES = 100;
-	const MAX_FLUID_TEMPLATE_BYTES = 2048;
-	const ERROR_SECURITY = 1;
+    const MAX_VARIABLE_STRING_BYTES = 100;
+    const MAX_FLUID_TEMPLATE_BYTES = 2048;
+    const ERROR_SECURITY = 1;
 
-	/**
-	 * @var ExtensionService
-	 */
-	protected $extensionService;
+    /**
+     * @var ExtensionService
+     */
+    protected $extensionService;
 
-	/**
-	 * @param ExtensionService $extensionService
-	 * @return void
-	 */
-	public function injectExtensionService(ExtensionService $extensionService) {
-		$this->extensionService = $extensionService;
-	}
+    /**
+     * @param ExtensionService $extensionService
+     * @return void
+     */
+    public function injectExtensionService(ExtensionService $extensionService)
+    {
+        $this->extensionService = $extensionService;
+    }
 
-	/**
-	 * @return void
-	 */
-	public function doodleAction() {
+    /**
+     * @return void
+     */
+    public function doodleAction()
+    {
 
-	}
+    }
 
-	/**
-	 * @param string $fluid
-	 * @param array $variables
-	 * @return void
-	 * @throws \RuntimeException
-	 */
-	public function renderFluidAction($fluid = NULL, array $variables = array()) {
-		$rejection = 'Your variables or fluid template code was rejected for security reasons. You may have performed ';
-		$rejection .= 'one of the following unsafe actions: variables containing an unsafe value or variable size too large, ';
-		$rejection .= 'fluid template attempts to import a namespace (this happens automatically for Fluid, VHS and Flux in';
-		$rejection .= 'this code doodler), fluid template is too large for reasonable handling - or fluid template uses ';
-		$rejection .= 'one or more of an undisclosed list of ViewHelpers which are considered unsafe for public execution.';
-		header('Content-type: application/json');
-		if (FALSE === $this->assertSecureVariables($variables) || FALSE === $this->assertSecureFluidTemplate($fluid)) {
-			$response = array(
-				'message' => $rejection,
-				'code' => self::ERROR_SECURITY
-			);
-			echo json_encode($response);
-		} elseif (FALSE === empty($this->settings['doodle']['renderer']) && !GeneralUtility::_GET('type')) {
-			// Undocumented setting: use an off-site renderer to do the actual Fluid rendering in a protected scope
-			$renderer = $this->settings['doodle']['renderer'];
-			$url = $renderer . '?type=9967';
-			$query = array('tx_builder_render' => $this->request->getArguments());
-			$context = stream_context_create(array(
-				'http' => array(
-					'method' => 'POST',
-					'header' => 'Content-type: application/x-www-form-urlencoded',
-					'content' => http_build_query($query)
-				)
-			));
-			echo file_get_contents($url, FALSE, $context);
-		} else {
-			$fluid = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL . $fluid;
-			$fluid = '{namespace v=FluidTYPO3\\Vhs\\ViewHelpers}' . PHP_EOL . $fluid;
-			try {
-				$templateParser = $this->objectManager->get('FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer');
-				$start = microtime(TRUE);
-				$memoryBefore = memory_get_usage();
-				/** @var \FluidTYPO3\Builder\Result\ParserResult $analysis */
-				$analysis = $templateParser->analyze($fluid);
-				if (FALSE === $this->assertSecureViewHelpers($analysis->getViewHelpers())) {
-					throw new \RuntimeException($rejection, self::ERROR_SECURITY);
-				}
-				$memoryUsage = memory_get_usage() - $memoryBefore;
-				$parseTime = microtime(TRUE) - $start;
-				/** @var StandaloneView $view */
-				$view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
-				$view->setTemplateSource($fluid);
-				$view->assignMultiple($variables);
-				$memoryBefore = memory_get_usage();
-				$start = microtime(TRUE);
-				$rendered = trim($view->render(), PHP_EOL . "\t");
-				$memoryUsageRender = memory_get_usage() - $memoryBefore;
-				$renderTime = microtime(TRUE) - $start;
-				$response = array(
-					'source' => htmlentities($rendered),
-					'preview' => $rendered,
-					'viewhelpers' => $analysis->getViewHelpers(),
-					'analysis' => array_map(function($item) {
-						/** @var Metric $item */
-						return $item->getValue();
-					}, $analysis->getPayload()),
-					'timing' => array(
-						'parse' => (float) number_format($parseTime * 1000, 2),
-						'render' => (float) number_format($renderTime * 1000, 2)
-					),
-					'memory' => array(
-						'parse' => (float) number_format($memoryUsage / 1024, 1),
-						'render' => (float) number_format($memoryUsageRender / 1024, 1)
-					),
-					'variables' => $variables
-				);
-			} catch (\Exception $error) {
-				$response = array(
-					'message' => $error->getMessage(),
-					'code' => $error->getCode()
-				);
-			}
-			echo json_encode($response, JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG);
-		}
-		exit();
-	}
+    /**
+     * @param string $fluid
+     * @param array $variables
+     * @return void
+     * @throws \RuntimeException
+     */
+    public function renderFluidAction($fluid = null, array $variables = [])
+    {
+        $rejection = 'Your variables or fluid template code was rejected for security reasons. You may have performed ';
+        $rejection .= 'one of the following unsafe actions: variables containing an unsafe value or variable size too ';
+        $rejection .= 'large, fluid template attempts to import a namespace (this happens automatically for Fluid, ';
+        $rejection .= 'VHS and Flux in this code doodler), fluid template is too large for reasonable handling - ';
+        $rejection .= 'or fluid template uses one or more of an undisclosed list of ViewHelpers which are considered ';
+        $rejection .= 'unsafe for public execution.';
+        header('Content-type: application/json');
+        if (false === $this->assertSecureVariables($variables) || false === $this->assertSecureFluidTemplate($fluid)) {
+            $response = [
+                'message' => $rejection,
+                'code' => self::ERROR_SECURITY
+            ];
+            echo json_encode($response);
+        } elseif (false === empty($this->settings['doodle']['renderer']) && !GeneralUtility::_GET('type')) {
+            // Undocumented setting: use an off-site renderer to do the actual Fluid rendering in a protected scope
+            $renderer = $this->settings['doodle']['renderer'];
+            $url = $renderer . '?type=9967';
+            $query = ['tx_builder_render' => $this->request->getArguments()];
+            $context = stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => 'Content-type: application/x-www-form-urlencoded',
+                    'content' => http_build_query($query)
+                ]
+            ]);
+            echo file_get_contents($url, false, $context);
+        } else {
+            $fluid = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL . $fluid;
+            $fluid = '{namespace v=FluidTYPO3\\Vhs\\ViewHelpers}' . PHP_EOL . $fluid;
+            try {
+                $templateParser = $this->objectManager->get('FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer');
+                $start = microtime(true);
+                $memoryBefore = memory_get_usage();
+                /** @var \FluidTYPO3\Builder\Result\ParserResult $analysis */
+                $analysis = $templateParser->analyze($fluid);
+                if (false === $this->assertSecureViewHelpers($analysis->getViewHelpers())) {
+                    throw new \RuntimeException($rejection, self::ERROR_SECURITY);
+                }
+                $memoryUsage = memory_get_usage() - $memoryBefore;
+                $parseTime = microtime(true) - $start;
+                /** @var StandaloneView $view */
+                $view = $this->objectManager->get('TYPO3\CMS\Fluid\View\StandaloneView');
+                $view->setTemplateSource($fluid);
+                $view->assignMultiple($variables);
+                $memoryBefore = memory_get_usage();
+                $start = microtime(true);
+                $rendered = trim($view->render(), PHP_EOL . "\t");
+                $memoryUsageRender = memory_get_usage() - $memoryBefore;
+                $renderTime = microtime(true) - $start;
+                $response = [
+                    'source' => htmlentities($rendered),
+                    'preview' => $rendered,
+                    'viewhelpers' => $analysis->getViewHelpers(),
+                    'analysis' => array_map(function ($item) {
+                        /** @var Metric $item */
+                        return $item->getValue();
+                    }, $analysis->getPayload()),
+                    'timing' => [
+                        'parse' => (float) number_format($parseTime * 1000, 2),
+                        'render' => (float) number_format($renderTime * 1000, 2)
+                    ],
+                    'memory' => [
+                        'parse' => (float) number_format($memoryUsage / 1024, 1),
+                        'render' => (float) number_format($memoryUsageRender / 1024, 1)
+                    ],
+                    'variables' => $variables
+                ];
+            } catch (\Exception $error) {
+                $response = [
+                    'message' => $error->getMessage(),
+                    'code' => $error->getCode()
+                ];
+            }
+            echo json_encode($response, JSON_HEX_AMP | JSON_HEX_QUOT | JSON_HEX_TAG);
+        }
+        exit();
+    }
 
-	/**
-	 * @param array $ids
-	 * @return boolean
-	 */
-	protected function assertSecureViewHelpers(array $ids) {
-		foreach ($ids as $id) {
-			// only necessary check: is ViewHelper ID blacklisted?
-			if (TRUE === in_array($id, (array) GeneralUtility::trimExplode(',', $this->settings['doodle']['blacklistedViewHelpers']))) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
+    /**
+     * @param array $ids
+     * @return boolean
+     */
+    protected function assertSecureViewHelpers(array $ids)
+    {
+        foreach ($ids as $id) {
+            // only necessary check: is ViewHelper ID blacklisted?
+            if (in_array($id, GeneralUtility::trimExplode(',', $this->settings['doodle']['blacklistedViewHelpers']))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * @param string $fluid
-	 * @return boolean
-	 */
-	protected function assertSecureFluidTemplate($fluid) {
-		if (self::MAX_FLUID_TEMPLATE_BYTES < strlen($fluid)) {
-			return FALSE;
-		}
-		// check 1: no namespace imports, old school
-		if (FALSE !== strpos($fluid, '{namespace')) {
-			return FALSE;
-		}
-		// check 2: no namespace imports, any occurrence(s) of xmlns imports
-		if (FALSE !== strpos($fluid, 'xmlns:')) {
-			return FALSE;
-		}
-		return TRUE;
-	}
+    /**
+     * @param string $fluid
+     * @return boolean
+     */
+    protected function assertSecureFluidTemplate($fluid)
+    {
+        if (self::MAX_FLUID_TEMPLATE_BYTES < strlen($fluid)) {
+            return false;
+        }
+        // check 1: no namespace imports, old school
+        if (false !== strpos($fluid, '{namespace')) {
+            return false;
+        }
+        // check 2: no namespace imports, any occurrence(s) of xmlns imports
+        if (false !== strpos($fluid, 'xmlns:')) {
+            return false;
+        }
+        return true;
+    }
 
-	/**
-	 * @param array $variables
-	 * @return boolean
-	 */
-	protected function assertSecureVariables(array $variables) {
-		foreach ($variables as $variable) {
-			if (FALSE === $this->assertSecureVariable($variable)) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
+    /**
+     * @param array $variables
+     * @return boolean
+     */
+    protected function assertSecureVariables(array $variables)
+    {
+        foreach ($variables as $variable) {
+            if (false === $this->assertSecureVariable($variable)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * @param mixed $variable
-	 * @return boolean
-	 */
-	protected function assertSecureVariable($variable) {
-		if (TRUE === is_array($variable)) {
-			return $this->assertSecureVariables($variable);
-		}
-		if (TRUE === is_string($variable)) {
-			// check 1: can variable pass for a standard float-in-string?
-			if (FALSE === (boolean) preg_match('/[^0-9\.]+/i', $variable) && (float) $variable == $variable) {
-				return TRUE;
-			}
-			// check 2: enforce maximum string length of 100 characters
-			if (self::MAX_VARIABLE_STRING_BYTES < strlen($variable)) {
-				return FALSE;
-			}
-			// check 3: no paths or escapes whatsoever are allowed, absolute or otherwise
-			if (TRUE === (boolean) preg_match('/[\.\/\\]/i', $variable)) {
-				return FALSE;
-			}
-			// check 4: absolutely no class names of any kind!
-			if (TRUE === class_exists($variable)) {
-				return FALSE;
-			}
-		}
-		return TRUE;
-	}
+    /**
+     * @param mixed $variable
+     * @return boolean
+     */
+    protected function assertSecureVariable($variable)
+    {
+        if (true === is_array($variable)) {
+            return $this->assertSecureVariables($variable);
+        }
+        if (true === is_string($variable)) {
+            // check 1: can variable pass for a standard float-in-string?
+            if (false === (boolean) preg_match('/[^0-9\.]+/i', $variable) && (float) $variable == $variable) {
+                return true;
+            }
+            // check 2: enforce maximum string length of 100 characters
+            if (self::MAX_VARIABLE_STRING_BYTES < strlen($variable)) {
+                return false;
+            }
+            // check 3: no paths or escapes whatsoever are allowed, absolute or otherwise
+            if (true === (boolean) preg_match('/[\.\/\\]/i', $variable)) {
+                return false;
+            }
+            // check 4: absolutely no class names of any kind!
+            if (true === class_exists($variable)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * @param string $filename
-	 * @return string
-	 */
-	public function buildAction($filename) {
-		$parts = pathinfo($filename);
-		$name = str_replace('..', '.', $parts['basename']);
-		$name = trim($name, '.');
-		$extensionKey = pathinfo($filename, PATHINFO_FILENAME);
-		$author = 'Your Name <you@domain.com>';
-		$title = 'Provider extension for Fluid Powered TYPO3';
-		$description = 'Provides templates for pages and content';
-		$controllers = TRUE;
-		$pages = TRUE;
-		$content = TRUE;
-		$backend = FALSE;
-		$vhs = TRUE;
-		$dry = FALSE;
-		$verbose = FALSE;
-		$temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
-		$temporaryFolder = $temporaryBaseFolder . '/' . $extensionKey;
-		$archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
-		GeneralUtility::mkdir_deep($temporaryBaseFolder);
-		$generator = $this->extensionService->buildProviderExtensionGenerator($extensionKey, $author, $title, $description, $controllers, $pages, $content, $backend, $vhs);
-		$generator->setVerbose($verbose);
-		$generator->setDry($dry);
-		$generator->setTargetFolder($temporaryFolder);
-		$generator->generate();
-		$packCommand = 'cd ' . $temporaryBaseFolder . ' && zip -r "' . $extensionKey . '.zip" "' . $extensionKey . '"';
-		exec($packCommand);
-		header('Content-Type: application/zip');
-		header('Content-Disposition: attachment; filename=' . $name);
-		header('Content-Length: ' . filesize($archiveFilePathAndFilename));
-		readfile($archiveFilePathAndFilename);
-		exec('rm -rf ' . $temporaryBaseFolder);
-		exit();
-	}
-
+    /**
+     * @param string $filename
+     * @return string
+     */
+    public function buildAction($filename)
+    {
+        $parts = pathinfo($filename);
+        $name = str_replace('..', '.', $parts['basename']);
+        $name = trim($name, '.');
+        $extensionKey = pathinfo($filename, PATHINFO_FILENAME);
+        $author = 'Your Name <you@domain.com>';
+        $title = 'Provider extension for Fluid Powered TYPO3';
+        $description = 'Provides templates for pages and content';
+        $controllers = true;
+        $pages = true;
+        $content = true;
+        $backend = false;
+        $vhs = true;
+        $dry = false;
+        $verbose = false;
+        $temporaryBaseFolder = GeneralUtility::getFileAbsFileName('typo3temp/builder/' . uniqid('provider_'));
+        $temporaryFolder = $temporaryBaseFolder . '/' . $extensionKey;
+        $archiveFilePathAndFilename = $temporaryBaseFolder . '/' . $extensionKey . '.zip';
+        GeneralUtility::mkdir_deep($temporaryBaseFolder);
+        $generator = $this->extensionService->buildProviderExtensionGenerator(
+            $extensionKey,
+            $author,
+            $title,
+            $description,
+            $controllers,
+            $pages,
+            $content,
+            $backend,
+            $vhs
+        );
+        $generator->setVerbose($verbose);
+        $generator->setDry($dry);
+        $generator->setTargetFolder($temporaryFolder);
+        $generator->generate();
+        $packCommand = 'cd ' . $temporaryBaseFolder . ' && zip -r "' . $extensionKey . '.zip" "' . $extensionKey . '"';
+        exec($packCommand);
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename=' . $name);
+        header('Content-Length: ' . filesize($archiveFilePathAndFilename));
+        readfile($archiveFilePathAndFilename);
+        exec('rm -rf ' . $temporaryBaseFolder);
+        exit();
+    }
 }

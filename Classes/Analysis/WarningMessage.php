@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -29,16 +30,17 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  * Class WarningMessage
  * @package FluidTYPO3\Builder\Analysis
  */
-class WarningMessage extends AbstractMessage {
+class WarningMessage extends AbstractMessage
+{
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::WARNING;
+    /**
+     * @var integer
+     */
+    protected $severity = FlashMessage::WARNING;
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Metric value (%s) is above tolerance level (notice: %s, warning: %s) - you should take measures to lower this metric.';
-
+    /**
+     * @var string
+     */
+    protected $message = 'Metric value (%s) is above tolerance level (notice: %s, warning: %s) - 
+        you should take measures to lower this metric.';
 }

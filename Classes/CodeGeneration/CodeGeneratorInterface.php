@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\CodeGeneration;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,33 +24,33 @@ namespace FluidTYPO3\Builder\CodeGeneration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-interface CodeGeneratorInterface {
+interface CodeGeneratorInterface
+{
 
-	/**
-	 * @param boolean $dry
-	 * @return void
-	 * @abstract
-	 */
-	public function setDry($dry);
+    /**
+     * @param boolean $dry
+     * @return void
+     * @abstract
+     */
+    public function setDry($dry);
 
-	/**
-	 * @param boolean $verbose
-	 * @return void
-	 * @abstract
-	 */
-	public function setVerbose($verbose);
+    /**
+     * @param boolean $verbose
+     * @return void
+     * @abstract
+     */
+    public function setVerbose($verbose);
 
-	/**
-	 * @return string
-	 * @abstract
-	 */
-	public function generate();
+    /**
+     * @return string
+     * @abstract
+     */
+    public function generate();
 
-	/**
-	 * @param string $filePathAndFilename
-	 * @return void
-	 * @abstract
-	 */
-	public function save($filePathAndFilename);
-
+    /**
+     * @param string $filePathAndFilename
+     * @return void
+     * @abstract
+     */
+    public function save($filePathAndFilename);
 }

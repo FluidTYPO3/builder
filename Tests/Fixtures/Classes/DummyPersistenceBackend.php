@@ -7,14 +7,15 @@ use TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface;
 /**
  * Class DummyPersistenceBackend
  */
-class DummyPersistenceBackend extends Typo3DbBackend {
+class DummyPersistenceBackend extends Typo3DbBackend
+{
 
-	/**
-	 * @param PersistenceManagerInterface $manager
-	 * @return void
-	 */
-	public function setPersistenceManager(PersistenceManagerInterface $manager) {
+    /**
+     * @param PersistenceManagerInterface $manager
+     * @return void
+     */
+    public function setPersistenceManager(PersistenceManagerInterface $manager)
+    {
 
-	}
-
+    }
 }

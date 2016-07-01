@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,39 +24,39 @@ namespace FluidTYPO3\Builder\Analysis;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-interface MessageInterface {
+interface MessageInterface
+{
 
-	/**
-	 * @param string $message
-	 * @return MessageInterface
-	 */
-	public function setMessage($message);
+    /**
+     * @param string $message
+     * @return MessageInterface
+     */
+    public function setMessage($message);
 
-	/**
-	 * @return string
-	 */
-	public function getMessage();
+    /**
+     * @return string
+     */
+    public function getMessage();
 
-	/**
-	 * @param mixed $payload
-	 * @return MessageInterface
-	 */
-	public function setPayload($payload);
+    /**
+     * @param mixed $payload
+     * @return MessageInterface
+     */
+    public function setPayload($payload);
 
-	/**
-	 * @return mixed
-	 */
-	public function getPayload();
+    /**
+     * @return mixed
+     */
+    public function getPayload();
 
-	/**
-	 * @param integer $severity
-	 * @return MessageInterface
-	 */
-	public function setSeverity($severity);
+    /**
+     * @param integer $severity
+     * @return MessageInterface
+     */
+    public function setSeverity($severity);
 
-	/**
-	 * @return integer
-	 */
-	public function getSeverity();
-
+    /**
+     * @return integer
+     */
+    public function getSeverity();
 }

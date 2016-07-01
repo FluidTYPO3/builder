@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Service;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,39 +31,41 @@ use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
  * Class ClassAnalysisService
  * @package FluidTYPO3\Builder\Service
  */
-class ClassAnalysisService implements SingletonInterface {
+class ClassAnalysisService implements SingletonInterface
+{
 
-	/**
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @param ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * @param mixed $classOrInstance
-	 * @param string $methodName
-	 * @return boolean
-	 */
-	public function assertClassMethodHasRequiredArguments($classOrInstance, $methodName) {
-		if (FALSE === is_object($classOrInstance)) {
-			$classOrInstance = $this->objectManager->get($classOrInstance);
-		}
-		$reflection = new \ReflectionClass($classOrInstance);
-		$methodReflection = $reflection->getMethod($methodName);
-		$arguments = $methodReflection->getParameters();
-		foreach ($arguments as $argumentReflection) {
-			if (FALSE === $argumentReflection->isOptional()) {
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
+    /**
+     * @param mixed $classOrInstance
+     * @param string $methodName
+     * @return boolean
+     */
+    public function assertClassMethodHasRequiredArguments($classOrInstance, $methodName)
+    {
+        if (false === is_object($classOrInstance)) {
+            $classOrInstance = $this->objectManager->get($classOrInstance);
+        }
+        $reflection = new \ReflectionClass($classOrInstance);
+        $methodReflection = $reflection->getMethod($methodName);
+        $arguments = $methodReflection->getParameters();
+        foreach ($arguments as $argumentReflection) {
+            if (false === $argumentReflection->isOptional()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

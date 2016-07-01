@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\CodeGeneration;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,36 +24,36 @@ namespace FluidTYPO3\Builder\CodeGeneration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-interface ClassGeneratorInterface extends CodeGeneratorInterface {
+interface ClassGeneratorInterface extends CodeGeneratorInterface
+{
 
-	/**
-	 * @param string $name
-	 * @return void
-	 * @abstract
-	 */
-	public function setClassName($name);
+    /**
+     * @param string $name
+     * @return void
+     * @abstract
+     */
+    public function setClassName($name);
 
-	/**
-	 * @param $attributes
-	 * @return void
-	 * @abstract
-	 */
-	public function setClassAttributes($attributes);
+    /**
+     * @param $attributes
+     * @return void
+     * @abstract
+     */
+    public function setClassAttributes($attributes);
 
-	/**
-	 * @param string $templateIdentifier
-	 * @param array $variables
-	 * @return void
-	 * @abstract
-	 */
-	public function appendMethodFromSourceTemplate($templateIdentifier, $variables);
+    /**
+     * @param string $templateIdentifier
+     * @param array $variables
+     * @return void
+     * @abstract
+     */
+    public function appendMethodFromSourceTemplate($templateIdentifier, $variables);
 
-	/**
-	 * @param string $name
-	 * @param string $type
-	 * @return void
-	 * @abstract
-	 */
-	public function appendProperty($name, $type);
-
+    /**
+     * @param string $name
+     * @param string $type
+     * @return void
+     * @abstract
+     */
+    public function appendProperty($name, $type);
 }

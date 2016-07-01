@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Parser;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -32,31 +33,48 @@ use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
  * Replacement TemplateCompiler intended solely for analysis
  * purposes. Does not work to compile templates normally!
  */
-class ExposedTemplateCompiler extends TemplateCompiler {
+class ExposedTemplateCompiler extends TemplateCompiler
+{
 
-	/**
-	 * @param ParsingState $parsingState
-	 * @return string
-	 */
-	public function compile(ParsingState $parsingState) {
-		$identifier = spl_object_hash($parsingState);
-		$identifier = $this->sanitizeIdentifier($identifier);
-		$this->variableCounter = 0;
-		$generatedRenderFunctions = '';
+    /**
+     * @param ParsingState $parsingState
+     * @return string
+     */
+    public function compile(ParsingState $parsingState)
+    {
+        $identifier = spl_object_hash($parsingState);
+        $identifier = $this->sanitizeIdentifier($identifier);
+        $this->variableCounter = 0;
+        $generatedRenderFunctions = '';
 
-		if ($parsingState->getVariableContainer()->exists('sections')) {
-			$sections = $parsingState->getVariableContainer()->get('sections');
-			// TODO: refactor to $parsedTemplate->getSections()
-			foreach ($sections as $sectionName => $sectionRootNode) {
-				$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($sectionRootNode), 'section_' . sha1($sectionName), 'section ' . $sectionName);
-			}
-		}
-		$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($parsingState->getRootNode()), 'render', 'Main Render function');
-		$convertedLayoutNameNode = $parsingState->hasLayout() ? $this->convert($parsingState->getLayoutNameNode()) : array('initialization' => '', 'execution' => 'NULL');
+        if ($parsingState->getVariableContainer()->exists('sections')) {
+            $sections = $parsingState->getVariableContainer()->get('sections');
+            // TODO: refactor to $parsedTemplate->getSections()
+            foreach ($sections as $sectionName => $sectionRootNode) {
+                $generatedRenderFunctions .= $this->generateCodeForSection(
+                    $this->convertListOfSubNodes($sectionRootNode),
+                    'section_' . sha1($sectionName),
+                    'section ' . $sectionName
+                );
+            }
+        }
+        $generatedRenderFunctions .= $this->generateCodeForSection(
+            $this->convertListOfSubNodes($parsingState->getRootNode()),
+            'render',
+            'Main Render function'
+        );
+        if ($parsingState->hasLayout() && method_exists($parsingState, 'getLayoutNameNode')) {
+            $convertedLayoutNameNode = $this->convert($parsingState->getLayoutNameNode());
+        } elseif ($parsingState->hasLayout() && method_exists($parsingState, 'getLayoutName')) {
+            $convertedLayoutNameNode = $parsingState->getLayoutName($this->renderingContext);
+        } else {
+            $convertedLayoutNameNode = ['initialization' => '', 'execution' => 'NULL'];
+        }
 
-		$classDefinition = 'class FluidCache_' . $identifier . ' extends \TYPO3\CMS\Fluid\Core\Compiler\AbstractCompiledTemplate';
+        $classDefinition = 'class FluidCache_' . $identifier .
+            ' extends \\TYPO3\\CMS\\Fluid\\Core\\Compiler\\AbstractCompiledTemplate';
 
-		$templateCode = '
+        $templateCode = '
 %s {
 
 public function getVariableContainer() {
@@ -75,42 +93,59 @@ return %s;
 
 }
 ';
-		$templateCode = sprintf($templateCode,
-			$classDefinition,
-			$convertedLayoutNameNode['initialization'],
-			$convertedLayoutNameNode['execution'],
-			($parsingState->hasLayout() ? 'TRUE' : 'FALSE'),
-			$generatedRenderFunctions);
-		return $templateCode;
-	}
+        $templateCode = sprintf(
+            $templateCode,
+            $classDefinition,
+            $convertedLayoutNameNode['initialization'],
+            $convertedLayoutNameNode['execution'],
+            ($parsingState->hasLayout() ? 'TRUE' : 'FALSE'),
+            $generatedRenderFunctions
+        );
+        return $templateCode;
+    }
 
-	/**
-	 * Overridden "store" method does not store - instead, it returns
-	 * the compiled result.
-	 *
-	 * @param string $identifier
-	 * @param \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState
-	 * @return void
-	 */
-	public function store($identifier, \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState)
-	{
-		$identifier = $this->sanitizeIdentifier($identifier);
-		$this->variableCounter = 0;
-		$generatedRenderFunctions = '';
+    /**
+     * Overridden "store" method does not store - instead, it returns
+     * the compiled result.
+     *
+     * @param string $identifier
+     * @param \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState
+     * @return void
+     */
+    public function store($identifier, \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState)
+    {
+        $identifier = $this->sanitizeIdentifier($identifier);
+        $this->variableCounter = 0;
+        $generatedRenderFunctions = '';
 
-		if ($parsingState->getVariableContainer()->exists('sections')) {
-			$sections = $parsingState->getVariableContainer()->get('sections');
-			// @todo refactor to $parsedTemplate->getSections()
-			foreach ($sections as $sectionName => $sectionRootNode) {
-				$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($sectionRootNode), 'section_' . sha1($sectionName), 'section ' . $sectionName);
-			}
-		}
-		$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($parsingState->getRootNode()), 'render', 'Main Render function');
-		$convertedLayoutNameNode = $parsingState->hasLayout() ? $this->convert($parsingState->getLayoutNameNode()) : array('initialization' => '', 'execution' => 'NULL');
+        if ($parsingState->getVariableContainer()->exists('sections')) {
+            $sections = $parsingState->getVariableContainer()->get('sections');
+            // @todo refactor to $parsedTemplate->getSections()
+            foreach ($sections as $sectionName => $sectionRootNode) {
+                $generatedRenderFunctions .= $this->generateCodeForSection(
+                    $this->convertListOfSubNodes($sectionRootNode),
+                    'section_' . sha1($sectionName),
+                    'section ' . $sectionName
+                );
+            }
+        }
+        $generatedRenderFunctions .= $this->generateCodeForSection(
+            $this->convertListOfSubNodes($parsingState->getRootNode()),
+            'render',
+            'Main Render function'
+        );
+        if ($parsingState->hasLayout() && method_exists($parsingState, 'getLayoutNameNode')) {
+            $convertedLayoutNameNode = $this->convert($parsingState->getLayoutNameNode());
+        } elseif ($parsingState->hasLayout() && method_exists($parsingState, 'getLayoutName')) {
+            $convertedLayoutNameNode = $parsingState->getLayoutName($this->renderingContext);
+        } else {
+            $convertedLayoutNameNode = ['initialization' => '', 'execution' => 'NULL'];
+        }
 
-		$classDefinition = 'class FluidCache_' . $identifier . ' extends \\TYPO3\\CMS\\Fluid\\Core\\Compiler\\AbstractCompiledTemplate';
+        $classDefinition = 'class FluidCache_' . $identifier .
+            ' extends \\TYPO3\\CMS\\Fluid\\Core\\Compiler\\AbstractCompiledTemplate';
 
-		$templateCode = <<<EOD
+        $templateCode = <<<EOD
 %s {
 
 public function getVariableContainer() {
@@ -130,12 +165,13 @@ return %s;
 
 }
 EOD;
-		return sprintf($templateCode,
-			$classDefinition,
-			$convertedLayoutNameNode['initialization'],
-			$convertedLayoutNameNode['execution'],
-			($parsingState->hasLayout() ? 'TRUE' : 'FALSE'),
-			$generatedRenderFunctions);
-	}
-
+        return sprintf(
+            $templateCode,
+            $classDefinition,
+            $convertedLayoutNameNode['initialization'],
+            $convertedLayoutNameNode['execution'],
+            ($parsingState->hasLayout() ? 'TRUE' : 'FALSE'),
+            $generatedRenderFunctions
+        );
+    }
 }

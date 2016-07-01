@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\Controller;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -29,22 +30,24 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Class FrontendControllerTest
  */
-class FrontendControllerTest extends BaseTestCase {
+class FrontendControllerTest extends BaseTestCase
+{
 
-	/**
-	 * @test
-	 */
-	public function injectsExpectedProperties() {
-		$class = $this->getInstanceClassName();
-		$instance = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get($class);
-		$this->assertAttributeInstanceOf('FluidTYPO3\\Builder\\Service\\ExtensionService', 'extensionService', $instance);
-	}
+    /**
+     * @test
+     */
+    public function injectsExpectedProperties()
+    {
+        $class = $this->getInstanceClassName();
+        $instance = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get($class);
+        $this->assertAttributeInstanceOf('FluidTYPO3\\Builder\\Service\\ExtensionService', 'extensionService', $instance);
+    }
 
-	/**
-	 * @return string
-	 */
-	protected function getInstanceClassName() {
-		return substr(str_replace('Tests\\Unit\\', '', get_class($this)), 0, -4);
-	}
-
+    /**
+     * @return string
+     */
+    protected function getInstanceClassName()
+    {
+        return substr(str_replace('Tests\\Unit\\', '', get_class($this)), 0, -4);
+    }
 }

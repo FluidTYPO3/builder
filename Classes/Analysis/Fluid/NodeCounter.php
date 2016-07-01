@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis\Fluid;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -118,265 +119,281 @@ use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
  * instanciated to render the template completely. A low value
  * here is naturally desirable - as low as possible, in fact.
  */
-class NodeCounter {
+class NodeCounter
+{
 
-	const METRIC_TOTAL_SPLITS = 'SplitsTotal';
-	const METRIC_TOTAL_NODES = 'NodesTotal';
-	const METRIC_CONDITION_NODES = 'ConditionsTotal';
-	const METRIC_MAXIMUM_ARGUMENT_COUNT = 'MaxArguments';
-	const METRIC_NODES_PER_SECTION_AVERAGE = 'NodesPerSectionAverage';
-	const METRIC_NODES_PER_SECTION_MAXIMUM = 'NodesPerSectionMaximum';
-	const METRIC_CACHED_SIZE = 'CachedSize';
-	const METRIC_SECTIONS = 'SectionNodes';
-	const METRIC_VIEWHELPERS = 'ViewHelperNodes';
-	const METRIC_MAXIMUM_NESTING_LEVEL = 'MaxNestingLevel';
+    const METRIC_TOTAL_SPLITS = 'SplitsTotal';
+    const METRIC_TOTAL_NODES = 'NodesTotal';
+    const METRIC_CONDITION_NODES = 'ConditionsTotal';
+    const METRIC_MAXIMUM_ARGUMENT_COUNT = 'MaxArguments';
+    const METRIC_NODES_PER_SECTION_AVERAGE = 'NodesPerSectionAverage';
+    const METRIC_NODES_PER_SECTION_MAXIMUM = 'NodesPerSectionMaximum';
+    const METRIC_CACHED_SIZE = 'CachedSize';
+    const METRIC_SECTIONS = 'SectionNodes';
+    const METRIC_VIEWHELPERS = 'ViewHelperNodes';
+    const METRIC_MAXIMUM_NESTING_LEVEL = 'MaxNestingLevel';
 
-	/**
-	 * @var ObjectManagerInterface
-	 */
-	protected $objectManager;
+    /**
+     * @var ObjectManagerInterface
+     */
+    protected $objectManager;
 
-	/**
-	 * @param ObjectManagerInterface $objectManager
-	 * @return void
-	 */
-	public function injectObjectManager(ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
+    /**
+     * @param ObjectManagerInterface $objectManager
+     * @return void
+     */
+    public function injectObjectManager(ObjectManagerInterface $objectManager)
+    {
+        $this->objectManager = $objectManager;
+    }
 
-	/**
-	 * Threshold values causing different severities; array($ok, $notice, $warning).
-	 * Filled by initializeObject using initial values of $this->metrics just below.
-	 *
-	 * @var array
-	 */
-	protected $thresholds = array();
+    /**
+     * Threshold values causing different severities; [$ok, $notice, $warning).
+     * Filled by initializeObject using initial values of $this->metrics just below.
+     *
+     * @var array
+     */
+    protected $thresholds = [];
 
-	/**
-	 * @var Metric[]
-	 */
-	protected $metrics = array(
-		self::METRIC_TOTAL_SPLITS => array(150, 300),
-		self::METRIC_TOTAL_NODES => array(100, 250),
-		self::METRIC_VIEWHELPERS => array(50, 100),
-		self::METRIC_SECTIONS => array(8, 15),
-		self::METRIC_CONDITION_NODES => array(10, 25),
-		self::METRIC_NODES_PER_SECTION_AVERAGE => array(8, 15),
-		self::METRIC_NODES_PER_SECTION_MAXIMUM => array(15, 30),
-		self::METRIC_CACHED_SIZE => array(250, 500),
-		self::METRIC_MAXIMUM_ARGUMENT_COUNT => array(8, 12),
-		self::METRIC_MAXIMUM_NESTING_LEVEL => array(15, 25),
-	);
+    /**
+     * @var Metric[]
+     */
+    protected $metrics = [
+        self::METRIC_TOTAL_SPLITS => [150, 300],
+        self::METRIC_TOTAL_NODES => [100, 250],
+        self::METRIC_VIEWHELPERS => [50, 100],
+        self::METRIC_SECTIONS => [8, 15],
+        self::METRIC_CONDITION_NODES => [10, 25],
+        self::METRIC_NODES_PER_SECTION_AVERAGE => [8, 15],
+        self::METRIC_NODES_PER_SECTION_MAXIMUM => [15, 30],
+        self::METRIC_CACHED_SIZE => [250, 500],
+        self::METRIC_MAXIMUM_ARGUMENT_COUNT => [8, 12],
+        self::METRIC_MAXIMUM_NESTING_LEVEL => [15, 25],
+    ];
 
-	/**
-	 * @return void
-	 */
-	public function initializeObject() {
-		foreach ($this->metrics as $metricName => $thresholds) {
-			$this->metrics[$metricName] = $this->objectManager->get('FluidTYPO3\Builder\Analysis\Metric')->setName($metricName)->setValue(0);
-			$this->thresholds[$metricName] = $thresholds;
-		}
-	}
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        foreach ($this->metrics as $metricName => $thresholds) {
+            $this->metrics[$metricName] = $this->objectManager->get(Metric::class)->setName($metricName)->setValue(0);
+            $this->thresholds[$metricName] = $thresholds;
+        }
+    }
 
-	/**
-	 * @param ExposedTemplateParser $parser
-	 * @param mixed $parsedTemplate
-	 * @return Metric[]
-	 */
-	public function count(ExposedTemplateParser $parser, $parsedTemplate) {
-		$method = new \ReflectionMethod($parser, 'buildObjectTree');
-		$method->setAccessible(TRUE);
-		$splitTemplate = $parser->getSplitTemplate();
-		$parsingState = $method->invokeArgs($parser, array($splitTemplate, new RenderingContext()));
-		$objectTree = $parsingState->getRootNode()->getChildNodes();
-		try {
-			if (FALSE === $parsedTemplate->isCompilable()) {
-				$this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
-			} else {
-				/** @var ExposedTemplateCompiler $compiler */
-				$compiler = $this->getTemplateCompiler();
-				if (method_exists($compiler, 'store')) {
-					$code = $compiler->store('testcompile_' . sha1(microtime(TRUE)), $parsingState);
-				} else {
-					$code = $compiler->compile($parsingState);
-				}
-				$this->set(self::METRIC_CACHED_SIZE, round(mb_strlen($code) / 1024, 1));
-			}
+    /**
+     * @param ExposedTemplateParser $parser
+     * @param mixed $parsedTemplate
+     * @return Metric[]
+     */
+    public function count(ExposedTemplateParser $parser, $parsedTemplate)
+    {
+        $method = new \ReflectionMethod($parser, 'buildObjectTree');
+        $method->setAccessible(true);
+        $splitTemplate = $parser->getSplitTemplate();
+        $parsingState = $method->invokeArgs($parser, [$splitTemplate, new RenderingContext()]);
+        $objectTree = $parsingState->getRootNode()->getChildNodes();
+        try {
+            if (false === $parsedTemplate->isCompilable()) {
+                $this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
+            } else {
+                /** @var ExposedTemplateCompiler $compiler */
+                $compiler = $this->getTemplateCompiler();
+                if (method_exists($compiler, 'store')) {
+                    $code = $compiler->store('testcompile_' . sha1(microtime(true)), $parsingState);
+                } else {
+                    $code = $compiler->compile($parsingState);
+                }
+                $this->set(self::METRIC_CACHED_SIZE, round(mb_strlen($code) / 1024, 1));
+            }
+        } catch (\TYPO3Fluid\Fluid\Core\StopCompilingException $error) {
+            $this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
+        }
+        // traversals, cumulatively increments $this->nodeCounter values.
+        $this->determineTotalNodeCount($objectTree);
+        $this->determineMaximumArgumentCount($objectTree);
+        $this->determineMaximumNestingLevel($objectTree);
+        $this->analyzePossibleSectionNodes($objectTree);
+        // counting, integers which we set directly into $this->nodeCounter values.
+        $this->set(self::METRIC_TOTAL_SPLITS, count($splitTemplate));
+        $this->evaluate();
+        return $this->metrics;
+    }
 
-		} catch (\TYPO3Fluid\Fluid\Core\StopCompilingException $error) {
-			$this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
-		}
-		// traversals, cumulatively increments $this->nodeCounter values.
-		$this->determineTotalNodeCount($objectTree);
-		$this->determineMaximumArgumentCount($objectTree);
-		$this->determineMaximumNestingLevel($objectTree);
-		$this->analyzePossibleSectionNodes($objectTree);
-		// counting, integers which we set directly into $this->nodeCounter values.
-		$this->set(self::METRIC_TOTAL_SPLITS, count($splitTemplate));
-		$this->evaluate();
-		return $this->metrics;
-	}
+    /**
+     * @return ExposedTemplateCompiler
+     */
+    protected function getTemplateCompiler()
+    {
+        if ($this->assertCoreVersionAtLeast(8)) {
+            $compiler = new TemplateCompiler();
+            $compiler->setRenderingContext(new RenderingContext());
+            return $compiler;
+        }
+        return $this->objectManager->get('FluidTYPO3\Builder\Parser\ExposedTemplateCompiler');
+    }
 
-	/**
-	 * @return ExposedTemplateCompiler
-	 */
-	protected function getTemplateCompiler() {
-		if ($this->assertCoreVersionAtLeast(8)) {
-			$compiler = new TemplateCompiler();
-			$compiler->setRenderingContext(new RenderingContext());
-			return $compiler;
-		}
-		return $this->objectManager->get('FluidTYPO3\Builder\Parser\ExposedTemplateCompiler');
-	}
+    /**
+     * @param string $counter
+     * @param mixed $value
+     * @return NodeCounter
+     */
+    public function set($counter, $value)
+    {
+        $this->metrics[$counter]->setValue($value);
+        return $this;
+    }
 
-	/**
-	 * @param string $counter
-	 * @param mixed $value
-	 * @return NodeCounter
-	 */
-	public function set($counter, $value) {
-		$this->metrics[$counter]->setValue($value);
-		return $this;
-	}
+    /**
+     * @param string $counter
+     * @return Metric
+     */
+    public function get($counter)
+    {
+        return $this->metrics[$counter];
+    }
 
-	/**
-	 * @param string $counter
-	 * @return Metric
-	 */
-	public function get($counter) {
-		return $this->metrics[$counter];
-	}
+    /**
+     * @return MessageInterface[]
+     */
+    public function getMessages()
+    {
+        /** @var MessageInterface[] $messages */
+        $messages = [];
+        foreach ($this->metrics as $metric) {
+            array_merge($messages, $metric->getMessages());
+        }
+        return $messages;
+    }
 
-	/**
-	 * @return MessageInterface[]
-	 */
-	public function getMessages() {
-		/** @var MessageInterface[] $messages */
-		$messages = array();
-		foreach ($this->metrics as $metric) {
-			array_merge($messages, $metric->getMessages());
-		}
-		return $messages;
-	}
-
-	/**
-	 * @param NodeInterface[] $nodes
-	 * @return void
-	 */
-	protected function analyzePossibleSectionNodes($nodes) {
-		$sectionNodeCounts = array();
-		foreach ($nodes as $node) {
-			if (TRUE === $node instanceof ViewHelperNode) {
+    /**
+     * @param NodeInterface[] $nodes
+     * @return void
+     */
+    protected function analyzePossibleSectionNodes($nodes)
+    {
+        $sectionNodeCounts = [];
+        foreach ($nodes as $node) {
+            if (true === $node instanceof ViewHelperNode) {
                 /** @var ViewHelperNode $node */
-				$instance = $node->getUninitializedViewHelper();
-				if (TRUE === $instance instanceof SectionViewHelper) {
-					array_push($sectionNodeCounts, $this->countNodesRecursive($node->getChildNodes()));
-				}
-			}
-		}
-		if (0 < count($sectionNodeCounts)) {
-			$this->set(self::METRIC_NODES_PER_SECTION_MAXIMUM, max($sectionNodeCounts));
-			$this->set(self::METRIC_NODES_PER_SECTION_AVERAGE, array_sum($sectionNodeCounts) / count($sectionNodeCounts));
-		}
-	}
+                $instance = $node->getUninitializedViewHelper();
+                if (true === $instance instanceof SectionViewHelper) {
+                    array_push($sectionNodeCounts, $this->countNodesRecursive($node->getChildNodes()));
+                }
+            }
+        }
+        if (0 < count($sectionNodeCounts)) {
+            $this->set(self::METRIC_NODES_PER_SECTION_MAXIMUM, max($sectionNodeCounts));
+            $this->set(
+                self::METRIC_NODES_PER_SECTION_AVERAGE,
+                array_sum($sectionNodeCounts) / count($sectionNodeCounts)
+            );
+        }
+    }
 
-	/**
-	 * @param NodeInterface[] $nodes
-	 * @return integer
-	 */
-	protected function countNodesRecursive($nodes) {
-		$count = 0;
-		foreach ($nodes as $node) {
-			++ $count;
-			$this->countNodesRecursive($node->getChildNodes());
-		}
-		return $count;
-	}
+    /**
+     * @param NodeInterface[] $nodes
+     * @return integer
+     */
+    protected function countNodesRecursive($nodes)
+    {
+        $count = 0;
+        foreach ($nodes as $node) {
+            ++ $count;
+            $this->countNodesRecursive($node->getChildNodes());
+        }
+        return $count;
+    }
 
-	/**
-	 * @param NodeInterface[] $nodes
-	 * @return void
-	 */
-	protected function determineTotalNodeCount($nodes) {
-		foreach ($nodes as $node) {
-			$numberOfChildNodes = $this->determineTotalNodeCount($node->getChildNodes());
-			// increment: count this node and its child nodes
-			$this->get(self::METRIC_TOTAL_NODES)->increment(1 + $numberOfChildNodes);
-			if (TRUE === $node instanceof ViewHelperNode) {
-				/** @var ViewHelperNode $node */
-				$this->get(self::METRIC_VIEWHELPERS)->increment();
-				$instance = $node->getUninitializedViewHelper();
-				if (TRUE === $instance instanceof AbstractConditionViewHelper) {
-					$this->get(self::METRIC_CONDITION_NODES)->increment();
-				} elseif (TRUE === $instance instanceof SectionViewHelper) {
-					$this->get(self::METRIC_SECTIONS)->increment();
-				}
-				$arguments = $node->getArguments();
-				$numberOfArgumentNodes = $this->determineTotalNodeCount($arguments);
-				$this->get(self::METRIC_TOTAL_NODES)->increment($numberOfArgumentNodes);
-			}
-		}
-	}
-
-	/**
-	 * @param NodeInterface[] $nodes
-	 * @param integer $level
-	 * @return void
-	 */
-	protected function determineMaximumNestingLevel($nodes, $level = 0) {
-		$this->get(self::METRIC_MAXIMUM_NESTING_LEVEL)->setOnlyIfHigher($level);
-		foreach ($nodes as $node) {
-			$this->determineMaximumNestingLevel($node->getChildNodes(), $level + 1);
-		}
-	}
-
-	/**
-	 * @param NodeInterface[] $nodes
-	 * @return void
-	 */
-	protected function determineMaximumArgumentCount($nodes) {
-		foreach ($nodes as $node) {
-			if (TRUE === $node instanceof ViewHelperNode) {
+    /**
+     * @param NodeInterface[] $nodes
+     * @return void
+     */
+    protected function determineTotalNodeCount($nodes)
+    {
+        foreach ($nodes as $node) {
+            $numberOfChildNodes = $this->determineTotalNodeCount($node->getChildNodes());
+            // increment: count this node and its child nodes
+            $this->get(self::METRIC_TOTAL_NODES)->increment(1 + $numberOfChildNodes);
+            if (true === $node instanceof ViewHelperNode) {
                 /** @var ViewHelperNode $node */
-				$arguments = $node->getArguments();
-				$this->get(self::METRIC_MAXIMUM_ARGUMENT_COUNT)->setOnlyIfHigher(count($arguments));
-				$this->determineMaximumArgumentCount($arguments);
-			}
-			$this->determineMaximumArgumentCount($node->getChildNodes());
-		}
-	}
+                $this->get(self::METRIC_VIEWHELPERS)->increment();
+                $instance = $node->getUninitializedViewHelper();
+                if (true === $instance instanceof AbstractConditionViewHelper) {
+                    $this->get(self::METRIC_CONDITION_NODES)->increment();
+                } elseif (true === $instance instanceof SectionViewHelper) {
+                    $this->get(self::METRIC_SECTIONS)->increment();
+                }
+                $arguments = $node->getArguments();
+                $numberOfArgumentNodes = $this->determineTotalNodeCount($arguments);
+                $this->get(self::METRIC_TOTAL_NODES)->increment($numberOfArgumentNodes);
+            }
+        }
+    }
 
-	/**
-	 * Evaluates all collected Metrics against defined
-	 * threshold values, adding messages as needed.
-	 *
-	 * @return void
-	 */
-	public function evaluate() {
-		/** @var MessageInterface $message */
-		foreach ($this->metrics as $metricName => $metric) {
-			list ($notice, $warning) = $this->thresholds[$metricName];
-			$value = $metric->getValue();
-			if ($value <= $notice) {
-				$message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\OkMessage');
-			} elseif ($value <= $warning) {
-				$message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\NoticeMessage');
-			} else {
-				$message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\WarningMessage');
-			}
-			$message->setPayload(array_merge(array($value), $this->thresholds[$metricName]));
-			$metric->addMessage($message);
-		}
-	}
+    /**
+     * @param NodeInterface[] $nodes
+     * @param integer $level
+     * @return void
+     */
+    protected function determineMaximumNestingLevel($nodes, $level = 0)
+    {
+        $this->get(self::METRIC_MAXIMUM_NESTING_LEVEL)->setOnlyIfHigher($level);
+        foreach ($nodes as $node) {
+            $this->determineMaximumNestingLevel($node->getChildNodes(), $level + 1);
+        }
+    }
 
-	/**
-	 * @param integer $majorVersion
-	 * @param integer $minorVersion
-	 * @return boolean
-	 */
-	protected function assertCoreVersionAtLeast($majorVersion, $minorVersion = 0) {
-		list ($major, $minor, ) = explode('.', TYPO3_version);
-		return ($major >= $majorVersion && $minor >= $minorVersion);
-	}
+    /**
+     * @param NodeInterface[] $nodes
+     * @return void
+     */
+    protected function determineMaximumArgumentCount($nodes)
+    {
+        foreach ($nodes as $node) {
+            if (true === $node instanceof ViewHelperNode) {
+                /** @var ViewHelperNode $node */
+                $arguments = $node->getArguments();
+                $this->get(self::METRIC_MAXIMUM_ARGUMENT_COUNT)->setOnlyIfHigher(count($arguments));
+                $this->determineMaximumArgumentCount($arguments);
+            }
+            $this->determineMaximumArgumentCount($node->getChildNodes());
+        }
+    }
 
+    /**
+     * Evaluates all collected Metrics against defined
+     * threshold values, adding messages as needed.
+     *
+     * @return void
+     */
+    public function evaluate()
+    {
+        /** @var MessageInterface $message */
+        foreach ($this->metrics as $metricName => $metric) {
+            list ($notice, $warning) = $this->thresholds[$metricName];
+            $value = $metric->getValue();
+            if ($value <= $notice) {
+                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\OkMessage');
+            } elseif ($value <= $warning) {
+                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\NoticeMessage');
+            } else {
+                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\WarningMessage');
+            }
+            $message->setPayload(array_merge([$value], $this->thresholds[$metricName]));
+            $metric->addMessage($message);
+        }
+    }
+
+    /**
+     * @param integer $majorVersion
+     * @param integer $minorVersion
+     * @return boolean
+     */
+    protected function assertCoreVersionAtLeast($majorVersion, $minorVersion = 0)
+    {
+        list ($major, $minor, ) = explode('.', TYPO3_version);
+        return ($major >= $majorVersion && $minor >= $minorVersion);
+    }
 }

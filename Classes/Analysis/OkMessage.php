@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -29,16 +30,17 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  * Class OkMessage
  * @package FluidTYPO3\Builder\Analysis
  */
-class OkMessage extends AbstractMessage {
+class OkMessage extends AbstractMessage
+{
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::OK;
+    /**
+     * @var integer
+     */
+    protected $severity = FlashMessage::OK;
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Metric value (%s) is within tolerance levels (notice: %s, warning: %s) but there may be other, more specific messages.';
-
+    /**
+     * @var string
+     */
+    protected $message = 'Metric value (%s) is within tolerance levels (notice: %s, warning: %s) but there 
+        may be other, more specific messages.';
 }

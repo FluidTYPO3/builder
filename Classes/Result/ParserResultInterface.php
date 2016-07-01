@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Result;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -23,6 +24,7 @@ namespace FluidTYPO3\Builder\Result;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-interface ParserResultInterface {
+interface ParserResultInterface
+{
 
 }

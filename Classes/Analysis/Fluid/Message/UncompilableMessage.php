@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis\Fluid\Message;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,16 +31,17 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  * Class UncompilableMessage
  * @package FluidTYPO3\Builder\Analysis\Fluid\Message
  */
-class UncompilableMessage extends AbstractMessage {
+class UncompilableMessage extends AbstractMessage
+{
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::WARNING;
+    /**
+     * @var integer
+     */
+    protected $severity = FlashMessage::WARNING;
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Template contains uncompilable ViewHelpers - avoiding these is very likely to increase performance';
-
+    /**
+     * @var string
+     */
+    protected $message = 'Template contains uncompilable ViewHelpers - 
+        avoiding these is very likely to increase performance';
 }

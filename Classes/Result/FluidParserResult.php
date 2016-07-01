@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Result;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -26,76 +27,83 @@ namespace FluidTYPO3\Builder\Result;
 /**
  * Class FluidParserResult
  */
-class FluidParserResult extends ParserResult {
+class FluidParserResult extends ParserResult
+{
 
-	/**
-	 * @var array
-	 */
-	protected $namespaces = array();
+    /**
+     * @var array
+     */
+    protected $namespaces = [];
 
-	/**
-	 * @var string
-	 */
-	protected $layoutName = NULL;
+    /**
+     * @var string
+     */
+    protected $layoutName = null;
 
-	/**
-	 * @var boolean
-	 */
-	protected $compilable = FALSE;
+    /**
+     * @var boolean
+     */
+    protected $compilable = false;
 
-	/**
-	 * @param string $layoutName
-	 * @return void
-	 */
-	public function setLayoutName($layoutName) {
-		$this->layoutName = $layoutName;
-	}
+    /**
+     * @param string $layoutName
+     * @return void
+     */
+    public function setLayoutName($layoutName)
+    {
+        $this->layoutName = $layoutName;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getLayoutName() {
-		return $this->layoutName;
-	}
+    /**
+     * @return string
+     */
+    public function getLayoutName()
+    {
+        return $this->layoutName;
+    }
 
-	/**
-	 * @param array $namespaces
-	 * @return void
-	 */
-	public function setNamespaces($namespaces) {
-		$this->namespaces = $namespaces;
-	}
+    /**
+     * @param array $namespaces
+     * @return void
+     */
+    public function setNamespaces($namespaces)
+    {
+        $this->namespaces = $namespaces;
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getNamespaces() {
-		return $this->namespaces;
-	}
+    /**
+     * @return array
+     */
+    public function getNamespaces()
+    {
+        return $this->namespaces;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getNamespacesFlattened() {
-		$flat = array();
-		foreach ($this->namespaces as $namespaceAlias => $classPath) {
-			array_push($flat, $namespaceAlias . '=' . $classPath);
-		}
-		return implode(', ', $flat);
-	}
+    /**
+     * @return string
+     */
+    public function getNamespacesFlattened()
+    {
+        $flat = [];
+        foreach ($this->namespaces as $namespaceAlias => $classPath) {
+            array_push($flat, $namespaceAlias . '=' . $classPath);
+        }
+        return implode(', ', $flat);
+    }
 
-	/**
-	 * @param boolean $compilable
-	 */
-	public function setCompilable($compilable) {
-		$this->compilable = $compilable;
-	}
+    /**
+     * @param boolean $compilable
+     */
+    public function setCompilable($compilable)
+    {
+        $this->compilable = $compilable;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function getCompilable() {
-		return $this->compilable;
-	}
-
+    /**
+     * @return boolean
+     */
+    public function getCompilable()
+    {
+        return $this->compilable;
+    }
 }
