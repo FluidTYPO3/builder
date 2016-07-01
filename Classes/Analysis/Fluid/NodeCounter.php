@@ -28,7 +28,7 @@ use FluidTYPO3\Builder\Analysis\MessageInterface;
 use FluidTYPO3\Builder\Analysis\Fluid\Message\UncompilableMessage;
 use FluidTYPO3\Builder\Parser\ExposedTemplateCompiler;
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use FluidTYPO3\Flux\Utility\VersionUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\NodeInterface;
@@ -221,7 +221,7 @@ class NodeCounter {
 	 * @return ExposedTemplateCompiler
 	 */
 	protected function getTemplateCompiler() {
-		if (VersionUtility::assertExtensionVersionIsAtLeastVersion('core', 8)) {
+		if ($this->assertCoreVersionAtLeast(8)) {
 			$compiler = new TemplateCompiler();
 			$compiler->setRenderingContext(new RenderingContext());
 			return $compiler;
@@ -367,6 +367,16 @@ class NodeCounter {
 			$message->setPayload(array_merge(array($value), $this->thresholds[$metricName]));
 			$metric->addMessage($message);
 		}
+	}
+
+	/**
+	 * @param integer $majorVersion
+	 * @param integer $minorVersion
+	 * @return boolean
+	 */
+	protected function assertCoreVersionAtLeast($majorVersion, $minorVersion = 0) {
+		list ($major, $minor, ) = explode('.', TYPO3_version);
+		return ($major >= $majorVersion && $minor >= $minorVersion);
 	}
 
 }

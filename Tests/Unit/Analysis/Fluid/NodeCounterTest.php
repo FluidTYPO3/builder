@@ -46,7 +46,7 @@ class NodeCounterTest extends UnitTestCase {
 		NodeCounter::METRIC_CONDITION_NODES => 1,
 		NodeCounter::METRIC_NODES_PER_SECTION_AVERAGE => 3,
 		NodeCounter::METRIC_NODES_PER_SECTION_MAXIMUM => 3,
-		NodeCounter::METRIC_CACHED_SIZE => 3,
+		NodeCounter::METRIC_CACHED_SIZE => 3.1,
 		NodeCounter::METRIC_MAXIMUM_ARGUMENT_COUNT => 3,
 		NodeCounter::METRIC_MAXIMUM_NESTING_LEVEL => 2
 	);

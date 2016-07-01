@@ -28,7 +28,9 @@ use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
 
 /**
  * Class ExposedTemplateCompiler
- * @package FluidTYPO3\Builder\Parser
+ *
+ * Replacement TemplateCompiler intended solely for analysis
+ * purposes. Does not work to compile templates normally!
  */
 class ExposedTemplateCompiler extends TemplateCompiler {
 
@@ -82,5 +84,58 @@ return %s;
 		return $templateCode;
 	}
 
+	/**
+	 * Overridden "store" method does not store - instead, it returns
+	 * the compiled result.
+	 *
+	 * @param string $identifier
+	 * @param \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState
+	 * @return void
+	 */
+	public function store($identifier, \TYPO3\CMS\Fluid\Core\Parser\ParsingState $parsingState)
+	{
+		$identifier = $this->sanitizeIdentifier($identifier);
+		$this->variableCounter = 0;
+		$generatedRenderFunctions = '';
+
+		if ($parsingState->getVariableContainer()->exists('sections')) {
+			$sections = $parsingState->getVariableContainer()->get('sections');
+			// @todo refactor to $parsedTemplate->getSections()
+			foreach ($sections as $sectionName => $sectionRootNode) {
+				$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($sectionRootNode), 'section_' . sha1($sectionName), 'section ' . $sectionName);
+			}
+		}
+		$generatedRenderFunctions .= $this->generateCodeForSection($this->convertListOfSubNodes($parsingState->getRootNode()), 'render', 'Main Render function');
+		$convertedLayoutNameNode = $parsingState->hasLayout() ? $this->convert($parsingState->getLayoutNameNode()) : array('initialization' => '', 'execution' => 'NULL');
+
+		$classDefinition = 'class FluidCache_' . $identifier . ' extends \\TYPO3\\CMS\\Fluid\\Core\\Compiler\\AbstractCompiledTemplate';
+
+		$templateCode = <<<EOD
+%s {
+
+public function getVariableContainer() {
+	// @todo
+	return new \TYPO3\CMS\Fluid\Core\ViewHelper\TemplateVariableContainer();
+}
+public function getLayoutName(\TYPO3\CMS\Fluid\Core\Rendering\RenderingContextInterface \$renderingContext) {
+\$currentVariableContainer = \$renderingContext->getTemplateVariableContainer();
+%s
+return %s;
+}
+public function hasLayout() {
+return %s;
+}
+
+%s
+
+}
+EOD;
+		return sprintf($templateCode,
+			$classDefinition,
+			$convertedLayoutNameNode['initialization'],
+			$convertedLayoutNameNode['execution'],
+			($parsingState->hasLayout() ? 'TRUE' : 'FALSE'),
+			$generatedRenderFunctions);
+	}
 
 }
