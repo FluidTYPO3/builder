@@ -25,19 +25,19 @@ namespace FluidTYPO3\Builder\Parser;
  * ************************************************************* */
 
 use TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface;
-use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
-use TYPO3\CMS\Fluid\Core\Parser\Exception;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
-use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface;
+use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
+use TYPO3\CMS\Fluid\Core\Parser\Exception;
+use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
+use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 
 /**
  * Class ExposedTemplateParser
  */
-class ExposedTemplateParser extends TemplateParser
+class ExposedTemplateParserLegacy extends TemplateParser
 {
 
     /**
@@ -144,7 +144,7 @@ class ExposedTemplateParser extends TemplateParser
         if ($viewHelper instanceof PostParseInterface) {
             // Don't just use $viewHelper::postParseEvent(...),
             // as this will break with PHP < 5.3.
-            // @TODO: replace with static call, no more php <5.3 support needed
+            // @TODO: replace with static call; no more php <5.3 support required
             call_user_func(
                 [$viewHelper, 'postParseEvent'],
                 $currentViewHelperNode,

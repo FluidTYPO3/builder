@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\Parser;
+
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
@@ -29,29 +30,31 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
 /**
  * Class ExposedTemplateParserTest
  */
-class ExposedTemplateParserTest extends UnitTestCase {
+class ExposedTemplateParserTest extends UnitTestCase
+{
 
-	/**
-	 * @param string $input
-	 * @test
-	 * @dataProvider getInvalidTemplateStringTestValues
-	 */
-	public function testParseThrowsExceptionOnInvalidTemplateString($input) {
-		$parser = new ExposedTemplateParser();
-		$this->setExpectedException('TYPO3\\CMS\\Fluid\\Core\\Parser\\Exception');
-		$parser->parse($input);
-	}
+    /**
+     * @param string $input
+     * @test
+     * @dataProvider getInvalidTemplateStringTestValues
+     */
+    public function testParseThrowsExceptionOnInvalidTemplateString($input)
+    {
+        $parser = new ExposedTemplateParser();
+        $this->setExpectedException('TYPO3\\CMS\\Fluid\\Core\\Parser\\Exception');
+        $parser->parse($input);
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getInvalidTemplateStringTestValues() {
-		return array(
-			array(1),
-			array(new \stdClass()),
-			array(NULL),
-			array(FALSE)
-		);
-	}
-
+    /**
+     * @return array
+     */
+    public function getInvalidTemplateStringTestValues()
+    {
+        return array(
+            array(1),
+            array(new \stdClass()),
+            array(null),
+            array(false)
+        );
+    }
 }

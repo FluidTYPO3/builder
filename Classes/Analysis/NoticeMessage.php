@@ -1,9 +1,10 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2016 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,16 +30,17 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  * Class NoticeMessage
  * @package FluidTYPO3\Builder\Analysis
  */
-class NoticeMessage extends AbstractMessage {
+class NoticeMessage extends AbstractMessage
+{
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::NOTICE;
+    /**
+     * @var integer
+     */
+    protected $severity = FlashMessage::NOTICE;
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Metric value (%s) is above safe base level (notice: %s, warning: %s) value but not high enough to cause major concern.';
-
+    /**
+     * @var string
+     */
+    protected $message = 'Metric value (%s) is above safe base level (notice: %s, warning: %s) value 
+        but not high enough to cause major concern.';
 }
