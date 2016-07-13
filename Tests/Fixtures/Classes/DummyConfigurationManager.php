@@ -8,40 +8,43 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 /**
  * Class DummyConfigurationManager
  */
-class DummyConfigurationManager extends BackendConfigurationManager implements ConfigurationManagerInterface {
+class DummyConfigurationManager extends BackendConfigurationManager implements ConfigurationManagerInterface
+{
 
-	/**
-	 * @return ContentObjectRenderer
-	 */
-	public function getContentObject() {
-		$builder = new \PHPUnit_Framework_MockObject_Generator();
-		$renderer = $builder->getMock('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer', array('RECORDS'));
-		return $renderer;
-	}
+    /**
+     * @return ContentObjectRenderer
+     */
+    public function getContentObject()
+    {
+        $builder = new \PHPUnit_Framework_MockObject_Generator();
+        $renderer = $builder->getMock('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer', array('RECORDS'));
+        return $renderer;
+    }
 
-	/**
-	 * @param string $type
-	 * @param string $extensionName
-	 * @param string $pluginName
-	 * @return array
-	 */
-	public function getConfiguration($type, $extensionName = NULL, $pluginName = NULL) {
-		return array(
-			'plugin.' => array(
-				'tx_builder.' => array(
-					'view.' => array(),
-					'settings.' => array(),
-				)
-			)
-		);
-	}
+    /**
+     * @param string $type
+     * @param string $extensionName
+     * @param string $pluginName
+     * @return array
+     */
+    public function getConfiguration($type, $extensionName = null, $pluginName = null)
+    {
+        return array(
+            'plugin.' => array(
+                'tx_builder.' => array(
+                    'view.' => array(),
+                    'settings.' => array(),
+                )
+            )
+        );
+    }
 
-	/**
-	 * @param string $featureName
-	 * @return boolean
-	 */
-	public function isFeatureEnabled($featureName) {
-		TRUE;
-	}
-
+    /**
+     * @param string $featureName
+     * @return boolean
+     */
+    public function isFeatureEnabled($featureName)
+    {
+        true;
+    }
 }

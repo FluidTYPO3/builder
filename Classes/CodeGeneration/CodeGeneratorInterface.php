@@ -1,9 +1,10 @@
 <?php
 namespace FluidTYPO3\Builder\CodeGeneration;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2016 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,33 +24,33 @@ namespace FluidTYPO3\Builder\CodeGeneration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-interface CodeGeneratorInterface {
+interface CodeGeneratorInterface
+{
 
-	/**
-	 * @param boolean $dry
-	 * @return void
-	 * @abstract
-	 */
-	public function setDry($dry);
+    /**
+     * @param boolean $dry
+     * @return void
+     * @abstract
+     */
+    public function setDry($dry);
 
-	/**
-	 * @param boolean $verbose
-	 * @return void
-	 * @abstract
-	 */
-	public function setVerbose($verbose);
+    /**
+     * @param boolean $verbose
+     * @return void
+     * @abstract
+     */
+    public function setVerbose($verbose);
 
-	/**
-	 * @return string
-	 * @abstract
-	 */
-	public function generate();
+    /**
+     * @return string
+     * @abstract
+     */
+    public function generate();
 
-	/**
-	 * @param string $filePathAndFilename
-	 * @return void
-	 * @abstract
-	 */
-	public function save($filePathAndFilename);
-
+    /**
+     * @param string $filePathAndFilename
+     * @return void
+     * @abstract
+     */
+    public function save($filePathAndFilename);
 }

@@ -1,9 +1,10 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2016 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -29,16 +30,17 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
  * Class OkMessage
  * @package FluidTYPO3\Builder\Analysis
  */
-class OkMessage extends AbstractMessage {
+class OkMessage extends AbstractMessage
+{
 
-	/**
-	 * @var integer
-	 */
-	protected $severity = FlashMessage::OK;
+    /**
+     * @var integer
+     */
+    protected $severity = FlashMessage::OK;
 
-	/**
-	 * @var string
-	 */
-	protected $message = 'Metric value (%s) is within tolerance levels (notice: %s, warning: %s) but there may be other, more specific messages.';
-
+    /**
+     * @var string
+     */
+    protected $message = 'Metric value (%s) is within tolerance levels (notice: %s, warning: %s) but there 
+        may be other, more specific messages.';
 }

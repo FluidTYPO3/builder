@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,54 +31,58 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 /**
  * Class CodeTemplateTest
  */
-class CodeTemplateTest extends UnitTestCase {
+class CodeTemplateTest extends UnitTestCase
+{
 
-	/**
-	 * @dataProvider getGetterAndSetterTestValues
-	 * @param string $property
-	 * @param mixed $value
-	 */
-	public function testGetterAndSetter($property, $value) {
-		$subject = new CodeTemplate();
-		$setter = 'set' . ucfirst($property);
-		$getter = 'get' . ucfirst($property);
-		$subject->$setter($value);
-		$this->assertEquals($value, $subject->$getter());
-	}
+    /**
+     * @dataProvider getGetterAndSetterTestValues
+     * @param string $property
+     * @param mixed $value
+     */
+    public function testGetterAndSetter($property, $value)
+    {
+        $subject = new CodeTemplate();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $subject->$setter($value);
+        $this->assertEquals($value, $subject->$getter());
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getGetterAndSetterTestValues() {
-		return array(
-			array('identifier', 'test'),
-			array('variables', array('test' => 'test')),
-			array('path', 'test'),
-			array('suffix', 'path')
-		);
-	}
+    /**
+     * @return array
+     */
+    public function getGetterAndSetterTestValues()
+    {
+        return array(
+            array('identifier', 'test'),
+            array('variables', array('test' => 'test')),
+            array('path', 'test'),
+            array('suffix', 'path')
+        );
+    }
 
-	/**
-	 * @dataProvider getRenderTestValues
-	 * @param string $marker
-	 * @param string $expectedOutput
-	 */
-	public function testRender($marker, $expectedOutput) {
-		$subject = new CodeTemplate();
-		$subject->setVariables(array('foo' => $marker));
-		$subject->setIdentifier('CodeTemplate');
-		$subject->setPath(ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
-		$this->assertEquals($expectedOutput, trim($subject->render()));
-	}
+    /**
+     * @dataProvider getRenderTestValues
+     * @param string $marker
+     * @param string $expectedOutput
+     */
+    public function testRender($marker, $expectedOutput)
+    {
+        $subject = new CodeTemplate();
+        $subject->setVariables(array('foo' => $marker));
+        $subject->setIdentifier('CodeTemplate');
+        $subject->setPath(ExtensionManagementUtility::extPath('builder', 'Tests/Fixtures/Templates/'));
+        $this->assertEquals($expectedOutput, trim($subject->render()));
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getRenderTestValues() {
-		return array(
-			array('bar', 'content: bar'),
-			array('baz', 'content: baz')
-		);
-	}
-
+    /**
+     * @return array
+     */
+    public function getRenderTestValues()
+    {
+        return array(
+            array('bar', 'content: bar'),
+            array('baz', 'content: baz')
+        );
+    }
 }

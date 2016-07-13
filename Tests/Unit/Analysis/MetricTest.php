@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -30,68 +31,73 @@ use TYPO3\CMS\Extbase\Error\Message;
 /**
  * Class MetricTest
  */
-class MetricTest extends UnitTestCase {
+class MetricTest extends UnitTestCase
+{
 
-	/**
-	 * @param string $property
-	 * @param mixed $testValue
-	 * @test
-	 * @dataProvider getPropertiesTestValues
-	 */
-	public function testGetterAndSetter($property, $testValue) {
-		$instance = new Metric();
-		$setter = 'set' . ucfirst($property);
-		$getter = 'get' . ucfirst($property);
-		$instance->$setter($testValue);
-		$this->assertEquals($testValue, $instance->$getter());
-	}
+    /**
+     * @param string $property
+     * @param mixed $testValue
+     * @test
+     * @dataProvider getPropertiesTestValues
+     */
+    public function testGetterAndSetter($property, $testValue)
+    {
+        $instance = new Metric();
+        $setter = 'set' . ucfirst($property);
+        $getter = 'get' . ucfirst($property);
+        $instance->$setter($testValue);
+        $this->assertEquals($testValue, $instance->$getter());
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getPropertiesTestValues() {
-		return array(
-			array('name', 'metricname'),
-			array('value', 'metricvalue'),
-			array('messages', array(new Message('test', 1))),
-			array('payload', array('test'))
-		);
-	}
+    /**
+     * @return array
+     */
+    public function getPropertiesTestValues()
+    {
+        return array(
+            array('name', 'metricname'),
+            array('value', 'metricvalue'),
+            array('messages', array(new Message('test', 1))),
+            array('payload', array('test'))
+        );
+    }
 
-	/**
-	 * @test
-	 */
-	public function testIncrement() {
-		$instance = new Metric();
-		$instance->setValue(2);
-		$instance->increment();
-		$this->assertEquals(3, $instance->getValue());
-		$instance->increment(2);
-		$this->assertEquals(5, $instance->getValue());
-	}
+    /**
+     * @test
+     */
+    public function testIncrement()
+    {
+        $instance = new Metric();
+        $instance->setValue(2);
+        $instance->increment();
+        $this->assertEquals(3, $instance->getValue());
+        $instance->increment(2);
+        $this->assertEquals(5, $instance->getValue());
+    }
 
-	/**
-	 * @test
-	 */
-	public function testSetOnlyIfHigher() {
-		$instance = new Metric();
-		$instance->setValue(5);
-		$instance->setOnlyIfHigher(3);
-		$this->assertEquals(5, $instance->getValue());
-		$instance->setOnlyIfHigher(10);
-		$this->assertEquals(10, $instance->getValue());
-	}
+    /**
+     * @test
+     */
+    public function testSetOnlyIfHigher()
+    {
+        $instance = new Metric();
+        $instance->setValue(5);
+        $instance->setOnlyIfHigher(3);
+        $this->assertEquals(5, $instance->getValue());
+        $instance->setOnlyIfHigher(10);
+        $this->assertEquals(10, $instance->getValue());
+    }
 
-	/**
-	 * @test
-	 */
-	public function testSetOnlyIfLower() {
-		$instance = new Metric();
-		$instance->setValue(5);
-		$instance->setOnlyIfLower(10);
-		$this->assertEquals(5, $instance->getValue());
-		$instance->setOnlyIfLower(3);
-		$this->assertEquals(3, $instance->getValue());
-	}
-
+    /**
+     * @test
+     */
+    public function testSetOnlyIfLower()
+    {
+        $instance = new Metric();
+        $instance->setValue(5);
+        $instance->setOnlyIfLower(10);
+        $this->assertEquals(5, $instance->getValue());
+        $instance->setOnlyIfLower(3);
+        $this->assertEquals(3, $instance->getValue());
+    }
 }

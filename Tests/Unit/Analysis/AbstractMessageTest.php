@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\Analysis;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -28,31 +29,33 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
 /**
  * Class AbstractMessageTest
  */
-class AbstractMessageTest extends UnitTestCase {
+class AbstractMessageTest extends UnitTestCase
+{
 
-	/**
-	 * @param string $name
-	 * @param mixed $value
-	 * @test
-	 * @dataProvider getGetterAndSetterTestValues
-	 */
-	public function testGetterAndSetter($name, $value) {
-		$message = $this->getMockForAbstractClass('FluidTYPO3\\Builder\\Analysis\\AbstractMessage');
-		$setter = 'set' . ucfirst($name);
-		$getter = 'get' . ucfirst($name);
-		$message->$setter($value);
-		$this->assertEquals($value, $message->$getter());
-	}
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @test
+     * @dataProvider getGetterAndSetterTestValues
+     */
+    public function testGetterAndSetter($name, $value)
+    {
+        $message = $this->getMockForAbstractClass('FluidTYPO3\\Builder\\Analysis\\AbstractMessage');
+        $setter = 'set' . ucfirst($name);
+        $getter = 'get' . ucfirst($name);
+        $message->$setter($value);
+        $this->assertEquals($value, $message->$getter());
+    }
 
-	/**
-	 * @return array
-	 */
-	public function getGetterAndSetterTestValues() {
-		return array(
-			array('message', 'I am a message'),
-			array('severity', 1),
-			array('payload', array('foo' => 'bar'))
-		);
-	}
-
+    /**
+     * @return array
+     */
+    public function getGetterAndSetterTestValues()
+    {
+        return array(
+            array('message', 'I am a message'),
+            array('severity', 1),
+            array('payload', array('foo' => 'bar'))
+        );
+    }
 }
