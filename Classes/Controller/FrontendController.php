@@ -59,7 +59,6 @@ class FrontendController extends ActionController
      */
     public function doodleAction()
     {
-
     }
 
     /**

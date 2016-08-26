@@ -291,7 +291,6 @@ class BuilderCommandController extends CommandController
      */
     protected function errorCommand()
     {
-
     }
 
     /**
