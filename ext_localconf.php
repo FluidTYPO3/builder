@@ -7,6 +7,8 @@ if (!defined('TYPO3_MODE')) {
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Doodle', array('Frontend' => 'doodle,renderFluid'), array('Frontend' => 'renderFluid'));
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin('FluidTYPO3.Builder', 'Render', array('Frontend' => 'renderFluid'), array('Frontend' => 'renderFluid'));
 
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\FluidTYPO3\Builder\Property\FormTypeConverter::class);
+
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScriptSetup('
 [GLOBAL]
 builderDoodle = PAGE
