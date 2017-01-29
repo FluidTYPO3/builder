@@ -37,9 +37,10 @@
 							{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
 						</td>
 						<td>
-							<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile}">
-								<span class="btn btn-mini fa fa-edit"></span>
-							</f:link.action>
+							<div class="btn-group btn-group-justified">
+								<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
+								<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
+							</div>
 						</td>
 					</tr>
 				</f:for>
