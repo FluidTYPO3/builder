@@ -1,12 +1,8 @@
 {
-  "name": "mia3-typo3",
+  "name": "fluidtypo3-builder",
   "version": "1.0.0",
-  "description": "MIA3/TYPO3",
+  "description": "FluidTYPO3/Builder",
   "main": "index.php",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@gitlab.mia3.com:30001/template/TYPO3-Base.git"
-  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack --watch",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
