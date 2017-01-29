@@ -25,11 +25,6 @@ if ('BE' === TYPO3_MODE) {
 		)
 	);
 
-	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
-		'builder',
-		'EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf'
-	);
-
 	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 		'FluidTYPO3.Builder',
 		'web',

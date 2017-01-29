@@ -11,43 +11,43 @@
 </f:section>
 
 <f:section name="Content">
-		<h1>{f:translate(key: 'header.fluxAdministration')}</h1>
-		<f:for each="{forms}" as="grouped" key="extensionName">
-			<table class="table table-bordered table-striped">
-				<thead>
-					<th class="col-xs-8">{extensionName}</th>
-					<th class="col-xs-1">Grid columns</th>
-					<th class="col-xs-1">Size</th>
-					<th class="col-xs-1">Options</th>
-				</thead>
-				<f:for each="{grouped}" as="set">
-					<tr>
-						<td>
-							<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
-						</td>
-						<td>
-							<f:if condition="{set.grid.rows}">
-								<f:else>No grid</f:else>
-								<f:then>
-									<f:render section="ColumnCounter" arguments="{grid: set.grid}" />
-								</f:then>
-							</f:if>
-						</td>
-						<td>
-							{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
-						</td>
-						<td>
-							<div class="btn-group btn-group-justified">
-								<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
-								<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
-							</div>
-						</td>
-					</tr>
-				</f:for>
-			</table>
-		</f:for>
+	<h1>{f:translate(key: 'header.fluxAdministration')}</h1>
+	<f:for each="{forms}" as="grouped" key="extensionName">
+		<table class="table table-bordered table-striped">
+			<thead>
+				<th class="col-xs-8">{extensionName}</th>
+				<th class="col-xs-1">Grid columns</th>
+				<th class="col-xs-1">Size</th>
+				<th class="col-xs-1">Options</th>
+			</thead>
+			<f:for each="{grouped}" as="set">
+				<tr>
+					<td>
+						<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
+					</td>
+					<td>
+						<f:if condition="{set.grid.rows}">
+							<f:else>No grid</f:else>
+							<f:then>
+								<f:render section="ColumnCounter" arguments="{grid: set.grid}" />
+							</f:then>
+						</f:if>
+					</td>
+					<td>
+						{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
+					</td>
+					<td>
+						<div class="btn-group btn-group-justified">
+							<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
+							<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
+						</div>
+					</td>
+				</tr>
+			</f:for>
+		</table>
+	</f:for>
 
-		<f:link.action action="new">new Content Element</f:link.action>
+	<f:link.action action="new">new Content Element</f:link.action>
 </f:section>
 
 <f:section name="ColumnCounter">

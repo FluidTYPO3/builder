@@ -31,7 +31,6 @@ use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\FluxFormService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
-use FluidTYPO3\Flux\Form;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
