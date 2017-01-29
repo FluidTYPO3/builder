@@ -11,24 +11,20 @@
 <f:section name="Content">
 		<h1>{f:translate(key: 'header.kickstarter')}</h1>
 
-		<f:link.action action="kickstarterEdit" arguments="{templatePathAndFilename: 'typo3conf/ext/template/Resources/Private/Templates/Content/Container.html'}">
-			edit Container
-		</f:link.action>
-
-		<f:form action="kickstarterEdit">
-			<f:form.select name="templatePathAndFilename">
-				<f:groupedFor each="{forms}" as="grouped" groupBy="extensionKey" groupKey="extensionKey">
-					<f:form.select.optgroup label="{extensionKey}">
-						<f:for each="{grouped}" as="set">
-							<f:form.select.option value="{set.form.options.templateFile}">
-								<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
-							</f:form.select.option>
-						</f:for>
-					</f:form.select.optgroup>
-				</f:groupedFor>
-			</f:form.select>
-			<f:form.submit value="Submit" />
-		</f:form>
+	<f:groupedFor each="{forms}" as="grouped" groupBy="extensionKey" groupKey="extensionKey">
+		<h3>{extensionKey}</h3>
+		<table>
+			<f:for each="{grouped}" as="set">
+				<tr>
+					<th>
+						<f:link.action action="kickstarterEdit" arguments="{templatePathAndFilename: set.form.options.templateFile}">
+							<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
+						</f:link.action>
+					</th>
+				</tr>
+			</f:for>
+		</table>
+	</f:groupedFor>
 
 		<f:link.action action="kickstarterNew">new Content Element</f:link.action>
 </f:section>
