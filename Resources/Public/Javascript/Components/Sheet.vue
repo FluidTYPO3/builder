@@ -57,7 +57,9 @@
         },
         methods: {
             addField: function(){
-                this.data.fields.push({});
+                this.sheet.children.push({
+                    type: 'FluidTYPO3\\Flux\\Form\\Field\\Input'
+                });
             }
         }
     }
