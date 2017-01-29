@@ -11,6 +11,15 @@
 <f:section name="Content">
 	<div id="kickstarter">
 		<h1>Edit form in {templateFile}</h1>
+
+		<f:form action="kickstarterUpdate" object="{data.form}" name="form">
+			<f:form.hidden name="templatePathAndFilename" value="{templateFile}" />
+			<f:form.textfield property="id" />
+			<f:form.textfield name="layoutName" value="Default" />
+			<f:form.textarea name="mainContent" value="{mainContent}" />
+			<f:form.submit value="Update template" />
+		</f:form>
+
 		<f:debug inline="1">{structure}</f:debug>
 	</div>
 

@@ -31,6 +31,7 @@ use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\FluxFormService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
+use FluidTYPO3\Flux\Form;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -258,6 +259,7 @@ class BackendController extends ActionController
     }
 
     /**
+     * @return void
      */
     public function kickstarterAction()
     {
@@ -273,6 +275,12 @@ class BackendController extends ActionController
      */
     public function kickstarterEditAction($templatePathAndFilename)
     {
+        $templateSource = file_get_contents($templatePathAndFilename);
+        $matches = [];
+        preg_match_all('/<f:section name="Main">([\\s\\S]*?)<\\/f:section/msiu', $templateSource, $matches);
+        #var_dump($templateSource);
+        #var_dump($matches);
+        #exit();
         $data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
         $this->view->assign(
             'structure',
@@ -283,14 +291,41 @@ class BackendController extends ActionController
         );
         $this->view->assign('data', $data);
         $this->view->assign('templateFile', $templatePathAndFilename);
+        $this->view->assign('mainContent', $matches[1][0]);
     }
 
     /**
+     * @param string $templatePathAndFilename
+     * @param Form $form
+     * @param string $mainContent
+     * @param string $layoutName
+     * @param Form\Container\Grid|null $grid
+     * @return string
+     */
+    public function kickstarterUpdateAction(
+        $templatePathAndFilename,
+        Form $form,
+        $mainContent = null,
+        $layoutName = null,
+        Form\Container\Grid $grid = null
+    )
+    {
+        if ($grid === null) {
+            $grid = Form\Container\Grid::create();
+        }
+        #var_dump($form->getOptions());
+        #$data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
+        header('Content-type: text/plain');
+        echo $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
+        exit();
+        #return nl2br(htmlspecialchars($this->fluxFormService->convertFormToTemplate($form, 'Hello {world}', 'Default')));
+    }
+
+    /**
+     * @return void
      */
     public function kickstarterNewAction()
     {
-        $forms = $this->fluxFormService->getAllRegisteredForms();
-
         $structure = [
             'id' => 'test',
             'label' => 'Some form',

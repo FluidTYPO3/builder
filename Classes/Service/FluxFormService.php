@@ -35,6 +35,7 @@ use FluidTYPO3\Flux\ViewHelpers\Wizard\SliderViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Wizard\SuggestViewHelper;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
+use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Fluid\Core\ViewHelper\ViewHelperInterface;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 
@@ -118,6 +119,23 @@ class FluxFormService implements SingletonInterface
         Form\Container\Grid::class => GridViewHelper::class,
         Form\Container\Row::class => RowViewHelper::class,
         Form\Container\Column::class => ColumnViewHelper::class
+    ];
+
+    /**
+     * Array containing mapping of ViewHelper argument names to
+     * Form component property names. Lookups happen by first
+     * looking for a [$class][$property] value, then [$property].
+     * If a certain argument applies only to some (or one) but
+     * not all, they must only be specified as [$class][$property].
+     *
+     * @var array
+     */
+    protected $argumentToPropertyMap = [
+        'displayCond' => 'displayCondition',
+        'eval' => 'validate',
+        ColumnViewHelper::class => [
+            'colPos' => 'columnPosition'
+        ]
     ];
 
     /**
@@ -230,7 +248,7 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
-     * Converts a Flux Form into template code.
+     * Converts a Flux Form and Grid into template code.
      *
      * If $layoutName is null, a layout-less template code is
      * generated and $mainSectionCode is placed directly in
@@ -245,19 +263,22 @@ class FluxFormService implements SingletonInterface
      * which gets confirmed to be valid before allowing the
      * template to be generated.
      *
-     * @param Form $form
+     * @param array $data
      * @param string $mainSectionCode
      * @param string|null $layoutName
      * @return string
      */
-    public function convertFormToTemplate(Form $form, $mainSectionCode, $layoutName = null)
+    public function convertDataToTemplate(array $data, $mainSectionCode, $layoutName = null)
     {
+        $form = $data['form'];
+        $grid = $data['grid'];
+
         $templateCode = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL . PHP_EOL;
         if ($layoutName) {
             $templateCode .= '<f:layout name="' . $layoutName . '" />' . PHP_EOL . PHP_EOL;
         }
 
-        $templateCode .= $this->createConfigurationSectionFromFormInstance($form);
+        $templateCode .= $this->createConfigurationSectionFromFormAndGridInstances($form, $grid);
 
         if ($layoutName) {
             $templateCode .= '<f:section name="Main">' . PHP_EOL . $mainSectionCode . PHP_EOL . '</f:section>';
@@ -320,8 +341,7 @@ class FluxFormService implements SingletonInterface
                 continue;
             }
 
-            $propertyReflection->setAccessible(true);
-            $value = $propertyReflection->getValue($object);
+            $value = ObjectAccess::getProperty($object, $name, true);
 
             if (array_key_exists($name, $defaultProperties) && $defaultProperties[$name] === $value) {
                 continue;
@@ -335,7 +355,7 @@ class FluxFormService implements SingletonInterface
                 $value = $this->extractPropertiesFromObject($value);
             }
 
-            if (is_array($value) && empty($value)) {
+            if (is_array($value) && !count($value)) {
                 continue;
             } elseif (is_null($value)) {
                 continue;
@@ -351,12 +371,13 @@ class FluxFormService implements SingletonInterface
      * Converts a class name of a Flux ViewHelper to an instance of
      * the corresponding Form component.
      *
-     * @param string $viewHelperClassName
+     * @param string|ViewHelperInterface $viewHelperClassName
      * @return Form\FormInterface
      */
-    public function convertViewHelperClassNameToFormComponentInstance($viewHelperClassName)
+    public function convertViewHelperClassNameToFormComponentInstance($viewHelperClassNameOrInstance)
     {
-        return call_user_func(array_search($viewHelperClassName, $this->objectTypeMap), 'create');
+        $className = is_string($viewHelperClassNameOrInstance) ? $viewHelperClassNameOrInstance : get_class($viewHelperClassNameOrInstance);
+        return call_user_func(array_search($className, $this->objectTypeMap), 'create');
     }
 
     /**
@@ -364,12 +385,13 @@ class FluxFormService implements SingletonInterface
      * instance of the corresponding ViewHelper, ready for argument
      * extraction using prepareArguments().
      *
-     * @param string $componentClassName
+     * @param string|FormInterface $componentClassNameOrInstance
      * @return ViewHelperInterface
      */
-    public function convertFormComponentClassNameToViewHelperInstance($componentClassName)
+    public function convertFormComponentClassNameToViewHelperInstance($componentClassNameOrInstance)
     {
-        return $this->objectManager->get($this->objectTypeMap[$componentClassName]);
+        $className = is_string($componentClassNameOrInstance) ? $componentClassNameOrInstance : get_class($componentClassNameOrInstance);
+        return $this->objectManager->get($this->objectTypeMap[$className]);
     }
 
     /**
@@ -393,16 +415,144 @@ class FluxFormService implements SingletonInterface
      * will result in a Form instance identical to $form.
      *
      * @param Form $form
+     * @param Form\Container\Grid $grid
      * @return string
      */
-    protected function createConfigurationSectionFromFormInstance(Form $form)
+    protected function createConfigurationSectionFromFormAndGridInstances(Form $form, Form\Container\Grid $grid)
     {
         $templateCode = '<f:section name="Configuration">' . PHP_EOL;
-
+        $templateCode .= $this->createFluidNodeFromFormObject($form);
+        if (count($grid->getRows())) {
+            $templateCode .= $this->createFluidNodeFromFormObject($grid);
+        }
         $templateCode .= '</f:section>' . PHP_EOL . PHP_EOL;
         return $templateCode;
     }
 
+    /**
+     * @param Form\FormInterface $object
+     * @param integer $indentation
+     * @return string
+     */
+    protected function createFluidNodeFromFormObject(
+        Form\FormInterface $object,
+        $indentation = 1
+    ) {
+        $children = $this->extractChildrenFromFormObject($object);
+        $viewHelper = $this->convertFormComponentClassNameToViewHelperInstance($object);
+        $viewHelperClass = get_class($viewHelper);
+        $viewHelperName = substr($viewHelperClass, strpos($viewHelperClass, '\\ViewHelpers\\') + 13, -10);
+        $viewHelperName = implode('.', array_map('lcfirst', explode('\\', $viewHelperName)));
+        $space = str_repeat('  ', $indentation);
+        $fluidTemplateCode = $space . '<flux:' . $viewHelperName;
+        $arguments = $viewHelper->prepareArguments();
+        foreach ($arguments as $name => $argumentDefinition) {
+            // "label" is extracted directly, bypassing the getter. This ensures that only when the label was
+            // actually specified will it be reflected in the Fluid template. In other words: skips the attribute
+            // if the generated value is an automatic LLL reference, or if label was copied from object name.
+            $propertyName = $name;
+            if (isset($this->argumentToPropertyMap[$viewHelperClass][$name])) {
+                $propertyName = $this->argumentToPropertyMap[$viewHelperClass][$name];
+            } elseif (isset($this->argumentToPropertyMap[$name])) {
+                $propertyName = $this->argumentToPropertyMap[$name];
+            }
+            if ($name === 'label' || $name === 'description' || $name === 'shortDescription') {
+                $value = ObjectAccess::getProperty($object, $propertyName, true);
+                if ($value === ObjectAccess::getProperty($object, $name)) {
+                    continue;
+                }
+            } elseif ($name === 'extensionName' && $object->getParent()) {// && $object->getParent() && $object->getParent()->getExtensionName() === $object->getExtensionName()) {
+                continue;
+            } elseif ($name === 'clear') {
+                if (!$object->has($name)) {
+                    continue;
+                }
+                $value = true;
+            } else {
+                $value = ObjectAccess::getProperty($object, $propertyName);
+            }
+            if ($name === 'options') {
+                unset(
+                    $value[Form::OPTION_TEMPLATEFILE],
+                    $value[Form::OPTION_RECORD],
+                    $value[Form::OPTION_RECORD_TABLE],
+                    $value[Form::OPTION_RECORD_FIELD]
+                );
+            }
+            if ($argumentDefinition->getType() === 'string' && $value === null) {
+                continue;
+            }
+            if (is_array($value) && empty($value)) {
+                continue;
+            }
+            // Note: loose comparison is intentional
+            if ($value == $argumentDefinition->getDefaultValue()) {
+                continue;
+            }
+            $fluidTemplateCode .= ' ' . $name . '="' . $this->convertValueToFluidVariable($value) . '"';
+        }
+        if (!count($children)) {
+            $fluidTemplateCode .= ' />';
+        } else {
+            $fluidTemplateCode .= '>' . PHP_EOL;
+            foreach ($children as $child) {
+                $fluidTemplateCode .= $this->createFluidNodeFromFormObject($child, $indentation + 1);
+            }
+            $fluidTemplateCode .= $space . '</flux:' . $viewHelperName . '>';
+        }
+        return $fluidTemplateCode  . PHP_EOL;
+    }
 
+    /**
+     * @param Form\FormInterface $object
+     * @return array
+     */
+    protected function extractChildrenFromFormObject(Form\FormInterface $object) {
+        if ($object instanceof Form) {
+            $sheets = $object->getSheets();
+            return (!empty($sheets) ? $sheets : $object->getFields());
+        }
+        if ($object instanceof Form\Container\Grid) {
+            return $object->getRows();
+        }
+        if ($object instanceof Form\Container\Row) {
+            return $object->getColumns();
+        }
+        if ($object instanceof Form\FieldInterface) {
+            return ObjectAccess::getProperty($object, 'wizards', true);
+        }
+        if ($object instanceof Form\FieldContainerInterface) {
+            return $object->getFields();
+        }
+        return [];
+    }
+
+    /**
+     * @param mixed $value
+     * @param integer $depth
+     * @return mixed
+     */
+    protected function convertValueToFluidVariable($value, $depth = 0)
+    {
+        if ($depth && is_string($value)) {
+            return sprintf("'%s'", str_replace('\'', '\\', $value));
+        } elseif (is_bool($value)) {
+            return (integer) $value;
+        } elseif (is_scalar($value) || is_null($value)) {
+            return $value;
+        } elseif (is_array($value) && count($value)) {
+            $fluidTemplateCode = '{';
+            foreach ($value as $name => $subValue) {
+                $converted = $this->convertValueToFluidVariable($subValue, $depth + 1);
+                if ($converted === null) {
+                    continue;
+                }
+                $fluidTemplateCode .= $name . ': ' . $converted . ', ';
+            }
+            $fluidTemplateCode = rtrim($fluidTemplateCode, ', ');
+            $fluidTemplateCode .= '}';
+            return $fluidTemplateCode;
+        }
+    }
 
 }
