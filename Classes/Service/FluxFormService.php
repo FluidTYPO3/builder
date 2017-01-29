@@ -201,7 +201,7 @@ class FluxFormService implements SingletonInterface
                         $viewContext = $provider->getViewContext([]);
                         $viewContext->setControllerName($controllerName);
                         $viewContext->setPackageName($providerExtensionKey);
-                        $viewContext->setTemplatePaths($templatePaths);
+                        $viewContext->setTemplatePaths(new \FluidTYPO3\Flux\View\TemplatePaths($providerExtensionKey));
                         foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
                             $viewContext->setTemplatePathAndFilename($templateFile);
                             $formsAndGrids[$templateFile] = [
