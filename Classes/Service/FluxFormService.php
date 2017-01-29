@@ -269,6 +269,85 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
+     * Converts a Form instance to an array structure which
+     * when passed to Form::create() results in a Form that
+     * is identical to the input Form.
+     *
+     * @param Form $form
+     * @return array
+     */
+    public function convertFormToStructure(Form $form)
+    {
+        return $this->extractPropertiesFromFormComponent($form);
+    }
+
+    /**
+     * @param Form\Container\Grid $grid
+     * @return array
+     */
+    public function convertGridToStructure(Form\Container\Grid $grid)
+    {
+        return $this->extractPropertiesFromObject($grid);
+    }
+
+    /**
+     * Extracts properties from a FormInterface implementer,
+     * returning an array of all properties which are NOT
+     * the same value as the default value.
+     *
+     * @param Form\FormInterface $component
+     * @return array
+     */
+    protected function extractPropertiesFromFormComponent(Form\FormInterface $component)
+    {
+        $structure = $this->extractPropertiesFromObject($component);
+        $structure['type'] = get_class($component);
+        return $structure;
+    }
+
+    /**
+     * @param object $object
+     * @return array
+     */
+    protected function extractPropertiesFromObject($object) {
+        $classReflection = new \ReflectionClass(get_class($object));
+        $defaultProperties = $classReflection->getDefaultProperties();
+        $properties = [];
+        foreach ($classReflection->getProperties() as $propertyReflection) {
+            $name = $propertyReflection->getName();
+
+            if ($name === 'parent') {
+                continue;
+            }
+
+            $propertyReflection->setAccessible(true);
+            $value = $propertyReflection->getValue($object);
+
+            if (array_key_exists($name, $defaultProperties) && $defaultProperties[$name] === $value) {
+                continue;
+            }
+
+            if ($value instanceof \SplObjectStorage) {
+                $value = array_map([$this, 'extractPropertiesFromFormComponent'], iterator_to_array($value));
+            } elseif ($value instanceof Form\FormInterface) {
+                $value = $this->extractPropertiesFromFormComponent($value);
+            } elseif (is_object($value)) {
+                $value = $this->extractPropertiesFromObject($value);
+            }
+
+            if (is_array($value) && empty($value)) {
+                continue;
+            } elseif (is_null($value)) {
+                continue;
+            }
+
+            $properties[$name] = $value;
+        }
+
+        return $properties;
+    }
+
+    /**
      * Converts a class name of a Flux ViewHelper to an instance of
      * the corresponding Form component.
      *

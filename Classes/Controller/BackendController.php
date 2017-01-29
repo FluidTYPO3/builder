@@ -273,8 +273,15 @@ class BackendController extends ActionController
      */
     public function kickstarterEditAction($templatePathAndFilename)
     {
-        $form = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
-        $this->view->assign('form', $form);
+        $data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
+        $this->view->assign(
+            'structure',
+            [
+                'form' => $this->fluxFormService->convertFormToStructure($data['form']),
+                'grid' => $this->fluxFormService->convertGridToStructure($data['grid'])
+            ]
+        );
+        $this->view->assign('data', $data);
         $this->view->assign('templateFile', $templatePathAndFilename);
     }
 
