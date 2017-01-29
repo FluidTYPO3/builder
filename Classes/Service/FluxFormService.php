@@ -207,9 +207,10 @@ class FluxFormService implements SingletonInterface
                     // can render the template:
                     $viewContext = $provider->getViewContext([]);
                     $form = $this->fluxService->getFormFromTemplateFile($viewContext);
+                    $providerExtensionKey = $form->getExtensionName();
                     if ($form) {
                         $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
-                        $formsAndGrids[$templatePathAndFilename] = [
+                        $formsAndGrids[$providerExtensionKey][$templatePathAndFilename] = [
                             'form' => $form,
                             'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
                         ];
@@ -223,6 +224,7 @@ class FluxFormService implements SingletonInterface
                         $viewContext = $provider->getViewContext([]);
                         $viewContext->setPackageName($providerExtensionKey);
 
+                        $providerExtensionName = $providerExtensionKey;
                         $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionKey);
 
                         /** @var TemplatePaths $templatePaths */
@@ -234,8 +236,8 @@ class FluxFormService implements SingletonInterface
                             $viewContext->setTemplatePathAndFilename($templateFile);
                             $form = $this->fluxService->getFormFromTemplateFile($viewContext);
                             if ($form) {
-                                $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
-                                $formsAndGrids[$templateFile] = [
+                                $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
+                                $formsAndGrids[$providerExtensionName][$templateFile] = [
                                     'form' => $form,
                                     'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
                                 ];

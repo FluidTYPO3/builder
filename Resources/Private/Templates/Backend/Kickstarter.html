@@ -1,3 +1,5 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+
 <f:layout name="Backend" />
 
 <f:section name="ButtonsLeft">
@@ -10,21 +12,47 @@
 
 <f:section name="Content">
 		<h1>{f:translate(key: 'header.kickstarter')}</h1>
-
-	<f:groupedFor each="{forms}" as="grouped" groupBy="extensionKey" groupKey="extensionKey">
-		<h3>{extensionKey}</h3>
-		<table>
-			<f:for each="{grouped}" as="set">
-				<tr>
-					<th>
-						<f:link.action action="kickstarterEdit" arguments="{templatePathAndFilename: set.form.options.templateFile}">
+		<f:for each="{forms}" as="grouped" key="extensionName">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<th class="col-xs-8">{extensionName}</th>
+					<th class="col-xs-1">Grid columns</th>
+					<th class="col-xs-1">Size</th>
+					<th class="col-xs-1">Options</th>
+				</thead>
+				<f:for each="{grouped}" as="set">
+					<tr>
+						<td>
 							<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
-						</f:link.action>
-					</th>
-				</tr>
-			</f:for>
-		</table>
-	</f:groupedFor>
+						</td>
+						<td>
+							<f:if condition="{set.grid.rows}">
+								<f:else>No grid</f:else>
+								<f:then>
+									<f:render section="ColumnCounter" arguments="{grid: set.grid}" />
+								</f:then>
+							</f:if>
+						</td>
+						<td>
+							{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
+						</td>
+						<td>
+							<f:link.action action="kickstarterEdit" arguments="{templatePathAndFilename: set.form.options.templateFile}">
+								<span class="btn btn-mini fa fa-edit"></span>
+							</f:link.action>
+						</td>
+					</tr>
+				</f:for>
+			</table>
+		</f:for>
 
 		<f:link.action action="kickstarterNew">new Content Element</f:link.action>
+</f:section>
+
+<f:section name="ColumnCounter">
+	{v:variable.set(name: 'columns', value: 0)}
+	<f:for each="{grid.rows}" as="row">
+		{row.columns -> f:count() -> v:math.sum(b: columns) -> v:variable.set(name: 'columns')}
+	</f:for>
+	{columns}
 </f:section>
