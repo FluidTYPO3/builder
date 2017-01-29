@@ -3,11 +3,11 @@
         <h3>Form</h3>
         <div class="field">
             <label>Label:</label>
-            <input v-model="label" />
+            <input v-model="form.label" />
         </div>
 
         <div class="kickstarter-sheets">
-            <template v-for="sheet in sheets">
+            <template v-for="sheet in form.children">
                 <sheet :data="sheet" />
             </template>
         </div>

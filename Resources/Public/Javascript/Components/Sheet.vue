@@ -13,22 +13,13 @@
                     <input v-model="data.label" />
                 </div>
             </div>
-
             <div class="group-row">
                 <div class="group-row-label">
-                    <label>Description:</label>
+                    <label>Name:</label>
+                    <small>Internal name.</small>
                 </div>
                 <div class="group-row-content">
-                    <textarea v-model="data.description" />
-                </div>
-            </div>
-
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Description:</label>
-                </div>
-                <div class="group-row-content">
-                    <input v-model="data.shortDescription" />
+                    <input v-model="data.name" />
                 </div>
             </div>
 
@@ -38,7 +29,7 @@
                 </div>
                 <div class="group-row-content">
                     <div class="kickstarter-fields">
-                        <template v-for="field in data.fields">
+                        <template v-for="field in data.children">
                             <field :data="field" />
                         </template>
                     </div>

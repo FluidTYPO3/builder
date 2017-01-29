@@ -1,89 +1,36 @@
 <template>
-    <div class="kickstarter-field group">
-        <div class="group-header">
-            Field: {{field.label}}
-        </div>
-        <div class="group-rows">
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Label:</label>
-                    <small>This label will be shown in the Backend.</small>
-                </div>
-                <div class="group-row-content">
-                    <input v-model="label" />
-                </div>
-            </div>
-
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Default:</label>
-                </div>
-                <div class="group-row-content">
-                    <input v-model="field.default" />
-                </div>
-            </div>
-
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Placeholder:</label>
-                </div>
-                <div class="group-row-content">
-                    <input v-model="field.placeholder" />
-                </div>
-            </div>
-
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Type:</label>
-                </div>
-                <div class="group-row-content">
-                    <select v-model="field.type">
-                        <option v-for="option in typeOptions" v-bind:value="option.value">
-                            {{ option.label }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="group-row">
-                <div class="group-row-label">
-                    <label>Wizards:</label>
-                </div>
-                <div class="group-row-content">
-                    <div class="kickstarter-wizards">
-                        <template v-for="wizard in field.wizards">
-                            <wizard :data="wizard" />
-                        </template>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="kickstarter-field">
+        <div :is="fieldType" :data="field" />
     </div>
 </template>
 
 <script>
-    import Wizard from './Wizard.vue'
+    import NoneField from './Fields/NoneField.vue'
+    import InputField from './Fields/InputField.vue'
+    import SelectField from './Fields/SelectField.vue'
 
     export default{
         name: 'field',
         props: ['data'],
         data(){
             return {
-                field: this.data,
-                typeOptions: [
-                    {
-                        label: 'Foo',
-                        value: 'Foo'
-                    },
-                    {
-                        label: 'Input',
-                        value: 'Input'
-                    }
-                ]
+                field: this.data
+            }
+        },
+        computed: {
+            'fieldType': function() {
+                console.log(this);
+                // FluidTYPO3\Flux\Form\Field
+                if (this.field.type.match(/FluidTYPO3\\Flux\\Form\\Field/) == null) {
+                    return 'NoneField';
+                }
+                return this.field.type.replace('FluidTYPO3\\Flux\\Form\\Field', '').replace(/\\/g, '') + 'Field';
             }
         },
         components:{
-            Wizard
+            NoneField,
+            InputField,
+            SelectField
         }
     }
 </script>

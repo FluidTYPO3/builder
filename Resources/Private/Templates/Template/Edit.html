@@ -11,37 +11,18 @@
 </f:section>
 
 <f:section name="Content">
+	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/font-awesome/css/font-awesome.css')}" />
+
 	<div id="kickstarter">
 
 		<div class="row">
 			<div class="col-xs-12 col-lg-9">
 				<h2>Editing {relativeTemplateFile}</h2>
-				<f:form action="kickstarterUpdate" object="{data.form}" name="form" class="form-vertical">
-					<fieldset class="alert">
-						<f:form.hidden name="templatePathAndFilename" value="{templateFile}" />
-						<div class="form-group">
-							<label class="form-label">Form ID</label>
-							<f:form.textfield property="id" class="form-control input" />
-						</div>
-						<div class="form-group">
-							<label class="form-label" for="layoutName">Layout name</label>
-							<f:form.textfield id="layoutName" name="layoutName" value="Default" class="form-control input" />
-						</div>
-						<div class="form-group">
-							<label class="form-label" for="mainContent">Form ID</label>
-							<f:form.textarea id="mainContent" name="mainContent" value="{mainContent}" class="form-control input" rows="12" />
-						</div>
-						<div class="form-group">
-							<label class="form-label"></label>
-							<f:form.submit value="Update template" class="btn btn-primary" />
-						</div>
-					</fieldset>
-				</f:form>
 
-				<div class="alert alert-notice">
-					{structure -> v:format.json.encode() -> f:format.raw()}
-				</div>
+				<kickstarter-form json='{structure -> v:format.json.encode() -> f:format.raw()}'/>
+
 			</div>
+
 			<div class="col-xs-12 col-lg-3">
 				<h2>Backups</h2>
 
@@ -67,4 +48,5 @@
 
 	</div>
 
+	<script src="../../{f:uri.resource(path: 'Javascript/Main.compiled.js')}"></script>
 </f:section>
