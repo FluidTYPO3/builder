@@ -15,9 +15,6 @@
 </template>
 
 <style>
-    #typo3-docbody {
-        background: #EAEAEA;
-    }
 
     .group {
         border: #dddddd solid 1px;
@@ -35,6 +32,7 @@
 
     .group-header {
         padding: 20px 10px;
+        background: #ededed;
     }
 
     .group-row-label {
