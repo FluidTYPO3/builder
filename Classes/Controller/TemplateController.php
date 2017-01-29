@@ -127,27 +127,20 @@ class TemplateController extends ActionController
     public function newAction()
     {
         $structure = [
-            'id' => 'test',
-            'label' => 'Some form',
-            'sheets' => [
-                'default' => [
-                    'label' => 'Sheet label',
-                    'description' => 'Sheet description',
-                    'shortDescription' => 'Short description',
-                    'fields' => [
-                        [
-                            'type' => 'Input',
-                            'label' => 'Test field',
-                            'default' => 'default value',
-                            'placeholder' => 'Placeholder text',
-                            'wizards' => [
-                                'link' => [
-                                    'type' => 'Link'
-                                ]
-                            ]
-                        ]
+            'form' => [
+                'id' => 'test',
+                'extensionName' => 'Test.Testing',
+                'children' => [
+                    [
+                        'name' => 'options',
+                        'label' => 'LLL:EXT:flux/Resources/Private/Language/locallang.xlf:tt_content.tx_flux_options',
+                        'type' => 'FluidTYPO3\\Flux\\Form\\Container\\Sheet',
+                        'children' => []
                     ]
-                ]
+                ],
+                'name' => 'test',
+                'label' => 'Test',
+                'type' => 'FluidTYPO3\\Flux\\Form',
             ]
         ];
         $this->view->assign('view', 'FluxAdministration');
