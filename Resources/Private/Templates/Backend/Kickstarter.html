@@ -10,5 +10,20 @@
 
 <f:section name="Content">
 		<h1>{f:translate(key: 'header.kickstarter')}</h1>
+		<f:form action="kickstarterEdit">
+			<f:form.select name="templatePathAndFilename">
+				<f:groupedFor each="{forms}" as="grouped" groupBy="extensionKey" groupKey="extensionKey">
+					<f:form.select.optgroup label="{extensionKey}">
+						<f:for each="{grouped}" as="set">
+							<f:form.select.option value="{set.form.options.templateFile}">
+								<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
+							</f:form.select.option>
+						</f:for>
+					</f:form.select.optgroup>
+				</f:groupedFor>
+			</f:form.select>
+			<f:form.submit value="Submit" />
+		</f:form>
+
 		<f:link.action action="kickstarterNew">new Content Element</f:link.action>
 </f:section>

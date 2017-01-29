@@ -1,8 +1,10 @@
 <?php
 namespace FluidTYPO3\Builder\Service;
+
 use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
 use FluidTYPO3\Flux\Service\FluxService;
+use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use FluidTYPO3\Flux\View\ViewContext;
 use FluidTYPO3\Flux\ViewHelpers\Field\CheckboxViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\CustomViewHelper;
@@ -184,6 +186,7 @@ class FluxFormService implements SingletonInterface
                     $viewContext = $provider->getViewContext([]);
                     $form = $this->fluxService->getFormFromTemplateFile($viewContext);
                     if ($form) {
+                        $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
                         $formsAndGrids[$templatePathAndFilename] = [
                             'form' => $form,
                             'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
@@ -195,19 +198,26 @@ class FluxFormService implements SingletonInterface
                     // which we can then scan for template files:
                     $controllerName = $provider->getControllerNameFromRecord([]);
                     foreach (Core::getRegisteredProviderExtensionKeys($controllerName) as $providerExtensionKey) {
+                        $viewContext = $provider->getViewContext([]);
+                        $viewContext->setPackageName($providerExtensionKey);
+
+                        $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionKey);
+
                         /** @var TemplatePaths $templatePaths */
                         $templatePaths = $this->objectManager->get(TemplatePaths::class);
                         $templatePaths->fillDefaultsByPackageName($providerExtensionKey);
-                        $viewContext = $provider->getViewContext([]);
                         $viewContext->setControllerName($controllerName);
-                        $viewContext->setPackageName($providerExtensionKey);
                         $viewContext->setTemplatePaths(new \FluidTYPO3\Flux\View\TemplatePaths($providerExtensionKey));
                         foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
                             $viewContext->setTemplatePathAndFilename($templateFile);
-                            $formsAndGrids[$templateFile] = [
-                                'form' => $this->fluxService->getFormFromTemplateFile($viewContext),
-                                'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
-                            ];
+                            $form = $this->fluxService->getFormFromTemplateFile($viewContext);
+                            if ($form) {
+                                $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
+                                $formsAndGrids[$templateFile] = [
+                                    'form' => $form,
+                                    'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
+                                ];
+                            }
                         }
                     }
                 }

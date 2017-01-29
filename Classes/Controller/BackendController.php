@@ -263,10 +263,19 @@ class BackendController extends ActionController
     {
         $forms = $this->fluxFormService->getAllRegisteredForms();
 
-        $form = array(
-
-        );
         $this->view->assign('view', 'Kickstarter');
+        $this->view->assign('forms', $forms);
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     * @return void
+     */
+    public function kickstarterEditAction($templatePathAndFilename)
+    {
+        $form = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
+        $this->view->assign('form', $form);
+        $this->view->assign('templateFile', $templatePathAndFilename);
     }
 
     /**
