@@ -1,21 +1,20 @@
 <template>
-    <div class="kickstarter-wizard">
-        <h3>Wizard</h3>
-
-        <div class="field">
-            <label>Type:</label>
-            <input v-model="field.type" />
+    <div class="kickstarter-wizard group">
+        <div class="group-header">
+            wizard: {{field.label}}
+        </div>
+        <div class="group-rows">
+            <div class="group-row">
+                <div class="group-row-label">
+                    <label>Type:</label>
+                </div>
+                <div class="group-row-content">
+                    <input v-model="field.type" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
-
-<style>
-    .kickstarter-wizard {
-        border: 1px solid #dedede;
-        background: white;
-        margin: 40px 20px;
-    }
-</style>
 
 <script>
     export default{

@@ -10,6 +10,11 @@
 
 <f:section name="Content">
 		<h1>{f:translate(key: 'header.kickstarter')}</h1>
+
+		<f:link.action action="kickstarterEdit" arguments="{templatePathAndFilename: 'typo3conf/ext/template/Resources/Private/Templates/Content/Container.html'}">
+			edit Container
+		</f:link.action>
+
 		<f:form action="kickstarterEdit">
 			<f:form.select name="templatePathAndFilename">
 				<f:groupedFor each="{forms}" as="grouped" groupBy="extensionKey" groupKey="extensionKey">

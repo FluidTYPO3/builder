@@ -1,34 +1,53 @@
 <template>
-    <div class="kickstarter-sheet">
-        <h3>Sheet</h3>
-        <div class="field">
-            <label>Label:</label>
-            <input v-model="label" />
+    <div class="kickstarter-sheet group">
+        <div class="group-header" v-on:click="isExpanded = !isExpanded">
+            Sheet: {{data.label}}
         </div>
+        <div class="group-rows" v-bind:class="{'group-rows--expanded': isExpanded }">
+            <div class="group-row">
+                <div class="group-row-label">
+                    <label>Label:</label>
+                    <small>This label will be shown in the Backend.</small>
+                </div>
+                <div class="group-row-content">
+                    <input v-model="data.label" />
+                </div>
+            </div>
 
-        <div class="field">
-            <label>Description:</label>
-            <textarea v-model="description" />
+            <div class="group-row">
+                <div class="group-row-label">
+                    <label>Description:</label>
+                </div>
+                <div class="group-row-content">
+                    <textarea v-model="data.description" />
+                </div>
+            </div>
+
+            <div class="group-row">
+                <div class="group-row-label">
+                    <label>Description:</label>
+                </div>
+                <div class="group-row-content">
+                    <input v-model="data.shortDescription" />
+                </div>
+            </div>
+
+            <div class="group-row">
+                <div class="group-row-label">
+                    <label>Fields:</label>
+                </div>
+                <div class="group-row-content">
+                    <div class="kickstarter-fields">
+                        <template v-for="field in data.fields">
+                            <field :data="field" />
+                        </template>
+                    </div>
+                    <button v-on:click="addField">add Field</button>
+                </div>
+            </div>
         </div>
-
-        <div class="field">
-            <label>Short Description:</label>
-            <input v-model="shortDescription" />
-        </div>
-
-        <template v-for="field in fields">
-            <field :data="field" />
-        </template>
     </div>
 </template>
-
-<style>
-    .kickstarter-sheet {
-        border: 1px solid #dedede;
-        background: white;
-        margin: 40px 20px;
-    }
-</style>
 
 <script>
     import Field from './Field.vue'
@@ -37,10 +56,18 @@
         name: 'sheet',
         props: ['data'],
         data(){
-            return this.data
+            return {
+                data: this.data,
+                isExpanded: true
+            }
         },
         components:{
             Field
+        },
+        methods: {
+            addField: function(){
+                this.data.fields.push({});
+            }
         }
     }
 </script>

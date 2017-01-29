@@ -344,7 +344,7 @@ class BackendController extends ActionController
                     'description' => 'Sheet description',
                     'shortDescription' => 'Short description',
                     'fields' => [
-                        'test' => [
+                        [
                             'type' => 'Input',
                             'label' => 'Test field',
                             'default' => 'default value',
