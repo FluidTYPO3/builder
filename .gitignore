@@ -3,3 +3,7 @@ vendor
 build
 composer.lock
 /Resources/Public/node_modules
+/index.php
+/typo3
+/typo3_src
+/typo3conf
