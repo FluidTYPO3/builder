@@ -1,11 +1,40 @@
 <?php
 namespace FluidTYPO3\Builder\Service;
+use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
+use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\View\ViewContext;
+use FluidTYPO3\Flux\ViewHelpers\Field\CheckboxViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\CustomViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\FileViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\InlineViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\InputViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\MultiRelationViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\RadioViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\RelationViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\SelectViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\TextViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\TreeViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\UserFuncViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Form\ContainerViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Form\ObjectViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Form\SectionViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Form\SheetViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\FormViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Grid\ColumnViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Grid\RowViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\GridViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\AddViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\ColorPickerViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\EditViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\LinkViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\ListViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\SliderViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Wizard\SuggestViewHelper;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\ViewHelperInterface;
+use TYPO3\CMS\Fluid\View\TemplatePaths;
 
 /***************************************************************
  *  Copyright notice
@@ -44,6 +73,52 @@ class FluxFormService implements SingletonInterface
     protected $objectManager;
 
     /**
+     * @var FluxService
+     */
+    protected $fluxService;
+
+    /**
+     * @var array
+     */
+    protected $objectTypeMap = [
+        // Containers:
+        Form::class => FormViewHelper::class,
+        Form\Container\Sheet::class => SheetViewHelper::class,
+        Form\Container\Section::class => SectionViewHelper::class,
+        Form\Container\Object::class => ObjectViewHelper::class,
+        Form\Container\Container::class => ContainerViewHelper::class,
+        // Fields:
+        Form\Field\Input::class => InputViewHelper::class,
+        Form\Field\Text::class => TextViewHelper::class,
+        Form\Field\Checkbox::class => CheckboxViewHelper::class,
+        Form\Field\Radio::class => RadioViewHelper::class,
+        Form\Field\Custom::class => CustomViewHelper::class,
+        Form\Field\UserFunction::class => UserFuncViewHelper::class,
+        // TODO: Form\Field\DateTime::class => DateTimeViewHelper::class,
+        Form\Field\File::class => FileViewHelper::class,
+        // Type "flex" is not mappable.
+        // Type "passthrough" is not mappable.
+        Form\Field\Inline::class => InlineViewHelper::class,
+        Form\Field\Relation::class => RelationViewHelper::class,
+        Form\Field\MultiRelation::class => MultiRelationViewHelper::class,
+        Form\Field\Tree::class => TreeViewHelper::class,
+        Form\Field\Select::class => SelectViewHelper::class,
+        // Wizards:
+        Form\Wizard\Add::class => AddViewHelper::class,
+        Form\Wizard\ColorPicker::class => ColorPickerViewHelper::class,
+        Form\Wizard\Edit::class => EditViewHelper::class,
+        Form\Wizard\Link::class => LinkViewHelper::class,
+        Form\Wizard\ListWizard::class => ListViewHelper::class,
+        Form\Wizard\Select::class => \FluidTYPO3\Flux\ViewHelpers\Wizard\SelectViewHelper::class,
+        Form\Wizard\Slider::class => SliderViewHelper::class,
+        Form\Wizard\Suggest::class => SuggestViewHelper::class,
+        // Grid:
+        Form\Container\Grid::class => GridViewHelper::class,
+        Form\Container\Row::class => RowViewHelper::class,
+        Form\Container\Column::class => ColumnViewHelper::class
+    ];
+
+    /**
      * @param ObjectManagerInterface $objectManager
      * @return void
      */
@@ -53,13 +128,22 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
-     * Returns a single Form instance based on the template path
-     * and filename.
+     * @param FluxService $fluxService
+     * @return void
+     */
+    public function injectFluxService(FluxService $fluxService)
+    {
+        $this->fluxService = $fluxService;
+    }
+
+    /**
+     * Returns a Form+Grid instance based on the template path
+     * and filename, as ['form' => $form, 'grid' => $grid].
      *
      * @param string $templatePathAndFilename
-     * @return Form|null
+     * @return array|null
      */
-    public function getRegisteredFormByTemplateName($templatePathAndFilename)
+    public function getRegisteredFormAndGridByTemplateName($templatePathAndFilename)
     {
         $allForms = $this->getAllRegisteredForms();
         if (isset($allForms[$templatePathAndFilename])) {
@@ -73,11 +157,66 @@ class FluxFormService implements SingletonInterface
      * rendered by the TYPO3 site, indexed by the template
      * path and filename in which the Form exists.
      *
-     * @return Form[]
+     * Returns an array of associative arrays each containing
+     * a "form" and a "grid":
+     *
+     * [$templateFile => ['form' => $form, 'grid' => $grid]]
+     *
+     * @return array
      */
     public function getAllRegisteredForms()
     {
-        return [];
+        $formsAndGrids = [];
+
+        // First, read all configured Provider instances. Special implementations such as fluidpages included.
+        $providers = Core::getRegisteredFlexFormProviders();
+        foreach ($providers as $provider) {
+            if (is_string($provider)) {
+                $provider = $this->objectManager->get($provider);
+            }
+            // Check if provider is able to return a template file directly, indicating it was hardcoded
+            // or force-configured to work with that template file:
+            try {
+                $templatePathAndFilename = $provider->getTemplatePathAndFilename([]);
+                if ($templatePathAndFilename) {
+                    // The Provider returns a template filename - it most likely also can return a ViewContext which
+                    // can render the template:
+                    $viewContext = $provider->getViewContext([]);
+                    $form = $this->fluxService->getFormFromTemplateFile($viewContext);
+                    if ($form) {
+                        $formsAndGrids[$templatePathAndFilename] = [
+                            'form' => $form,
+                            'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
+                        ];
+                    }
+                } else {
+                    // Provider is NOT able to return a template path and filename. We then check the
+                    // class name of the provider which by convention should match a controller name
+                    // which we can then scan for template files:
+                    $controllerName = $provider->getControllerNameFromRecord([]);
+                    foreach (Core::getRegisteredProviderExtensionKeys($controllerName) as $providerExtensionKey) {
+                        /** @var TemplatePaths $templatePaths */
+                        $templatePaths = $this->objectManager->get(TemplatePaths::class);
+                        $templatePaths->fillDefaultsByPackageName($providerExtensionKey);
+                        $viewContext = $provider->getViewContext([]);
+                        $viewContext->setControllerName($controllerName);
+                        $viewContext->setPackageName($providerExtensionKey);
+                        $viewContext->setTemplatePaths($templatePaths);
+                        foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
+                            $viewContext->setTemplatePathAndFilename($templateFile);
+                            $formsAndGrids[$templateFile] = [
+                                'form' => $this->fluxService->getFormFromTemplateFile($viewContext),
+                                'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
+                            ];
+                        }
+                    }
+                }
+            } catch (\RuntimeException $error) {
+                // TODO: error messaging?
+            }
+        }
+
+        return $formsAndGrids;
     }
 
     /**
@@ -121,16 +260,14 @@ class FluxFormService implements SingletonInterface
 
     /**
      * Converts a class name of a Flux ViewHelper to an instance of
-     * the corresponding Form component. Done by analysing the
-     * ViewHelper's getComponent() method using reflection framework
-     * to determine the value of the "@return" annotation.
+     * the corresponding Form component.
      *
      * @param string $viewHelperClassName
      * @return Form\FormInterface
      */
     public function convertViewHelperClassNameToFormComponentInstance($viewHelperClassName)
     {
-        return Form::class;
+        return call_user_func(array_search($viewHelperClassName, $this->objectTypeMap), 'create');
     }
 
     /**
@@ -143,7 +280,7 @@ class FluxFormService implements SingletonInterface
      */
     public function convertFormComponentClassNameToViewHelperInstance($componentClassName)
     {
-        return FormViewHelper::class;
+        return $this->objectManager->get($this->objectTypeMap[$componentClassName]);
     }
 
     /**

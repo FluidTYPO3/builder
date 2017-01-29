@@ -1,5 +1,6 @@
 <?php
 namespace FluidTYPO3\Builder\Property;
+
 use FluidTYPO3\Flux\Form;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
@@ -36,7 +37,7 @@ class FormTypeConverter extends AbstractTypeConverter implements TypeConverterIn
      * @var array<string>
      * @api
      */
-    protected $sourceTypes = ['array'];
+    protected $sourceTypes = ['array', 'string'];
 
     /**
      * The target type this converter can convert to.
@@ -59,6 +60,9 @@ class FormTypeConverter extends AbstractTypeConverter implements TypeConverterIn
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ) {
+        if (is_string($source)) {
+            $source = (array) json_decode($source, JSON_OBJECT_AS_ARRAY);
+        }
         return Form::create($source);
     }
 
