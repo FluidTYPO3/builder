@@ -19,7 +19,6 @@
         },
         computed: {
             'fieldType': function() {
-                console.log(this);
                 // FluidTYPO3\Flux\Form\Field
                 if (this.field.type.match(/FluidTYPO3\\Flux\\Form\\Field/) == null) {
                     return 'NoneField';

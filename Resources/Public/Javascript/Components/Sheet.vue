@@ -1,7 +1,7 @@
 <template>
     <div class="kickstarter-sheet group">
         <div class="group-header" v-on:click="isExpanded = !isExpanded">
-            Sheet: {{data.label}}
+            Sheet: {{sheet.label}}
         </div>
         <div class="group-rows" v-bind:class="{'group-rows--expanded': isExpanded }">
             <div class="group-row">
@@ -10,7 +10,7 @@
                     <small>This label will be shown in the Backend.</small>
                 </div>
                 <div class="group-row-content">
-                    <input v-model="data.label" />
+                    <input v-model="sheet.label" />
                 </div>
             </div>
             <div class="group-row">
@@ -19,7 +19,7 @@
                     <small>Internal name.</small>
                 </div>
                 <div class="group-row-content">
-                    <input v-model="data.name" />
+                    <input v-model="sheet.name" />
                 </div>
             </div>
 
@@ -29,7 +29,7 @@
                 </div>
                 <div class="group-row-content">
                     <div class="kickstarter-fields">
-                        <template v-for="field in data.children">
+                        <template v-for="field in sheet.children">
                             <field :data="field" />
                         </template>
                     </div>
@@ -48,7 +48,7 @@
         props: ['data'],
         data(){
             return {
-                data: this.data,
+                sheet: this.data,
                 isExpanded: true
             }
         },
