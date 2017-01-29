@@ -34,10 +34,14 @@ use FluidTYPO3\Flux\ViewHelpers\Wizard\ListViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Wizard\SliderViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Wizard\SuggestViewHelper;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Fluid\Core\ViewHelper\ViewHelperInterface;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
+use TYPO3\CMS\Fluid\View\TemplateView;
+use TYPO3Fluid\Fluid\Core\Parser\Exception;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /***************************************************************
  *  Copyright notice
@@ -273,7 +277,8 @@ class FluxFormService implements SingletonInterface
         $form = $data['form'];
         $grid = $data['grid'];
 
-        $templateCode = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL . PHP_EOL;
+        $templateCode = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL;
+        $templateCode .= '{namespace v=FluidTYPO3\\Vhs\\ViewHelpers}' . PHP_EOL . PHP_EOL;
         if ($layoutName) {
             $templateCode .= '<f:layout name="' . $layoutName . '" />' . PHP_EOL . PHP_EOL;
         }
@@ -287,6 +292,69 @@ class FluxFormService implements SingletonInterface
         }
         $templateCode .= PHP_EOL;
         return $templateCode;
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     * @return array
+     */
+    public function getBackupsForTemplateFile($templatePathAndFilename)
+    {
+        $templateFileDirectory = pathinfo($templatePathAndFilename, PATHINFO_DIRNAME);
+        $backupDirectory = $templateFileDirectory . '/.backups/';
+        if (!is_dir($backupDirectory)) {
+            return [];
+        }
+        return array_map(function($item) {
+            $item = pathinfo($item, PATHINFO_BASENAME);
+            $timestamp = substr($item, 0, strpos($item, '.'));
+            var_dump($timestamp);
+            $date = date('Y-m-d H:i:s', (integer) $timestamp);
+            return [
+                'timestamp' => $timestamp,
+                'date' => $date
+            ];
+        }, glob($backupDirectory . '/*'));
+    }
+
+    /**
+     * Writes a template file after validating that it can be
+     * rendered (as in: parsed by the CMS Fluid adapter without errors).
+     *
+     * @param string $templatePathAndFilename
+     * @param string $templateSource
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function writeTemplateFileWithBackup($templatePathAndFilename, $templateSource)
+    {
+        // Test the template source validity
+        /** @var TemplateView $view */
+        $view = $this->objectManager->get(TemplateView::class);
+        $parser = $view->getRenderingContext()->getTemplateParser();
+        try {
+            $parser->parse($templateSource);
+        } catch (Exception $error) {
+            throw new \InvalidArgumentException('Template source cannot be parsed', $error->getCode(), $error);
+        }
+
+        $templateFileDirectory = pathinfo($templatePathAndFilename, PATHINFO_DIRNAME);
+        if (!is_dir($templateFileDirectory)) {
+            mkdir($templateFileDirectory, 0755, true);
+        }
+        $backupDirectory = $templateFileDirectory . '/.backups/';
+        if (file_exists($templatePathAndFilename)) {
+            $contents = file_get_contents($templatePathAndFilename);
+            if ($contents === $templateSource) {
+                return;
+            }
+            if (!is_dir($backupDirectory)) {
+                mkdir($backupDirectory, 0755, true);
+            }
+            $backupFilename = $backupDirectory . time() . '.' . pathinfo($templatePathAndFilename, PATHINFO_BASENAME);
+            copy($templatePathAndFilename, $backupFilename);
+        }
+        GeneralUtility::writeFile($templatePathAndFilename, $templateSource);
     }
 
     /**

@@ -15,7 +15,7 @@ if ('BE' === TYPO3_MODE) {
 		'txbuilderM1',
 		'',
 		array(
-			'Backend' => 'index,syntax,build,buildForm,kickstarter,kickstarterEdit,kickstarterNew,kickstarterUpdate',
+			'Backend' => 'index,syntax,build,buildForm,kickstarter,kickstarterEdit,kickstarterNew,kickstarterUpdate,kickstarterBackupRestore',
 		),
 		array(
 			'access' => 'user,group',

@@ -12,6 +12,19 @@
 	<div id="kickstarter">
 		<h1>Edit form in {templateFile}</h1>
 
+		<f:if condition="{backups}">
+			<h2>Backups</h2>
+			<ul>
+				<f:for each="{backups}" as="backup">
+					<li>
+						<f:link.action action="kickstarterBackupRestore" arguments="{templatePathAndFilename: templateFile, backupTimestamp: backup.timestamp}">
+							Restore from {backup.date}
+						</f:link.action>
+					</li>
+				</f:for>
+			</ul>
+		</f:if>
+
 		<f:form action="kickstarterUpdate" object="{data.form}" name="form">
 			<f:form.hidden name="templatePathAndFilename" value="{templateFile}" />
 			<f:form.textfield property="id" />

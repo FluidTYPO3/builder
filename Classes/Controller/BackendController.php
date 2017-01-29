@@ -278,9 +278,6 @@ class BackendController extends ActionController
         $templateSource = file_get_contents($templatePathAndFilename);
         $matches = [];
         preg_match_all('/<f:section name="Main">([\\s\\S]*?)<\\/f:section/msiu', $templateSource, $matches);
-        #var_dump($templateSource);
-        #var_dump($matches);
-        #exit();
         $data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
         $this->view->assign(
             'structure',
@@ -292,6 +289,7 @@ class BackendController extends ActionController
         $this->view->assign('data', $data);
         $this->view->assign('templateFile', $templatePathAndFilename);
         $this->view->assign('mainContent', $matches[1][0]);
+        $this->view->assign('backups', $this->fluxFormService->getBackupsForTemplateFile($templatePathAndFilename));
     }
 
     /**
@@ -313,12 +311,22 @@ class BackendController extends ActionController
         if ($grid === null) {
             $grid = Form\Container\Grid::create();
         }
-        #var_dump($form->getOptions());
-        #$data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
-        header('Content-type: text/plain');
-        echo $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
-        exit();
-        #return nl2br(htmlspecialchars($this->fluxFormService->convertFormToTemplate($form, 'Hello {world}', 'Default')));
+        $source = $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
+        $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $source);
+        $this->redirect('kickstarterEdit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     * @param integer $backupTimestamp
+     * @return void
+     */
+    public function kickstarterBackupRestoreAction($templatePathAndFilename, $backupTimestamp)
+    {
+        $backupFilePath = pathinfo($templatePathAndFilename, PATHINFO_DIRNAME) . '/.backups/' . $backupTimestamp . '.' . pathinfo($templatePathAndFilename, PATHINFO_BASENAME);
+        $backupFileSource = file_get_contents($backupFilePath);
+        $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $backupFileSource);
+        $this->redirect('kickstarterEdit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
     }
 
     /**
