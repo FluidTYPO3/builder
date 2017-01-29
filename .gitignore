@@ -2,3 +2,4 @@ vendor
 .idea
 build
 composer.lock
+/Resources/Public/node_modules

@@ -28,6 +28,7 @@ use FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer;
 use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Result\ParserResult;
 use FluidTYPO3\Builder\Service\ExtensionService;
+use FluidTYPO3\Builder\Service\FluxFormService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -55,6 +56,11 @@ class BackendController extends ActionController
     protected $extensionService;
 
     /**
+     * @var FluxFormService
+     */
+    protected $fluxFormService;
+
+    /**
      * @param SyntaxService $syntaxService
      * @return void
      */
@@ -70,6 +76,15 @@ class BackendController extends ActionController
     public function injectExtensionService(ExtensionService $extensionService)
     {
         $this->extensionService = $extensionService;
+    }
+
+    /**
+     * @param FluxFormService $fluxFormService
+     * @return void
+     */
+    public function injectFluxFormService(FluxFormService $fluxFormService)
+    {
+        $this->fluxFormService = $fluxFormService;
     }
 
     /**
@@ -240,6 +255,52 @@ class BackendController extends ActionController
         $this->view->assign('formats', $formats);
         $this->view->assign('syntax', $syntax);
         $this->view->assign('view', 'Index');
+    }
+
+    /**
+     */
+    public function kickstarterAction()
+    {
+        $forms = $this->fluxFormService->getAllRegisteredForms();
+
+        $form = array(
+
+        );
+        $this->view->assign('view', 'Kickstarter');
+    }
+
+    /**
+     */
+    public function kickstarterNewAction()
+    {
+        $forms = $this->fluxFormService->getAllRegisteredForms();
+
+        $structure = [
+            'id' => 'test',
+            'label' => 'Some form',
+            'sheets' => [
+                'default' => [
+                    'label' => 'Sheet label',
+                    'description' => 'Sheet description',
+                    'shortDescription' => 'Short description',
+                    'fields' => [
+                        'test' => [
+                            'type' => 'Input',
+                            'label' => 'Test field',
+                            'default' => 'default value',
+                            'placeholder' => 'Placeholder text',
+                            'wizards' => [
+                                'link' => [
+                                    'type' => 'Link'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $this->view->assign('view', 'Kickstarter');
+        $this->view->assign('structure', json_encode($structure));
     }
 
     /**

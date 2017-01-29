@@ -1,0 +1,19 @@
+<f:layout name="Backend" />
+
+<f:section name="ButtonsLeft">
+
+</f:section>
+
+<f:section name="FunctionsLeft">
+	{csh -> f:format.raw()}
+</f:section>
+
+<f:section name="Content">
+	<div id="kickstarter">
+		<h1>New Content element</h1>
+
+		<kickstarter-form json="{structure}"/>
+	</div>
+
+	<script src="../../{f:uri.resource(path: 'Javascript/Main.compiled.js')}"></script>
+</f:section>
