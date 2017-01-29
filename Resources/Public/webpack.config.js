@@ -5,7 +5,7 @@ module.exports = {
   entry: './Javascript/Main.js',
   output: {
     path: path.resolve(__dirname, './Javascript'),
-    publicPath: '/typo3conf/ext/template/Resources/Public/Scripts/',
+    publicPath: '/typo3conf/ext/builder/Resources/Public/Javascript/',
     filename: 'Main.compiled.js'
   },
   module: {
