@@ -21,19 +21,6 @@
 					<field-type-selector :field="field">
 				</div>
 			</div>
-
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Wizards:</label>
-				</div>
-				<div class="group-row-content">
-					<div class="kickstarter-wizards">
-						<template v-for="wizard in field.wizards">
-							<wizard :data="wizard" />
-						</template>
-					</div>
-				</div>
-			</div>
 		</div>
 	</div>
 </template>

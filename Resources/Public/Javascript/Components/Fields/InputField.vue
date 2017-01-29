@@ -24,16 +24,62 @@
 
 			<div class="group-row">
 				<div class="group-row-label">
-					<label>Wizards:</label>
+					<label>Placeholder:</label>
 				</div>
 				<div class="group-row-content">
-					<div class="kickstarter-wizards">
-						<template v-for="wizard in field.wizards">
-							<wizard :data="wizard" />
-						</template>
-					</div>
+					<input v-model="field.placeholder" />
 				</div>
 			</div>
+
+			<div class="group-row">
+				<div class="group-row-label">
+					<label>Max Characters:</label>
+				</div>
+				<div class="group-row-content">
+					<input v-model="field.maxCharacters" />
+				</div>
+			</div>
+
+			<div class="group-row">
+				<div class="group-row-label">
+					<label>Minimum:</label>
+				</div>
+				<div class="group-row-content">
+					<input v-model="field.minimum" />
+				</div>
+			</div>
+
+			<div class="group-row">
+				<div class="group-row-label">
+					<label>Maximum:</label>
+				</div>
+				<div class="group-row-content">
+					<input v-model="field.maximum" />
+				</div>
+			</div>
+
+			<div class="group-row">
+				<div class="group-row-label">
+					<label>Eval:</label>
+					<small>FlexForm-type validation configuration for this input</small>
+				</div>
+				<div class="group-row-content">
+					<input v-model="field.eval" />
+				</div>
+			</div>
+
+			<!--<div class="group-row">-->
+				<!--<div class="group-row-label">-->
+					<!--<label>Wizards:</label>-->
+				<!--</div>-->
+				<!--<div class="group-row-content">-->
+					<!--<div class="kickstarter-wizards">-->
+						<!--<template v-for="wizard in field.wizards">-->
+							<!--<wizard :data="wizard" />-->
+						<!--</template>-->
+					<!--</div>-->
+				<!--</div>-->
+			<!--</div>-->
 		</div>
 	</div>
 </template>
