@@ -15,13 +15,34 @@ if ('BE' === TYPO3_MODE) {
 		'txbuilderM1',
 		'',
 		array(
-			'Backend' => 'index,syntax,build,buildForm,kickstarter,kickstarterEdit,kickstarterNew,kickstarterUpdate,kickstarterBackupRestore',
+			'Backend' => 'index,syntax,build,buildForm',
 		),
 		array(
 			'access' => 'user,group',
 			'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/' .
 				(6.2 === (float) substr(TYPO3_version, 0, 3) ? 'builder.gif' : 'module_builder.png'),
 			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf'
+		)
+	);
+
+	\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
+		'builder',
+		'EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang.xlf'
+	);
+
+	\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+		'FluidTYPO3.Builder',
+		'web',
+		'txbuilderM2',
+		'',
+		array(
+			'Template' => 'index,new,edit,update,restore',
+		),
+		array(
+			'access' => 'user,group',
+			'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/' .
+				(6.2 === (float) substr(TYPO3_version, 0, 3) ? 'builder.gif' : 'module_builder.png'),
+			'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/Module/locallang_template.xlf'
 		)
 	);
 

@@ -170,8 +170,10 @@ class FluxFormService implements SingletonInterface
     public function getRegisteredFormAndGridByTemplateName($templatePathAndFilename)
     {
         $allForms = $this->getAllRegisteredForms();
-        if (isset($allForms[$templatePathAndFilename])) {
-            return $allForms[$templatePathAndFilename];
+        foreach ($allForms as $extensionName => $set) {
+            if (isset($set[$templatePathAndFilename])) {
+                return $set[$templatePathAndFilename];
+            }
         }
         return null;
     }
