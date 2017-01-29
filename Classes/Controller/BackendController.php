@@ -288,6 +288,7 @@ class BackendController extends ActionController
         );
         $this->view->assign('data', $data);
         $this->view->assign('templateFile', $templatePathAndFilename);
+        $this->view->assign('relativeTemplateFile', substr($templatePathAndFilename, strlen(PATH_site)));
         $this->view->assign('mainContent', $matches[1][0]);
         $this->view->assign('backups', $this->fluxFormService->getBackupsForTemplateFile($templatePathAndFilename));
     }

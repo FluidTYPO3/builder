@@ -308,7 +308,6 @@ class FluxFormService implements SingletonInterface
         return array_map(function($item) {
             $item = pathinfo($item, PATHINFO_BASENAME);
             $timestamp = substr($item, 0, strpos($item, '.'));
-            var_dump($timestamp);
             $date = date('Y-m-d H:i:s', (integer) $timestamp);
             return [
                 'timestamp' => $timestamp,

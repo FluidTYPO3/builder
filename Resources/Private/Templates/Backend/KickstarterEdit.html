@@ -1,3 +1,5 @@
+{namespace v=FluidTYPO3\Vhs\ViewHelpers}
+
 <f:layout name="Backend" />
 
 <f:section name="ButtonsLeft">
@@ -10,30 +12,59 @@
 
 <f:section name="Content">
 	<div id="kickstarter">
-		<h1>Edit form in {templateFile}</h1>
 
-		<f:if condition="{backups}">
-			<h2>Backups</h2>
-			<ul>
-				<f:for each="{backups}" as="backup">
-					<li>
-						<f:link.action action="kickstarterBackupRestore" arguments="{templatePathAndFilename: templateFile, backupTimestamp: backup.timestamp}">
-							Restore from {backup.date}
-						</f:link.action>
-					</li>
-				</f:for>
-			</ul>
-		</f:if>
+		<div class="row">
+			<div class="col-xs-12 col-lg-9">
+				<h2>Editing {relativeTemplateFile}</h2>
+				<f:form action="kickstarterUpdate" object="{data.form}" name="form" class="form-vertical">
+					<fieldset class="alert">
+						<f:form.hidden name="templatePathAndFilename" value="{templateFile}" />
+						<div class="form-group">
+							<label class="form-label">Form ID</label>
+							<f:form.textfield property="id" class="form-control input" />
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="layoutName">Layout name</label>
+							<f:form.textfield id="layoutName" name="layoutName" value="Default" class="form-control input" />
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="mainContent">Form ID</label>
+							<f:form.textarea id="mainContent" name="mainContent" value="{mainContent}" class="form-control input" rows="12" />
+						</div>
+						<div class="form-group">
+							<label class="form-label"></label>
+							<f:form.submit value="Update template" class="btn btn-primary" />
+						</div>
+					</fieldset>
+				</f:form>
 
-		<f:form action="kickstarterUpdate" object="{data.form}" name="form">
-			<f:form.hidden name="templatePathAndFilename" value="{templateFile}" />
-			<f:form.textfield property="id" />
-			<f:form.textfield name="layoutName" value="Default" />
-			<f:form.textarea name="mainContent" value="{mainContent}" />
-			<f:form.submit value="Update template" />
-		</f:form>
+				<div class="alert alert-notice">
+					{structure -> v:format.json.encode() -> f:format.raw()}
+				</div>
+			</div>
+			<div class="col-xs-12 col-lg-3">
+				<h2>Backups</h2>
 
-		<f:debug inline="1">{structure}</f:debug>
+				<div class="panel-default">
+					<f:if condition="{backups}">
+						<f:else>
+							No backups yet
+						</f:else>
+						<f:then>
+							<div class="btn-group-vertical">
+								<f:for each="{backups}" as="backup">
+									<f:link.action action="kickstarterBackupRestore" arguments="{templatePathAndFilename: templateFile, backupTimestamp: backup.timestamp}"
+												   class="btn btn-default btn-block btn-secondary" additionalAttributes="{data-toggle: 'tooltip'}" title="Restore from {backup.date}">
+										<span class="fa fa-refresh"></span> {backup.date}
+									</f:link.action>
+								</f:for>
+							</div>
+						</f:then>
+					</f:if>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 </f:section>
