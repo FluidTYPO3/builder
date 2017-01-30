@@ -33,7 +33,7 @@
                             <field :data="field" />
                         </template>
                     </div>
-                    <button v-on:click="addField">add Field</button>
+                    <div v-on:click="addField">add Field</div>
                 </div>
             </div>
         </div>
@@ -56,7 +56,7 @@
             Field
         },
         methods: {
-            addField: function(){
+            addField: function() {
                 this.sheet.children.push({
                     type: 'FluidTYPO3\\Flux\\Form\\Field\\Input'
                 });

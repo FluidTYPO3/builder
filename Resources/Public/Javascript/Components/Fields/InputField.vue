@@ -4,69 +4,38 @@
 			Input: {{field.name}}
 		</div>
 		<div class="group-rows">
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Name:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.name" />
-				</div>
-			</div>
+			<tabs>
+				<tab label="General" selected="1">
+					<group-row label="Name" description="lorem ipsum dolor set amet">
+						<input v-model="field.name" />
+					</group-row>
 
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Type:</label>
-				</div>
-				<div class="group-row-content">
-					<field-type-selector :field="field">
-				</div>
-			</div>
+					<group-row label="Type">
+						<field-type-selector :field="field">
+					</group-row>
 
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Placeholder:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.placeholder" />
-				</div>
-			</div>
+					<group-row label="Placeholder">
+						<input v-model="field.placeholder" />
+					</group-row>
+				</tab>
+				<tab label="Constraints">
+					<group-row label="Max Characters">
+						<input v-model="field.maxCharacters" />
+					</group-row>
 
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Max Characters:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.maxCharacters" />
-				</div>
-			</div>
+					<group-row label="Minimum">
+						<input v-model="field.minimum" />
+					</group-row>
 
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Minimum:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.minimum" />
-				</div>
-			</div>
+					<group-row label="Maximum">
+						<input v-model="field.maximum" />
+					</group-row>
 
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Maximum:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.maximum" />
-				</div>
-			</div>
-
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Eval:</label>
-					<small>FlexForm-type validation configuration for this input</small>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.eval" />
-				</div>
-			</div>
+					<group-row label="Eval" description="FlexForm-type validation configuration for this input">
+						<input v-model="field.eval" />
+					</group-row>
+				</tab>
+			</tabs>
 
 			<!--<div class="group-row">-->
 				<!--<div class="group-row-label">-->
@@ -85,8 +54,6 @@
 </template>
 
 <script>
-    import FieldTypeSelector from '../FieldTypeSelector.vue'
-
     export default{
         name: 'InputField',
         props: ['data'],
@@ -94,9 +61,6 @@
             return {
                 field: this.data,
             }
-        },
-        components: {
-        	FieldTypeSelector
         }
     }
 </script>

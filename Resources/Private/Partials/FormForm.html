@@ -1,7 +1,14 @@
 {namespace v=FluidTYPO3\Vhs\ViewHelpers}
 
+
 <f:form.hidden name="form" value='{structure.form -> v:format.json.encode()}' />
 <f:form.hidden name="grid" value='{structure.grid -> v:format.json.encode()}' />
+
+<kickstarter-form
+    json='{structure -> v:format.json.encode() -> f:format.raw()}'
+    namespace="tx_builder_web_buildertxbuilderm2">
+</kickstarter-form>
+
 <f:form.hidden name="extensionName" value="{extensionName}" />
 <f:form.hidden name="templatePathAndFilename" value="{templatePath}{templateFile}" />
 <f:form.hidden name="templatePath" value="{templatePath}" />

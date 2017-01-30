@@ -6,6 +6,9 @@
             <input v-model="form.label" />
         </div>
 
+        <input type="hidden" v-model="formJson" :name="namespace + '[form]'" />
+        <input type="hidden" v-model="gridJson" :name="namespace + '[grid]'" />
+
         <div class="kickstarter-sheets">
             <template v-for="sheet in form.children">
                 <sheet :data="sheet" />
@@ -62,6 +65,19 @@
         font-size: 14px;
         line-height: 1.4;
     }
+
+    .tabs-navigation {
+        overflow: hidden;
+    }
+
+    .tabs-navigation-item {
+        float: left;
+        padding: 12px 8px;
+    }
+
+    .tabs-navigation-item--active {
+        background: #ededed;
+    }
 </style>
 
 <script>
@@ -69,9 +85,17 @@
 
     export default{
         name: 'kickstarter-form',
-        props: ['json'],
+        props: ['json', 'namespace'],
         data() {
             return JSON.parse(this.json)
+        },
+        computed: {
+            formJson: function(){
+                return JSON.stringify(this.form);
+            },
+            gridJson: function() {
+                return JSON.stringify(this.grid);
+            }
         },
         components:{
             Sheet
