@@ -226,7 +226,7 @@ class FluxFormService implements SingletonInterface
             $argumentDefinitions = $this->objectManager->get($viewHelperClassName)->prepareArguments();
             $object = [
                 'type' => $componentClassName,
-                'attribute' => []
+                'attributes' => []
             ];
             foreach ($argumentDefinitions as $argumentDefinition) {
                 $name = $argumentDefinition->getName();
@@ -235,7 +235,7 @@ class FluxFormService implements SingletonInterface
                 } elseif (isset($this->argumentToPropertyMap[$name])) {
                     $name = $this->argumentToPropertyMap[$name];
                 }
-                $object['attributes'] = [
+                $object['attributes'][$name] = [
                     'name' => $name,
                     'description' => $argumentDefinition->getDescription(),
                     'type' => $argumentDefinition->getType(),
@@ -243,7 +243,7 @@ class FluxFormService implements SingletonInterface
                     'required' => $argumentDefinition->isRequired()
                 ];
             }
-            $objects[] = $object;
+            $objects[$componentClassName] = $object;
         }
         return $objects;
     }
