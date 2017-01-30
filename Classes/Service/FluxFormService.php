@@ -5,7 +5,6 @@ use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
 use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
-use FluidTYPO3\Flux\View\ViewContext;
 use FluidTYPO3\Flux\ViewHelpers\Field\CheckboxViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\CustomViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\FileViewHelper;
@@ -41,7 +40,6 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\ViewHelperInterface;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\Parser\Exception;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /***************************************************************
  *  Copyright notice
@@ -444,7 +442,7 @@ class FluxFormService implements SingletonInterface
      * Converts a class name of a Flux ViewHelper to an instance of
      * the corresponding Form component.
      *
-     * @param string|ViewHelperInterface $viewHelperClassName
+     * @param string|ViewHelperInterface $viewHelperClassNameOrInstance
      * @return Form\FormInterface
      */
     public function convertViewHelperClassNameToFormComponentInstance($viewHelperClassNameOrInstance)
@@ -458,28 +456,13 @@ class FluxFormService implements SingletonInterface
      * instance of the corresponding ViewHelper, ready for argument
      * extraction using prepareArguments().
      *
-     * @param string|FormInterface $componentClassNameOrInstance
+     * @param string|Form\FormInterface $componentClassNameOrInstance
      * @return ViewHelperInterface
      */
     public function convertFormComponentClassNameToViewHelperInstance($componentClassNameOrInstance)
     {
         $className = is_string($componentClassNameOrInstance) ? $componentClassNameOrInstance : get_class($componentClassNameOrInstance);
         return $this->objectManager->get($this->objectTypeMap[$className]);
-    }
-
-    /**
-     * Converts a Flux ViewContext (which holds template paths,
-     * extension scope, template filename, variables etc) into
-     * a Flux form instance, by rendering the template's
-     * Configuration section like Flux normally would.
-     *
-     * @param ViewContext $viewContext
-     * @return Form|null
-     */
-    protected function convertViewContextToFormInstance(ViewContext $viewContext)
-    {
-
-        return Form::create(['id' => 'fake']);
     }
 
     /**
@@ -627,5 +610,4 @@ class FluxFormService implements SingletonInterface
             return $fluidTemplateCode;
         }
     }
-
 }

@@ -33,7 +33,6 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
  */
 class TemplateController extends ActionController
 {
-
     /**
      * @var FluxFormService
      */
@@ -98,8 +97,30 @@ class TemplateController extends ActionController
         $mainContent = null,
         $layoutName = null,
         Form\Container\Grid $grid = null
-    )
-    {
+    ) {
+        if ($grid === null) {
+            $grid = Form\Container\Grid::create();
+        }
+        $source = $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
+        $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $source);
+        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     * @param Form $form
+     * @param string $mainContent
+     * @param string $layoutName
+     * @param Form\Container\Grid|null $grid
+     * @return string
+     */
+    public function createAction(
+        $templatePathAndFilename,
+        Form $form,
+        $mainContent,
+        $layoutName,
+        Form\Container\Grid $grid
+    ) {
         if ($grid === null) {
             $grid = Form\Container\Grid::create();
         }
@@ -122,10 +143,19 @@ class TemplateController extends ActionController
     }
 
     /**
+     * Performs analysis of Flux-enabled templates with two levels
+     * of details possible: simple analysis of file/template on its
+     * own, optionally combined with an analysis (using expensive
+     * record digging) of possible usages of the template file.
+     *
+     * The second level of detail requires an additional flag in
+     * order to warn the user about potential long waits.
+     *
      * @param string $templatePathAndFilename
+     * @param boolean $usages
      * @return void
      */
-    public function analysisAction($templatePathAndFilename)
+    public function analysisAction($templatePathAndFilename, $usages = false)
     {
 
     }
@@ -134,6 +164,7 @@ class TemplateController extends ActionController
      * @param string $templatePath
      * @param string $templateName
      * @param string $extensionName
+     * @param string $mainContent
      * @param Form|null $form
      * @param Form\Container\Grid|null $grid
      * @validate $templatePath NotEmpty
@@ -141,8 +172,14 @@ class TemplateController extends ActionController
      * @validate $extensionName NotEmpty
      * @return void
      */
-    public function newAction($templatePath, $templateName, $extensionName, Form $form = null, Form\Container\Grid $grid = null)
-    {
+    public function newAction(
+        $templatePath,
+        $templateName,
+        $extensionName,
+        $mainContent = null,
+        Form $form = null,
+        Form\Container\Grid $grid = null
+    ) {
         if ($form) {
             $structure = [
                 'form' => $this->fluxFormService->convertFormToStructure($form),
@@ -167,8 +204,12 @@ class TemplateController extends ActionController
                 ]
             ];
         }
+        $this->view->assign('extensionName', $extensionName);
+        $this->view->assign('templatePath', $templatePath);
+        $this->view->assign('templateName', $templateName);
         $this->view->assign('view', 'FluxAdministration');
         $this->view->assign('structure', json_encode($structure));
+        $this->view->assign('mainContent', $mainContent);
         $this->view->assign('tempatePathAndFilename', $templatePath . $templateName);
     }
 

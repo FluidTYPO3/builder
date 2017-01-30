@@ -19,6 +19,10 @@
 			<div class="col-xs-12 col-lg-9">
 				<h2>Editing {relativeTemplateFile}</h2>
 
+				<f:form class="form" name="form" id="formform" action="update">
+					<f:render partial="FormForm" arguments="{_all}" />
+				</f:form>
+
 				<kickstarter-form json='{structure -> v:format.json.encode() -> f:format.raw()}'/>
 
 			</div>

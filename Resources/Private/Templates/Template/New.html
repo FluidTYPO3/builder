@@ -12,7 +12,11 @@
 	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/font-awesome/css/font-awesome.css')}" />
 
 	<div id="kickstarter">
-		<h1>New Content element</h1>
+		<h1>New template</h1>
+
+		<f:form class="form" name="form" id="formform" action="new">
+			<f:render partial="FormForm" arguments="{_all}" />
+		</f:form>
 
 		<kickstarter-form json="{structure}"/>
 	</div>
