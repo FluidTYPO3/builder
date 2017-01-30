@@ -99,6 +99,7 @@ class TemplateController extends ActionController
         $layoutNames = array_map(function($item) {
             return pathinfo($item, PATHINFO_FILENAME);
         }, $layoutNames);
+        $layoutNames = ['' => ''] + array_combine($layoutNames, $layoutNames);
 
         $layoutName = 'Default';
         $this->view->assign('layoutName', $layoutName);
@@ -241,6 +242,8 @@ class TemplateController extends ActionController
         $layoutNames = array_map(function($item) {
             return pathinfo($item, PATHINFO_FILENAME);
         }, $layoutNames);
+        $layoutNames = ['' => ''] + array_combine($layoutNames, $layoutNames);
+
         $this->view->assign('layoutNames', $layoutNames);
         $this->view->assign('layoutName', $layoutName);
         $this->view->assign('extensionName', $extensionName);
