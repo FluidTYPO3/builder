@@ -26,7 +26,9 @@ namespace FluidTYPO3\Builder\Controller;
 
 use FluidTYPO3\Builder\Service\FluxFormService;
 use FluidTYPO3\Flux\Form;
+use FluidTYPO3\Flux\Service\FluxService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Fluid\View\TemplatePaths;
 
 /**
  * Class TemplateController
@@ -39,12 +41,26 @@ class TemplateController extends ActionController
     protected $fluxFormService;
 
     /**
+     * @var FluxService
+     */
+    protected $fluxService;
+
+    /**
      * @param FluxFormService $fluxFormService
      * @return void
      */
     public function injectFluxFormService(FluxFormService $fluxFormService)
     {
         $this->fluxFormService = $fluxFormService;
+    }
+
+    /**
+     * @param FluxService $fluxService
+     * @return void
+     */
+    public function injectFluxService(FluxService $fluxService)
+    {
+        $this->fluxService = $fluxService;
     }
 
     /**
@@ -60,9 +76,10 @@ class TemplateController extends ActionController
 
     /**
      * @param string $templatePathAndFilename
+     * @param string $extensionName
      * @return void
      */
-    public function editAction($templatePathAndFilename)
+    public function editAction($templatePathAndFilename, $extensionName)
     {
         $templateSource = file_get_contents($templatePathAndFilename);
         $matches = [];
@@ -75,6 +92,17 @@ class TemplateController extends ActionController
                 'grid' => $this->fluxFormService->convertGridToStructure($data['grid'])
             ]
         );
+        $format = pathinfo($templatePathAndFilename, PATHINFO_EXTENSION);
+        $viewConfiguration = $this->fluxService->getViewConfigurationForExtensionName($extensionName);
+        $templatePaths = new TemplatePaths($viewConfiguration);
+        $layoutNames = $templatePaths->resolveAvailableLayoutFiles($format);
+        $layoutNames = array_map(function($item) {
+            return pathinfo($item, PATHINFO_FILENAME);
+        }, $layoutNames);
+
+        $layoutName = 'Default';
+        $this->view->assign('layoutName', $layoutName);
+        $this->view->assign('layoutNames', $layoutNames);
         $this->view->assign('data', $data);
         $this->view->assign('templateFile', $templatePathAndFilename);
         $this->view->assign('relativeTemplateFile', substr($templatePathAndFilename, strlen(PATH_site)));
@@ -164,6 +192,7 @@ class TemplateController extends ActionController
      * @param string $templatePath
      * @param string $templateName
      * @param string $extensionName
+     * @param string $layoutName
      * @param string $mainContent
      * @param Form|null $form
      * @param Form\Container\Grid|null $grid
@@ -176,6 +205,7 @@ class TemplateController extends ActionController
         $templatePath,
         $templateName,
         $extensionName,
+        $layoutName = null,
         $mainContent = null,
         Form $form = null,
         Form\Container\Grid $grid = null
@@ -204,6 +234,15 @@ class TemplateController extends ActionController
                 ]
             ];
         }
+        $format = pathinfo($templateName, PATHINFO_EXTENSION);
+        $viewConfiguration = $this->fluxService->getViewConfigurationForExtensionName($extensionName);
+        $templatePaths = new TemplatePaths($viewConfiguration);
+        $layoutNames = $templatePaths->resolveAvailableLayoutFiles($format);
+        $layoutNames = array_map(function($item) {
+            return pathinfo($item, PATHINFO_FILENAME);
+        }, $layoutNames);
+        $this->view->assign('layoutNames', $layoutNames);
+        $this->view->assign('layoutName', $layoutName);
         $this->view->assign('extensionName', $extensionName);
         $this->view->assign('templatePath', $templatePath);
         $this->view->assign('templateName', $templateName);

@@ -338,7 +338,11 @@ class FluxFormService implements SingletonInterface
         try {
             $parser->parse($templateSource);
         } catch (Exception $error) {
-            throw new \InvalidArgumentException('Template source cannot be parsed', $error->getCode(), $error);
+            throw new \InvalidArgumentException(
+                'Template source cannot be parsed: ' . $error->getMessage(),
+                $error->getCode(),
+                $error
+            );
         }
 
         $templateFileDirectory = pathinfo($templatePathAndFilename, PATHINFO_DIRNAME);

@@ -31,7 +31,7 @@ if ('BE' === TYPO3_MODE) {
 		'txbuilderM2',
 		'',
 		array(
-			'Template' => 'index,new,edit,update,restore,analysis',
+			'Template' => 'index,new,edit,update,create,restore,analysis',
 		),
 		array(
 			'access' => 'user,group',
