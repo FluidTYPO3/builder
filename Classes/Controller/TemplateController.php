@@ -115,6 +115,7 @@ class TemplateController extends ActionController
 
     /**
      * @param string $templatePathAndFilename
+     * @param string $extensionName
      * @param Form $form
      * @param string $mainContent
      * @param string $layoutName
@@ -123,6 +124,7 @@ class TemplateController extends ActionController
      */
     public function updateAction(
         $templatePathAndFilename,
+        $extensionName,
         Form $form,
         $mainContent = null,
         $layoutName = null,
@@ -133,11 +135,12 @@ class TemplateController extends ActionController
         }
         $source = $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
         $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $source);
-        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
+        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename, 'extensionName' => $extensionName]);
     }
 
     /**
      * @param string $templatePathAndFilename
+     * @param string $extensionName
      * @param Form $form
      * @param string $mainContent
      * @param string $layoutName
@@ -146,6 +149,7 @@ class TemplateController extends ActionController
      */
     public function createAction(
         $templatePathAndFilename,
+        $extensionName,
         Form $form,
         $mainContent,
         $layoutName,
@@ -156,7 +160,7 @@ class TemplateController extends ActionController
         }
         $source = $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
         $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $source);
-        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
+        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename, 'extensionName' => $extensionName]);
     }
 
     /**
