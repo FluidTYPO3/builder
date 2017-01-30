@@ -38,16 +38,48 @@
 					</td>
 					<td>
 						<div class="btn-group btn-group-justified">
+							<f:link.action action="analysis" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-info"></span></f:link.action>
 							<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
 							<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
 						</div>
 					</td>
 				</tr>
+				{set.paths -> v:variable.set(name: 'paths')}
 			</f:for>
+			<tfoot>
+				<tr>
+					<td colspan="4">
+						<f:form action="new" class="form-inline container row" style="margin-bottom: 0">
+							<div class="form-group">
+								<f:form.hidden name="extensionName" value="{extensionName}" />
+								<label for="templatePath" class="sr-only col-xs-2 col-form-label">Template path</label>
+								<f:form.select id="templatePath" name="templatePath" class="col-xs-4 form-control" style="max-width: 500px;">
+									<f:form.select.optgroup label="Template root paths">
+										<f:for each="{paths.templateRootPaths}" as="templateRootPath">
+											<f:form.select.option value="{templateRootPath}">{templateRootPath}</f:form.select.option>
+										</f:for>
+									</f:form.select.optgroup>
+									<f:form.select.optgroup label="Partial root paths">
+										<f:for each="{paths.partialRootPaths}" as="partialRootPath">
+											<f:form.select.option value="{partialRootPath}">{partialRootPath}</f:form.select.option>
+										</f:for>
+									</f:form.select.optgroup>
+									<f:form.select.optgroup label="Layout root paths">
+										<f:for each="{paths.layoutRootPaths}" as="layoutRootPath">
+											<f:form.select.option value="{layoutRootPath}">{layoutRootPath}</f:form.select.option>
+										</f:for>
+									</f:form.select.optgroup>
+								</f:form.select>
+								<label for="templateName" class="sr-only col-xs-2 col-form-label">Template name</label>
+								<f:form.textfield id="templateName" name="templateName" class="col-xs-4 form-control" placeholder="Filename.html" />
+								<f:form.submit value="Create" class="btn btn-primary" />
+							</div>
+						</f:form>
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 	</f:for>
-
-	<f:link.action action="new">new Content Element</f:link.action>
 </f:section>
 
 <f:section name="ColumnCounter">

@@ -106,7 +106,7 @@
 				<source>Build results</source>
 			</trans-unit>
 			<trans-unit id="header.fluxAdministration" xml:space="preserve">
-				<source>Kickstarter</source>
+				<source>Flux template administration</source>
 			</trans-unit>
 			<trans-unit id="noreports" xml:space="preserve">
 				<source>No reports</source>

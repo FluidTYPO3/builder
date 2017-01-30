@@ -214,7 +214,8 @@ class FluxFormService implements SingletonInterface
                         $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
                         $formsAndGrids[$providerExtensionKey][$templatePathAndFilename] = [
                             'form' => $form,
-                            'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
+                            'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
+                            'paths' => $viewContext->getTemplatePaths()
                         ];
                     }
                 } else {
@@ -241,7 +242,8 @@ class FluxFormService implements SingletonInterface
                                 $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
                                 $formsAndGrids[$providerExtensionName][$templateFile] = [
                                     'form' => $form,
-                                    'grid' => $this->fluxService->getGridFromTemplateFile($viewContext)
+                                    'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
+                                    'paths' => $viewContext->getTemplatePaths()
                                 ];
                             }
                         }

@@ -122,29 +122,54 @@ class TemplateController extends ActionController
     }
 
     /**
+     * @param string $templatePathAndFilename
      * @return void
      */
-    public function newAction()
+    public function analysisAction($templatePathAndFilename)
     {
-        $structure = [
-            'form' => [
-                'id' => 'test',
-                'extensionName' => 'Test.Testing',
-                'children' => [
-                    [
-                        'name' => 'options',
-                        'label' => 'LLL:EXT:flux/Resources/Private/Language/locallang.xlf:tt_content.tx_flux_options',
-                        'type' => 'FluidTYPO3\\Flux\\Form\\Container\\Sheet',
-                        'children' => []
-                    ]
-                ],
-                'name' => 'test',
-                'label' => 'Test',
-                'type' => 'FluidTYPO3\\Flux\\Form',
-            ]
-        ];
+
+    }
+
+    /**
+     * @param string $templatePath
+     * @param string $templateName
+     * @param string $extensionName
+     * @param Form|null $form
+     * @param Form\Container\Grid|null $grid
+     * @validate $templatePath NotEmpty
+     * @validate $templateName NotEmpty
+     * @validate $extensionName NotEmpty
+     * @return void
+     */
+    public function newAction($templatePath, $templateName, $extensionName, Form $form = null, Form\Container\Grid $grid = null)
+    {
+        if ($form) {
+            $structure = [
+                'form' => $this->fluxFormService->convertFormToStructure($form),
+                'grid' => $this->fluxFormService->convertGridToStructure($grid)
+            ];
+        } else {
+            $structure = [
+                'form' => [
+                    'id' => strtolower(pathinfo($templateName, PATHINFO_FILENAME)),
+                    'extensionName' => $extensionName,
+                    'children' => [
+                        [
+                            'name' => 'options',
+                            'label' => 'LLL:EXT:flux/Resources/Private/Language/locallang.xlf:tt_content.tx_flux_options',
+                            'type' => 'FluidTYPO3\\Flux\\Form\\Container\\Sheet',
+                            'children' => []
+                        ]
+                    ],
+                    'name' => 'test',
+                    'label' => $templateName,
+                    'type' => 'FluidTYPO3\\Flux\\Form',
+                ]
+            ];
+        }
         $this->view->assign('view', 'FluxAdministration');
         $this->view->assign('structure', json_encode($structure));
+        $this->view->assign('tempatePathAndFilename', $templatePath . $templateName);
     }
 
 }
