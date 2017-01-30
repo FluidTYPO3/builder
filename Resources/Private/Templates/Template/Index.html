@@ -53,23 +53,7 @@
 							<div class="form-group">
 								<f:form.hidden name="extensionName" value="{extensionName}" />
 								<label for="templatePath" class="sr-only col-xs-2 col-form-label">Template path</label>
-								<f:form.select id="templatePath" name="templatePath" class="col-xs-4 form-control" style="max-width: 500px;">
-									<f:form.select.optgroup label="Template root paths">
-										<f:for each="{paths.templateRootPaths}" as="templateRootPath">
-											<f:form.select.option value="{templateRootPath}">{templateRootPath}</f:form.select.option>
-										</f:for>
-									</f:form.select.optgroup>
-									<f:form.select.optgroup label="Partial root paths">
-										<f:for each="{paths.partialRootPaths}" as="partialRootPath">
-											<f:form.select.option value="{partialRootPath}">{partialRootPath}</f:form.select.option>
-										</f:for>
-									</f:form.select.optgroup>
-									<f:form.select.optgroup label="Layout root paths">
-										<f:for each="{paths.layoutRootPaths}" as="layoutRootPath">
-											<f:form.select.option value="{layoutRootPath}">{layoutRootPath}</f:form.select.option>
-										</f:for>
-									</f:form.select.optgroup>
-								</f:form.select>
+								<f:form.select id="templatePath" name="templatePath" class="col-xs-4 form-control" style="max-width: 400px;" options="{paths.templateRootPaths}" />
 								<label for="templateName" class="sr-only col-xs-2 col-form-label">Template name</label>
 								<f:form.textfield id="templateName" name="templateName" class="col-xs-4 form-control" placeholder="Filename.html" />
 								<f:form.submit value="Create" class="btn btn-primary" />
