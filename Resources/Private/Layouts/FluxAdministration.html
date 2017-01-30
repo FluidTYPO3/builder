@@ -1,15 +1,10 @@
 {namespace v=FluidTYPO3\Vhs\ViewHelpers}
 <f:be.container>
-    <div class="typo3-fullDoc">
+    <div class="typo3-fullDoc module">
         <div id="typo3-docheader">
-            <div class="typo3-docheader-functions">
-                <div class="left">
+            <div class="typo3-docheader-functions module-docheader t3js-module-docheader">
+                <div class="left module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation">
                     <f:render section="FunctionsLeft" />
-                    <f:form style="display: inline-block">
-                        <v:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}">
-                            <v:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'FluxAdmin\'', then: '1', else: '0')}">Kickstarter</v:form.select.option>
-                        </v:form.select>
-                    </f:form>
                 </div>
                 <div class="right"></div>
             </div>

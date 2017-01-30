@@ -218,39 +218,39 @@ class FluxFormService implements SingletonInterface
                             'paths' => $viewContext->getTemplatePaths()
                         ];
                     }
-                } else {
-                    // Provider is NOT able to return a template path and filename. We then check the
-                    // class name of the provider which by convention should match a controller name
-                    // which we can then scan for template files:
-                    $controllerName = $provider->getControllerNameFromRecord([]);
-                    foreach (Core::getRegisteredProviderExtensionKeys($controllerName) as $providerExtensionKey) {
-                        $viewContext = $provider->getViewContext([]);
-                        $viewContext->setPackageName($providerExtensionKey);
+                }
+                // Provider is NOT able to return a template path and filename. We then check the
+                // class name of the provider which by convention should match a controller name
+                // which we can then scan for template files:
+                $controllerName = $provider->getControllerNameFromRecord([]);
+                foreach (Core::getRegisteredProviderExtensionKeys($controllerName) as $providerExtensionKey) {
+                    $viewContext = $provider->getViewContext([]);
+                    $viewContext->setPackageName($providerExtensionKey);
 
-                        $providerExtensionName = $providerExtensionKey;
-                        $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionKey);
+                    $providerExtensionName = $providerExtensionKey;
+                    $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionKey);
 
-                        /** @var TemplatePaths $templatePaths */
-                        $templatePaths = $this->objectManager->get(TemplatePaths::class);
-                        $templatePaths->fillDefaultsByPackageName($providerExtensionKey);
-                        $viewContext->setControllerName($controllerName);
-                        $viewContext->setTemplatePaths(new \FluidTYPO3\Flux\View\TemplatePaths($providerExtensionKey));
-                        foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
-                            $viewContext->setTemplatePathAndFilename($templateFile);
-                            $form = $this->fluxService->getFormFromTemplateFile($viewContext);
-                            if ($form) {
-                                $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
-                                $formsAndGrids[$providerExtensionName][$templateFile] = [
-                                    'form' => $form,
-                                    'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
-                                    'paths' => $viewContext->getTemplatePaths()
-                                ];
-                            }
+                    /** @var TemplatePaths $templatePaths */
+                    $templatePaths = $this->objectManager->get(TemplatePaths::class);
+                    $templatePaths->fillDefaultsByPackageName($providerExtensionKey);
+                    $viewContext->setControllerName($controllerName);
+                    $viewContext->setTemplatePaths(new \FluidTYPO3\Flux\View\TemplatePaths($providerExtensionKey));
+                    foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
+                        $viewContext->setTemplatePathAndFilename($templateFile);
+                        $form = $this->fluxService->getFormFromTemplateFile($viewContext);
+                        if ($form) {
+                            $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
+                            $formsAndGrids[$providerExtensionName][$templateFile] = [
+                                'form' => $form,
+                                'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
+                                'paths' => $viewContext->getTemplatePaths()
+                            ];
                         }
                     }
                 }
             } catch (\RuntimeException $error) {
                 // TODO: error messaging?
+                throw $error;
             }
         }
 
