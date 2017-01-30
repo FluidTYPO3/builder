@@ -177,6 +177,41 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
+     * Returns a list of all arguments for all components
+     * based on the ViewHelpers in the component=>VH map.
+     *
+     * @return array
+     */
+    public function getGlobalObjectAttributeList()
+    {
+        $objects = [];
+        foreach ($this->objectTypeMap as $componentClassName => $viewHelperClassName) {
+            $argumentDefinitions = $this->objectManager->get($viewHelperClassName)->prepareArguments();
+            $object = [
+                'type' => $componentClassName,
+                'attribute' => []
+            ];
+            foreach ($argumentDefinitions as $argumentDefinition) {
+                $name = $argumentDefinition->getName();
+                if (isset($this->argumentToPropertyMap[$viewHelperClassName][$name])) {
+                    $name = $this->argumentToPropertyMap[$viewHelperClassName][$name];
+                } elseif (isset($this->argumentToPropertyMap[$name])) {
+                    $name = $this->argumentToPropertyMap[$name];
+                }
+                $object['attributes'] = [
+                    'name' => $name,
+                    'description' => $argumentDefinition->getDescription(),
+                    'type' => $argumentDefinition->getType(),
+                    'default' => $argumentDefinition->getDefaultValue(),
+                    'required' => $argumentDefinition->isRequired()
+                ];
+            }
+            $objects[] = $object;
+        }
+        return $objects;
+    }
+
+    /**
      * Gets every registered Flux-enabled form which can be
      * rendered by the TYPO3 site, indexed by the template
      * path and filename in which the Form exists.

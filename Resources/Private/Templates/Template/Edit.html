@@ -39,7 +39,7 @@
 						<f:then>
 							<div class="btn-group-vertical">
 								<f:for each="{backups}" as="backup">
-									<f:link.action action="restore" arguments="{templatePathAndFilename: templateFile, backupTimestamp: backup.timestamp}"
+									<f:link.action action="restore" arguments="{templatePathAndFilename: templateFile, extensionName: extensionName, backupTimestamp: backup.timestamp}"
 												   class="btn btn-default btn-block btn-secondary" additionalAttributes="{data-toggle: 'tooltip'}" title="Restore from {backup.date}">
 										<span class="fa fa-refresh"></span> {backup.date}
 									</f:link.action>

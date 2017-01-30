@@ -111,6 +111,7 @@ class TemplateController extends ActionController
         $this->view->assign('mainContent', $matches[1][0]);
         $this->view->assign('backups', $this->fluxFormService->getBackupsForTemplateFile($templatePathAndFilename));
         $this->view->assign('view', 'FluxAdministration');
+        $this->view->assign('objects', $this->fluxFormService->getGlobalObjectAttributeList());
     }
 
     /**
@@ -165,15 +166,16 @@ class TemplateController extends ActionController
 
     /**
      * @param string $templatePathAndFilename
+     * @param string $extensionName
      * @param integer $backupTimestamp
      * @return void
      */
-    public function restoreAction($templatePathAndFilename, $backupTimestamp)
+    public function restoreAction($templatePathAndFilename, $extensionName, $backupTimestamp)
     {
         $backupFilePath = pathinfo($templatePathAndFilename, PATHINFO_DIRNAME) . '/.backups/' . $backupTimestamp . '.' . pathinfo($templatePathAndFilename, PATHINFO_BASENAME);
         $backupFileSource = file_get_contents($backupFilePath);
         $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $backupFileSource);
-        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename]);
+        $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename, 'extensionName' => $extensionName]);
     }
 
     /**
@@ -255,7 +257,8 @@ class TemplateController extends ActionController
         $this->view->assign('templatePath', $templatePath);
         $this->view->assign('templateName', $templateName);
         $this->view->assign('view', 'FluxAdministration');
-        $this->view->assign('structure', json_encode($structure));
+        $this->view->assign('objects', $this->fluxFormService->getGlobalObjectAttributeList());
+        $this->view->assign('structure', $structure);
         $this->view->assign('mainContent', $mainContent);
         $this->view->assign('tempatePathAndFilename', $templatePath . $templateName);
     }
