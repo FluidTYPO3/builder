@@ -13,7 +13,8 @@
 
 <kickstarter-form
     json='{structure -> v:format.json.encode() -> f:format.raw()}'
-    namespace="tx_builder_web_buildertxbuilderm2">
+    formFieldName="{v:form.fieldName(name: 'form')}"
+    gridFieldName="{v:form.fieldName(name: 'grid')}">
 </kickstarter-form>
 
 <div class="form-group">
