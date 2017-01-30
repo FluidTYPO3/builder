@@ -102,6 +102,7 @@ class TemplateController extends ActionController
         $layoutNames = ['' => ''] + array_combine($layoutNames, $layoutNames);
 
         $layoutName = 'Default';
+        $this->view->assign('extensionName', $extensionName);
         $this->view->assign('layoutName', $layoutName);
         $this->view->assign('layoutNames', $layoutNames);
         $this->view->assign('data', $data);
