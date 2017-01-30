@@ -81,29 +81,6 @@
     .flux-template-fields {
         margin: -11px -11px 0;
     }
-
-    .sheet-addField {
-        color: #292b2c;
-        background-color: #fff;
-        border-color: #ccc;
-        display: inline-block;
-        font-weight: 400;
-        line-height: 1.25;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        border: 1px solid transparent;
-        padding: .5rem 1rem;
-        font-size: 1rem;
-        border-radius: .25rem;
-        -webkit-transition: all .2s ease-in-out;
-        -o-transition: all .2s ease-in-out;
-        transition: all .2s ease-in-out;
-    }
 </style>
 
 <script>

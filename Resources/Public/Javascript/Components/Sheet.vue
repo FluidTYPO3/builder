@@ -33,7 +33,7 @@
                             <field :data="field" />
                         </template>
                     </div>
-                    <div v-on:click="addField" class="sheet-addField">add Field</div>
+                    <div v-on:click="addField" class="btn btn-default">add Field</div>
                 </div>
             </div>
         </div>
