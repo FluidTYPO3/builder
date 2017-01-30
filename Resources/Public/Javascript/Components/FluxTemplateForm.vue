@@ -1,15 +1,14 @@
 <template>
-    <div class="kickstarter-form">
-        <h3>Form</h3>
+    <div class="flux-template-form">
         <div class="field">
             <label>Label:</label>
             <input v-model="form.label" />
         </div>
 
-        <input type="hidden" v-model="formJson" :name="namespace + '[form]'" />
-        <input type="hidden" v-model="gridJson" :name="namespace + '[grid]'" />
+        <input type="hidden" v-model="formJson" :name="formFieldName" />
+        <input type="hidden" v-model="gridJson" :name="gridFieldName" />
 
-        <div class="kickstarter-sheets">
+        <div class="flux-template-sheets">
             <template v-for="sheet in form.children">
                 <sheet :data="sheet" />
             </template>
@@ -78,14 +77,41 @@
     .tabs-navigation-item--active {
         background: #ededed;
     }
+
+    .flux-template-fields {
+        margin: -11px -11px 0;
+    }
+
+    .sheet-addField {
+        color: #292b2c;
+        background-color: #fff;
+        border-color: #ccc;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.25;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: .5rem 1rem;
+        font-size: 1rem;
+        border-radius: .25rem;
+        -webkit-transition: all .2s ease-in-out;
+        -o-transition: all .2s ease-in-out;
+        transition: all .2s ease-in-out;
+    }
 </style>
 
 <script>
     import Sheet from './Sheet.vue'
 
     export default{
-        name: 'kickstarter-form',
-        props: ['json', 'namespace'],
+        name: 'flux-template-form',
+        props: ['json', 'form-field-name', 'grid-field-name'],
         data() {
             return JSON.parse(this.json)
         },

@@ -11,11 +11,11 @@
     <f:form.select class="form-control" name="layoutName" options="{layoutNames}" value="{layoutName}" />
 </div>
 
-<kickstarter-form
+<flux-template-form
     json='{structure -> v:format.json.encode() -> f:format.raw()}'
-    formFieldName="{v:form.fieldName(name: 'form')}"
-    gridFieldName="{v:form.fieldName(name: 'grid')}">
-</kickstarter-form>
+    form-field-name="{v:form.fieldName(name: 'form')}"
+    grid-field-name="{v:form.fieldName(name: 'grid')}">
+</flux-template-form>
 
 <div class="form-group">
     <label class="form-label" for="mainContent">Main section Fluid code</label>

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import KickstarterForm from './Components/KickstarterForm.vue';
+import FluxTemplateForm from './Components/FluxTemplateForm.vue';
 import Tabs from './Components/Tabs.vue';
 import Tab from './Components/Tab.vue';
 import GroupRow from './Components/GroupRow.vue';
@@ -13,6 +13,6 @@ Vue.component('field-type-selector', FieldTypeSelector);
 new Vue({
   el: '#kickstarter',
   components: {
-    KickstarterForm
+    FluxTemplateForm
   }
 })
