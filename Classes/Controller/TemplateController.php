@@ -85,11 +85,13 @@ class TemplateController extends ActionController
         $matches = [];
         preg_match_all('/<f:section name="Main">([\\s\\S]*?)<\\/f:section/msiu', $templateSource, $matches);
         $data = $this->fluxFormService->getRegisteredFormAndGridByTemplateName($templatePathAndFilename);
+        $form = $this->fluxFormService->convertFormToStructure($data['form']);
+        $grid = $this->fluxFormService->convertGridToStructure($data['grid']);
         $this->view->assign(
             'structure',
             [
-                'form' => $this->fluxFormService->convertFormToStructure($data['form']),
-                'grid' => $this->fluxFormService->convertGridToStructure($data['grid'])
+                'form' => $form,
+                'grid' => $grid
             ]
         );
         $format = pathinfo($templatePathAndFilename, PATHINFO_EXTENSION);
@@ -102,6 +104,7 @@ class TemplateController extends ActionController
         $layoutNames = ['' => ''] + array_combine($layoutNames, $layoutNames);
 
         $layoutName = 'Default';
+        $this->view->assign('snippets', $this->fluxFormService->generateFluidSnippetsFromFormAndGrid($data['form'], $data['grid']));
         $this->view->assign('extensionName', $extensionName);
         $this->view->assign('layoutName', $layoutName);
         $this->view->assign('layoutNames', $layoutNames);

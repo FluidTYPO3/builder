@@ -212,6 +212,48 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
+     * Generates a list of snippets of Fluid code which can
+     * be used in the template to output or consume the
+     * variables and grid columns provided by the objects.
+     *
+     * @param Form $form
+     * @param Form\Container\Grid $grid
+     * @return string
+     */
+    public function generateFluidSnippetsFromFormAndGrid(Form $form, Form\Container\Grid $grid)
+    {
+        $fields = $form->getFields();
+        if (!count($fields)) {
+            $fields = [];
+            foreach ($form->getSheets() as $sheet) {
+                $fields += $sheet->getFields();
+            }
+        }
+        $snippets = [];
+        foreach ($fields as $field) {
+            $fieldName = $field->getName();
+            $snippets[] = [
+                'label' => 'Insert this to output value of field ' . $fieldName,
+                'snippet' => '{' . $fieldName . '}'
+            ];
+        }
+        foreach ($grid->getRows() as $row) {
+            foreach ($row->getColumns() as $column) {
+                $columnName = $column->getName();
+                $snippets[] = [
+                    'label' => 'Insert this to output content placed in column ' . $columnName,
+                    'snippet' => '<flux:content.render area="' . $columnName . '" />'
+                ];
+                $snippets[] = [
+                    'label' => 'Insert this to manually render content placed in column ' . $columnName,
+                    'snippet' => '<f:for each="{flux:content.get(area: \'' . $columnName . '\')}" as="element">...<flux:content.render contentUids="{element.uid}" />...</f:for>'
+                ];
+            }
+        }
+        return $snippets;
+    }
+
+    /**
      * Gets every registered Flux-enabled form which can be
      * rendered by the TYPO3 site, indexed by the template
      * path and filename in which the Form exists.
