@@ -34,14 +34,14 @@
     }
 
     .group-header {
-        padding: 20px 10px;
+        padding: 10px 10px;
         background: #ededed;
     }
 
     .group-row-label {
         background: #F9F9F9;
         width: 24%;
-        padding: 15px 12px;
+        padding: 10px 10px;
     }
 
     .group-row-label small {
@@ -50,7 +50,7 @@
 
     .group-row-content {
         width: 76%;
-        padding: 15px 12px;
+        padding: 10px 10px;
     }
 
     .group-row-content input,
