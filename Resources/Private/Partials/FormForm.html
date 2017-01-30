@@ -1,7 +1,5 @@
 {namespace v=FluidTYPO3\Vhs\ViewHelpers}
 
-<f:form.hidden name="form" value='{structure.form -> v:format.json.encode()}' />
-<f:form.hidden name="grid" value='{structure.grid -> v:format.json.encode()}' />
 <f:form.hidden name="layoutName" value="{layoutName}" />
 <f:form.hidden name="extensionName" value="{extensionName}" />
 <f:form.hidden name="templatePathAndFilename" value="{templatePath}{templateFile}" />
@@ -13,8 +11,12 @@
     <f:form.select class="form-control" name="layoutName" options="{layoutNames}" value="{layoutName}" />
 </div>
 
+<kickstarter-form
+    json='{structure -> v:format.json.encode() -> f:format.raw()}'
+    namespace="tx_builder_web_buildertxbuilderm2">
+</kickstarter-form>
+
 <div class="form-group">
     <label class="form-label" for="mainContent">Main section Fluid code</label>
     <f:form.textarea class="form-control" rows="12" name="mainContent" value="{mainContent}" />
 </div>
-
