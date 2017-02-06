@@ -33,6 +33,7 @@ use FluidTYPO3\Flux\ViewHelpers\Wizard\ListViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Wizard\SliderViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Wizard\SuggestViewHelper;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
@@ -254,6 +255,37 @@ class FluxFormService implements SingletonInterface
     }
 
     /**
+     * Detects whether $templatePathAndFilename is registered
+     * as a native CType in ext_localconf.php of $extensionName.
+     *
+     * @param string $extensionName
+     * @param string $templatePathAndFilename
+     * @return boolean
+     */
+    public function isTemplateRegisteredAsContentType($extensionName, $templatePathAndFilename)
+    {
+        $localConfiguration = file_get_contents(ExtensionManagementUtility::extPath(ExtensionNamingUtility::getExtensionKey($extensionName), 'ext_localconf.php'));
+        $matches = [];
+        preg_match_all('/Core::registerTemplateAsContentType\\(\\s*\'' . $extensionName  . '\',\\s*\'(.+)\'\\s*\\)/', $localConfiguration, $matches, PREG_PATTERN_ORDER);
+        if (empty($matches[1])) {
+            return false;
+        }
+        foreach ($matches[1] as $registeredTemplatePathAndFilename) {
+            $registeredTemplatePathAndFilename = trim($registeredTemplatePathAndFilename, '\'');
+            if (strpos($registeredTemplatePathAndFilename, '/') !== 0) {
+                $registeredAbsoluteTemplatePathAndFilename = GeneralUtility::getFileAbsFileName($registeredTemplatePathAndFilename);
+            } else {
+                $registeredAbsoluteTemplatePathAndFilename = $registeredTemplatePathAndFilename;
+            }
+            if ($registeredAbsoluteTemplatePathAndFilename === $templatePathAndFilename) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Gets every registered Flux-enabled form which can be
      * rendered by the TYPO3 site, indexed by the template
      * path and filename in which the Form exists.
@@ -268,6 +300,8 @@ class FluxFormService implements SingletonInterface
     public function getAllRegisteredForms()
     {
         $formsAndGrids = [];
+
+
 
         // First, read all configured Provider instances. Special implementations such as fluidpages included.
         $providers = Core::getRegisteredFlexFormProviders();
@@ -287,6 +321,8 @@ class FluxFormService implements SingletonInterface
                     $providerExtensionKey = $form->getExtensionName();
                     if ($form) {
                         $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
+                        $form->setOption(Form::OPTION_RECORD, $this->generateDummyRecordData($provider->getFieldName([])));
+                        $form->setOption(Form::OPTION_RECORD_FIELD, $provider->getFieldName([]));
                         $formsAndGrids[$providerExtensionKey][$templatePathAndFilename] = [
                             'form' => $form,
                             'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
@@ -315,6 +351,8 @@ class FluxFormService implements SingletonInterface
                         $form = $this->fluxService->getFormFromTemplateFile($viewContext);
                         if ($form) {
                             $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
+                            $form->setOption(Form::OPTION_RECORD, $this->generateDummyRecordData($provider->getFieldName([])));
+                            $form->setOption(Form::OPTION_RECORD_FIELD, $provider->getFieldName([]));
                             $formsAndGrids[$providerExtensionName][$templateFile] = [
                                 'form' => $form,
                                 'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
@@ -330,6 +368,26 @@ class FluxFormService implements SingletonInterface
         }
 
         return $formsAndGrids;
+    }
+
+    /**
+     * @param $fieldName
+     * @return array
+     */
+    protected function generateDummyRecordData($fieldName)
+    {
+        return [$fieldName => '<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3FlexForms>
+    <data>
+        <sheet index="options">
+            <language index="lDEF">
+                <field index="settings.distribution">
+                    <value index="vDEF">6-6</value>
+                </field>
+            </language>
+        </sheet>
+    </data>
+</T3FlexForms>'];
     }
 
     /**

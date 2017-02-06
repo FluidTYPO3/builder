@@ -1,4 +1,5 @@
 {namespace v=FluidTYPO3\Vhs\ViewHelpers}
+{namespace flux=FluidTYPO3\Flux\ViewHelpers}
 
 <f:layout name="FluxAdministration" />
 
@@ -51,7 +52,13 @@
 			</div>
 		</div>
 
+		<h2>Preview</h2>
+		<f:if condition="{form.sheets -> f:count()}">
+			<flux:form.render form="{form}" />
+		</f:if>
+
 	</div>
+
 
 	<script src="../../{f:uri.resource(path: 'Javascript/Main.compiled.js')}"></script>
 </f:section>

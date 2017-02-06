@@ -105,6 +105,8 @@ class TemplateController extends ActionController
 
         $layoutName = 'Default';
         $this->view->assign('snippets', $this->fluxFormService->generateFluidSnippetsFromFormAndGrid($data['form'], $data['grid']));
+        $this->view->assign('form', $data['form']);
+        $this->view->assign('register', (integer) $this->fluxFormService->isTemplateRegisteredAsContentType($extensionName, $templatePathAndFilename));
         $this->view->assign('extensionName', $extensionName);
         $this->view->assign('layoutName', $layoutName);
         $this->view->assign('layoutNames', $layoutNames);
@@ -123,6 +125,7 @@ class TemplateController extends ActionController
      * @param Form $form
      * @param string $mainContent
      * @param string $layoutName
+     * @param boolean $register
      * @param Form\Container\Grid|null $grid
      * @return string
      */
@@ -132,6 +135,7 @@ class TemplateController extends ActionController
         Form $form,
         $mainContent = null,
         $layoutName = null,
+        $register = false,
         Form\Container\Grid $grid = null
     ) {
         if ($grid === null) {
@@ -204,6 +208,7 @@ class TemplateController extends ActionController
      * @param string $templateName
      * @param string $extensionName
      * @param string $layoutName
+     * @param boolean $register
      * @param string $mainContent
      * @param Form|null $form
      * @param Form\Container\Grid|null $grid
@@ -217,6 +222,7 @@ class TemplateController extends ActionController
         $templateName,
         $extensionName,
         $layoutName = null,
+        $register = false,
         $mainContent = null,
         Form $form = null,
         Form\Container\Grid $grid = null
@@ -254,6 +260,8 @@ class TemplateController extends ActionController
         }, $layoutNames);
         $layoutNames = ['' => ''] + array_combine($layoutNames, $layoutNames);
 
+        $this->view->assign('form', $form);
+        $this->view->assign('register', $register);
         $this->view->assign('layoutNames', $layoutNames);
         $this->view->assign('layoutName', $layoutName);
         $this->view->assign('extensionName', $extensionName);

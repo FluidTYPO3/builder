@@ -7,8 +7,15 @@
 <f:form.hidden name="templateName" value="{templateName}" />
 
 <div class="form-group">
+    <label class="form-check-label" for="register">
+        <f:form.checkbox class="form-check-input" name="register" id="register" value="1" checked="{register}" />
+        Register as native CType
+    </label>
+</div>
+
+<div class="form-group">
     <label class="form-label" for="layoutName">Layout name</label>
-    <f:form.select class="form-control" name="layoutName" options="{layoutNames}" value="{layoutName}" />
+    <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
 </div>
 
 <flux-template-form
