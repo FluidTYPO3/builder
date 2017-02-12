@@ -1,43 +1,31 @@
-<template>
-	<div class="kickstarter-inputField group">
-		<div class="group-header">
-			Select: {{field.name}}
-		</div>
-		<div class="group-rows">
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Name:</label>
-				</div>
-				<div class="group-row-content">
-					<input v-model="field.name" />
-				</div>
-			</div>
-
-			<div class="group-row">
-				<div class="group-row-label">
-					<label>Type:</label>
-				</div>
-				<div class="group-row-content">
-					<field-type-selector :field="field">
-				</div>
-			</div>
-		</div>
-	</div>
-</template>
-
 <script>
-    import FieldTypeSelector from '../FieldTypeSelector.vue'
-
-    export default{
-        name: 'InputField',
-        props: ['data'],
-        data(){
-            return {
-                field: this.data,
+    import FieldMixin from './FieldMixin.vue';
+    export default {
+        name: 'SelectField',
+        mixins: [FieldMixin],
+        computed: {
+            meta: function () {
+                return fieldTypes['FluidTYPO3\\Flux\\Form\\Field\\Select'];
+            },
+            tabs: function () {
+                var attributes = this.attributes;
+                return [
+                    {
+                        label: 'General',
+                        selected: true,
+                        attributes: [
+                            {
+                                name: 'type',
+                                type: 'field-type'
+                            },
+                            attributes['name'],
+                            attributes['label'],
+                            attributes['default'],
+                            attributes['required']
+                        ]
+                    }
+                ];
             }
-        },
-        components: {
-        	FieldTypeSelector
         }
     }
 </script>

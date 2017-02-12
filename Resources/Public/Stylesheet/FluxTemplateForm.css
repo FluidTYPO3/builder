@@ -1,0 +1,157 @@
+.group {
+	border: #dddddd solid 1px;
+	background: white;
+}
+
+.group-rows {
+}
+
+.group-row {
+	display: flex;
+	border-bottom: #dddddd solid 1px;
+}
+
+.group-header {
+	padding: 10px 10px;
+	background: #ededed;
+}
+
+.group-row-label {
+	background: #F9F9F9;
+	width: 24%;
+	padding: 10px 10px;
+}
+
+.group-row-label small {
+	display: block;
+}
+
+.group-row-content {
+	width: 76%;
+	padding: 10px 10px;
+}
+
+.group-row-content input,
+.group-row-content textarea {
+	width: 100%;
+	padding: 3px 5px;
+	resize: none;
+	margin: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.tabs-navigation {
+	overflow: hidden;
+	background: #ededed;
+	padding: 5px 5px 0;
+}
+
+.tabs-navigation-item {
+	float: left;
+	padding: 12px 8px;
+	margin-top: 5px;
+}
+
+.tabs-navigation-item--active {
+	background: white;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+.tabs-items {
+	overflow-y: auto;
+	max-height: 65vh;
+	overflow-x: hidden;
+}
+
+.tabs-item {
+	margin: 10px;
+	border: 1px solid #ccc;
+}
+
+.flux-template-fields {
+	margin: -11px -11px 0;
+}
+
+.group-actions {
+	float: right;
+	overflow: hidden;
+}
+
+.group-actions > * {
+	float: left;
+	margin-left: 10px;
+}
+
+.field-edit {
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.modal-mask {
+	position: fixed;
+	z-index: 9998;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .5);
+	transition: opacity .3s ease;
+}
+
+.modal-container {
+	width: 90%;
+	max-width: 600px;
+	padding: 0;
+	background-color: #fff;
+	border-radius: 2px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+	transition: all .3s ease;
+	max-height: 80vh;
+	position: absolute;
+	top: 20px;
+	z-index: 9999;
+	left: 50%;
+	margin-left: -300px;
+}
+
+.modal-actions {
+	float: right;
+}
+
+.modal-actions > * {
+	float: left;
+	margin-left: 10px;
+}
+
+.modal-header {
+	margin-top: 0;
+}
+
+.modal-header h3 {
+	margin: 0;
+	padding: 12px 0px 0px;
+}
+
+.modal-body {
+	margin: 0;
+	padding: 0 0 5px;
+}
+
+.modal-close {
+	font-size: 20px;
+	cursor: pointer;
+}
+
+.multiselect__tags {
+	min-height: 34px;
+	padding: 4px 40px 0 8px;
+}
+
+.multiselect__select {
+	height: 34px;
+}

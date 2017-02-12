@@ -13,42 +13,40 @@
 
 <f:section name="Content">
 	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/font-awesome/css/font-awesome.css')}" />
+	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/FluxTemplateForm.css')}" />
 
-	<div id="kickstarter">
+	<div class="row">
+		<div class="col-xs-12 col-lg-9">
+			<h2>Editing {relativeTemplateFile}</h2>
 
-		<div class="row">
-			<div class="col-xs-12 col-lg-9">
-				<h2>Editing {relativeTemplateFile}</h2>
+			<f:form class="form" name="form" id="formform" action="update">
+				<f:render partial="FormForm" arguments="{_all}" />
 
-				<f:form class="form" name="form" id="formform" action="update">
-					<f:render partial="FormForm" arguments="{_all}" />
-
-					<div class="form-group">
-						<button type="submit" class="btn btn-primary">Save</button>
-					</div>
-				</f:form>
-			</div>
-
-			<div class="col-xs-12 col-lg-3">
-				<h2>Backups</h2>
-
-				<div class="panel-default">
-					<f:if condition="{backups}">
-						<f:else>
-							No backups yet
-						</f:else>
-						<f:then>
-							<div class="btn-group-vertical">
-								<f:for each="{backups}" as="backup">
-									<f:link.action action="restore" arguments="{templatePathAndFilename: templateFile, extensionName: extensionName, backupTimestamp: backup.timestamp}"
-												   class="btn btn-default btn-block btn-secondary" additionalAttributes="{data-toggle: 'tooltip'}" title="Restore from {backup.date}">
-										<span class="fa fa-refresh"></span> {backup.date}
-									</f:link.action>
-								</f:for>
-							</div>
-						</f:then>
-					</f:if>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary">Save</button>
 				</div>
+			</f:form>
+		</div>
+
+		<div class="col-xs-12 col-lg-3">
+			<h2>Backups</h2>
+
+			<div class="panel-default">
+				<f:if condition="{backups}">
+					<f:else>
+						No backups yet
+					</f:else>
+					<f:then>
+						<div class="btn-group-vertical">
+							<f:for each="{backups}" as="backup">
+								<f:link.action action="restore" arguments="{templatePathAndFilename: templateFile, extensionName: extensionName, backupTimestamp: backup.timestamp}"
+												 class="btn btn-default btn-block btn-secondary" additionalAttributes="{data-toggle: 'tooltip'}" title="Restore from {backup.date}">
+									<span class="fa fa-refresh"></span> {backup.date}
+								</f:link.action>
+							</f:for>
+						</div>
+					</f:then>
+				</f:if>
 			</div>
 		</div>
 

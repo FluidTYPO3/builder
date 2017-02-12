@@ -12,21 +12,19 @@
 
 <f:section name="Content">
 	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/font-awesome/css/font-awesome.css')}" />
+	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/FluxTemplateForm.css')}" />
 
-	<div id="kickstarter">
-		<h1>New template</h1>
+	<h1>New template</h1>
 
-		<f:form class="form" name="form" id="formform" action="new">
-			<f:form.hidden name="action" value="new" id="formaction" />
-			<f:render partial="FormForm" arguments="{_all}" />
+	<f:form class="form" name="form" id="formform" action="new">
+		<f:form.hidden name="action" value="new" id="formaction" />
+		<f:render partial="FormForm" arguments="{_all}" />
 
-			<div class="form-group">
-				<button type="submit" class="btn btn-secondary">Preview</button>
-				<button type="button" class="btn btn-primary" onclick="javascript:document.getElementById('formaction').value = 'create'; document.getElementById('formform').submit();">Save as template</button>
-			</div>
-		</f:form>
-
-	</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-secondary">Preview</button>
+			<button type="button" class="btn btn-primary" onclick="javascript:document.getElementById('formaction').value = 'create'; document.getElementById('formform').submit();">Save as template</button>
+		</div>
+	</f:form>
 
 	<f:if condition="{form.sheets -> f:count()}">
 		<flux:form.render form="{form}" />

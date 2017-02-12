@@ -116,7 +116,7 @@ class TemplateController extends ActionController
         $this->view->assign('mainContent', $matches[1][0]);
         $this->view->assign('backups', $this->fluxFormService->getBackupsForTemplateFile($templatePathAndFilename));
         $this->view->assign('view', 'FluxAdministration');
-        $this->view->assign('objects', $this->fluxFormService->getGlobalObjectAttributeList());
+        $this->view->assign('fieldTypes', $this->fluxFormService->getGlobalObjectAttributeList());
     }
 
     /**

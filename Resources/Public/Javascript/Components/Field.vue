@@ -8,18 +8,20 @@
     import NoneField from './Fields/NoneField.vue'
     import InputField from './Fields/InputField.vue'
     import SelectField from './Fields/SelectField.vue'
+    import Vue from 'vue';
 
     export default{
         name: 'field',
         props: ['data'],
         data(){
+            var field = this.data;
+            Vue.set(field, 'showModal', false);
             return {
                 field: this.data
             }
         },
         computed: {
             'fieldType': function() {
-                // FluidTYPO3\Flux\Form\Field
                 if (this.field.type.match(/FluidTYPO3\\Flux\\Form\\Field/) == null) {
                     return 'NoneField';
                 }

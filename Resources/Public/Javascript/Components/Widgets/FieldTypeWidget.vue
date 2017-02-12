@@ -1,22 +1,29 @@
 <template>
 	<div class="kickstarter-fieldTypeSelector">
-		<multiselect v-model="field.type"
+		<multiselect :value="value"
 								 placeholder="Choose a type"
 								 :custom-label="typeLabel"
 								 :options="typeOptions"
 								 :allow-empty="false"
 								 deselect-label=""
-								 :searchable="true"></multiselect>
+								 :searchable="true"
+								 v-on:input="updateValue($event)"></multiselect>
 	</div>
 </template>
 
 <script>
     export default{
-        name: 'field-type-selector',
-        props: ['field'],
+        name: 'field-type-widget',
+        props: ['field', 'value'],
         methods: {
             typeLabel: function (name) {
                 return name.replace('FluidTYPO3\\Flux\\Form\\Field\\', '');
+            },
+            updateValue: function (value) {
+                this.$emit('input', value);
+            },
+            updateValue: function (value) {
+                this.$emit('input', value);
             }
         },
         data(){

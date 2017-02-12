@@ -18,12 +18,17 @@
     <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
 </div>
 
+<script>
+    var fieldTypes = {fieldTypes -> v:format.json.encode() -> f:format.raw()};
+</script>
+
+<div class="flux-template-form">
 <flux-template-form
     json='{structure -> v:format.json.encode() -> f:format.raw()}'
-    objects='{objects -> v:format.json.encode() -> f:format.raw()}'
     form-field-name="{v:form.fieldName(name: 'form')}"
     grid-field-name="{v:form.fieldName(name: 'grid')}">
 </flux-template-form>
+</div>
 
 <div class="form-group">
     <label class="form-label" for="mainContent">Main section Fluid code</label>

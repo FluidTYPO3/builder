@@ -10,13 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axis": "^0.6.1",
-    "jeet": "^7.0.0",
+    "install": "^0.8.6",
     "jquery": "^3.1.1",
-    "rupture": "^0.6.2",
-    "sanitize.css": "^4.1.0",
-    "stylus": "^0.54.5",
-    "vue": "^2.0.1"
+    "vue": "^2.0.1",
+    "vue-multiselect": "next",
+    "vuedraggable": "^2.8.3-rc0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
