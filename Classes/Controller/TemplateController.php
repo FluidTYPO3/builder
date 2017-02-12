@@ -143,6 +143,7 @@ class TemplateController extends ActionController
         }
         $source = $this->fluxFormService->convertDataToTemplate(['form' => $form, 'grid' => $grid], $mainContent, $layoutName);
         $this->fluxFormService->writeTemplateFileWithBackup($templatePathAndFilename, $source);
+        $this->fluxFormService->writeOrRemoveContentTypeRegistration($extensionName, $templatePathAndFilename, !$register);
         $this->redirect('edit', null, null, ['templatePathAndFilename' => $templatePathAndFilename, 'extensionName' => $extensionName]);
     }
 
