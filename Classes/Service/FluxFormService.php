@@ -460,6 +460,8 @@ class FluxFormService implements SingletonInterface
 
         $templateCode .= $this->createConfigurationSectionFromFormAndGridInstances($form, $grid);
 
+        $mainSectionCode = trim($mainSectionCode);
+
         if ($layoutName) {
             $templateCode .= '<f:section name="Main">' . PHP_EOL . $mainSectionCode . PHP_EOL . '</f:section>';
         } else {
