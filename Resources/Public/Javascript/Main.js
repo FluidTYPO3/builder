@@ -10,6 +10,7 @@ import Attribute from './Components/Attribute.vue';
 import Modal from './Components/Modal.vue';
 import StringWidget from './Components/Widgets/StringWidget.vue';
 import FieldTypeWidget from './Components/Widgets/FieldTypeWidget.vue';
+import BooleanWidget from './Components/Widgets/BooleanWidget.vue';
 
 Vue.component('draggable', Draggable);
 Vue.component(Tabs.name, Tabs);
@@ -18,7 +19,7 @@ Vue.component(GroupRow.name, GroupRow);
 Vue.component(FieldTypeSelector.name, FieldTypeSelector);
 Vue.component(Attribute.name, Attribute);
 Vue.component(StringWidget.name, StringWidget);
-Vue.component('boolean-widget', StringWidget);
+Vue.component(BooleanWidget.name, BooleanWidget);
 Vue.component('integer-widget', StringWidget);
 Vue.component('array-widget', StringWidget);
 Vue.component('mixed-widget', StringWidget);
