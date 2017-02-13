@@ -10,7 +10,6 @@
 							<v:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}" class="form-control t3-js-jumpMenuBox">
 								<v:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'Index\'', then: '1', else: '0')}">Syntax</v:form.select.option>
 								<v:form.select.option value="{f:uri.action(action: 'buildForm')}" selected="{f:if(condition: '{view}==\'BuildForm\'', then: '1', else: '0')}">Build provider</v:form.select.option>
-								<v:form.select.option value="{f:uri.action(action: 'kickstarter')}" selected="{f:if(condition: '{view}==\'Kickstarter\'', then: '1', else: '0')}">Kickstarter</v:form.select.option>
 							</v:form.select>
 						</div>
 					 </f:form>
