@@ -47,32 +47,83 @@
                 return this.field.type.substring(this.field.type.lastIndexOf('\\') + 1);
             },
             tabsGrouped: function () {
-                var attributes = this.meta.attributes;
+                var encountered = [];
                 var tabs = this.tabs;
+                var attributes = this.meta.attributes;
+                var defaultTab = {
+                    label: 'General',
+                    selected: true,
+                    attributes: [
+                        {
+                            name: 'type',
+                            type: 'field-type'
+                        },
+                        attributes['name'],
+                        attributes['label'],
+                        attributes['default'],
+                        attributes['required']
+                    ]
+                };
+                var accessTab = {
+                    label: 'Access',
+                    attributes: [
+                        attributes['enabled'],
+                        attributes['displayCondition'],
+                        attributes['exclude']
+                    ]
+                };
+                var behaviorTab = {
+                    label: 'Behavior',
+                    attributes: [
+                        attributes['extensionName'],
+                        attributes['clear'],
+                        attributes['inherit'],
+                        attributes['inheritEmpty'],
+                        attributes['requestUpdate'],
+                        attributes['transform']
+                    ]
+                };
+                if (typeof attributes['validate'] != 'undefined') {
+                    behaviorTab.attributes.push(attributes['validate']);
+                }
+                var optionsTab = {
+                    label: 'Options',
+                    attributes: [
+                        attributes['variables']
+                    ]
+                };
+                var otherTab = {
+                    label: 'Component',
+                    attributes: []
+                };
 
-                for (var tabIndex in tabs) {
+                tabs.unshift(defaultTab, accessTab, behaviorTab, optionsTab, otherTab);
+
+                for (var tabIndex in this.tabs) {
                     for (var attributeIndex in tabs[tabIndex].attributes) {
-                        var attributeName = tabs[tabIndex].attributes[attributeIndex];
-                        tabs[tabIndex][attributeIndex] = attributes[attributeName];
-                        delete attributes[attributeName];
+                        if (typeof tabs[tabIndex].attributes[attributeIndex] != 'undefined') {
+                            encountered.push(tabs[tabIndex].attributes[attributeIndex].name);
+                        }
                     }
                 }
 
-                var otherTab = {
-                    label: 'Other',
-                    attributes: []
-                };
                 for (var attributeIndex in attributes) {
-                    otherTab.attributes.push(attributes[attributeIndex]);
+                    if (encountered.indexOf(attributeIndex) < 0) {
+                        otherTab.attributes.push(attributes[attributeIndex]);
+                    }
                 }
-                tabs.push(otherTab);
+
+                if (otherTab.attributes.length == 0) {
+                    tabs.splice(tabs.indexOf(otherTab), 1);
+                }
+
                 return tabs;
             },
             attributes: function () {
                 return this.meta.attributes
             },
             meta: function () {
-                return fieldTypes['FluidTYPO3\\Flux\\Form\\Field\\Input'];
+                return fieldTypes['FluidTYPO3\\Flux\\Form\\Field\\None'];
             }
         },
         data: function () {

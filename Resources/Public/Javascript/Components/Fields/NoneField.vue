@@ -9,21 +9,7 @@
             },
             tabs: function () {
                 var attributes = this.attributes;
-                return [
-                    {
-                        label: 'General',
-                        selected: true,
-                        attributes: [
-                            {
-                                name: 'type',
-                                type: 'field-type'
-                            },
-                            attributes['name'],
-                            attributes['label'],
-                            attributes['default']
-                        ]
-                    }
-                ];
+                return [];
             }
         }
     }

@@ -29,10 +29,21 @@
         data(){
             return {
                 typeOptions: [
+                    'FluidTYPO3\\Flux\\Form\\Field\\None',
                     'FluidTYPO3\\Flux\\Form\\Field\\Input',
                     'FluidTYPO3\\Flux\\Form\\Field\\Text',
-                    'FluidTYPO3\\Flux\\Form\\Field\\None',
-                    'FluidTYPO3\\Flux\\Form\\Field\\Select'
+                    'FluidTYPO3\\Flux\\Form\\Field\\Radio',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Checkbox',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Select',
+                    'FluidTYPO3\\Flux\\Form\\Field\\DateTime',
+                    'FluidTYPO3\\Flux\\Form\\Field\\UserFunction',
+                    'FluidTYPO3\\Flux\\Form\\Field\\File',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Inline',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Inline\\Fal',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Relation',
+                    'FluidTYPO3\\Flux\\Form\\Field\\MultiRelation',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Passthrough',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Tree'
                 ]
             }
         }

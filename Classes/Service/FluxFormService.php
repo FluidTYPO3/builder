@@ -8,6 +8,7 @@ use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use FluidTYPO3\Flux\ViewHelpers\Field\CheckboxViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\CustomViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\DateTimeViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\FileViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\InlineViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\InputViewHelper;
@@ -101,6 +102,7 @@ class FluxFormService implements SingletonInterface
         Form\Field\Text::class => TextViewHelper::class,
         Form\Field\Checkbox::class => CheckboxViewHelper::class,
         Form\Field\Radio::class => RadioViewHelper::class,
+        Form\Field\DateTime::class => DateTimeViewHelper::class,
         Form\Field\Custom::class => CustomViewHelper::class,
         Form\Field\UserFunction::class => UserFuncViewHelper::class,
         // TODO: Form\Field\DateTime::class => DateTimeViewHelper::class,
@@ -488,7 +490,7 @@ class FluxFormService implements SingletonInterface
         $mainSectionCode = trim($mainSectionCode);
 
         if ($layoutName) {
-            $templateCode .= '<f:section name="Main">' . PHP_EOL . $mainSectionCode . PHP_EOL . '</f:section>';
+            $templateCode .= '<f:section name="Main">' . PHP_EOL . rtrim($mainSectionCode) . PHP_EOL . '</f:section>';
         } else {
             $templateCode .= $mainSectionCode;
         }

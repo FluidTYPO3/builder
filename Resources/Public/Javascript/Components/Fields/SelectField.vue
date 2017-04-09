@@ -11,17 +11,25 @@
                 var attributes = this.attributes;
                 return [
                     {
-                        label: 'General',
-                        selected: true,
+                        label: 'Display',
                         attributes: [
-                            {
-                                name: 'type',
-                                type: 'field-type'
-                            },
-                            attributes['name'],
-                            attributes['label'],
-                            attributes['default'],
-                            attributes['required']
+                            attributes['size'],
+                            attributes['renderType'],
+                            attributes['itemListStyle'],
+                            attributes['selectedListStyle'],
+                            attributes['showIconTable']
+                        ]
+                    },
+                    {
+                        label: 'Items',
+                        attributes: [
+                            attributes['minItems'],
+                            attributes['maxItems'],
+                            attributes['multiple'],
+                            attributes['emptyOption'],
+                            attributes['items'],
+                            attributes['translateCsvItems'],
+                            attributes['itemsProcFunc']
                         ]
                     }
                 ];

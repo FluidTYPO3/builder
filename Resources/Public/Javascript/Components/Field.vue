@@ -8,6 +8,11 @@
     import NoneField from './Fields/NoneField.vue'
     import InputField from './Fields/InputField.vue'
     import TextField from './Fields/TextField.vue'
+    import RadioField from './Fields/RadioField.vue'
+    import CheckboxField from './Fields/CheckboxField.vue'
+    import DateTimeField from './Fields/DateTimeField.vue'
+    import FileField from './Fields/FileField.vue'
+    import RelationField from './Fields/RelationField.vue'
     import SelectField from './Fields/SelectField.vue'
     import Vue from 'vue';
 
@@ -33,6 +38,11 @@
             NoneField,
             InputField,
             TextField,
+            RadioField,
+            CheckboxField,
+            DateTimeField,
+            FileField,
+            RelationField,
             SelectField
         }
     }
