@@ -7,12 +7,13 @@
 <script>
     import NoneField from './Fields/NoneField.vue'
     import InputField from './Fields/InputField.vue'
+    import TextField from './Fields/TextField.vue'
     import SelectField from './Fields/SelectField.vue'
     import Vue from 'vue';
 
     export default{
         name: 'field',
-        props: ['data'],
+        props: ['data', 'index'],
         data(){
             var field = this.data;
             Vue.set(field, 'showModal', false);
@@ -28,9 +29,10 @@
                 return this.field.type.replace('FluidTYPO3\\Flux\\Form\\Field', '').replace(/\\/g, '') + 'Field';
             }
         },
-        components:{
+        components: {
             NoneField,
             InputField,
+            TextField,
             SelectField
         }
     }

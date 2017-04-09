@@ -1,6 +1,7 @@
 <?php
 namespace FluidTYPO3\Builder\Property;
 
+use FluidTYPO3\Builder\Helpers\GridsObjectStorage;
 use FluidTYPO3\Flux\Form\Container\Grid;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfigurationInterface;
 use TYPO3\CMS\Extbase\Property\TypeConverter\AbstractTypeConverter;
@@ -29,7 +30,7 @@ use TYPO3\CMS\Extbase\Property\TypeConverterInterface;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-class GridTypeConverter extends AbstractTypeConverter implements TypeConverterInterface
+class GridsTypeConverter extends AbstractTypeConverter implements TypeConverterInterface
 {
     /**
      * The source types this converter can convert.
@@ -45,14 +46,14 @@ class GridTypeConverter extends AbstractTypeConverter implements TypeConverterIn
      * @var string
      * @api
      */
-    protected $targetType = Grid::class;
+    protected $targetType = GridsObjectStorage::class;
 
     /**
      * @param mixed $source
      * @param string $targetType
      * @param array $convertedChildProperties
      * @param PropertyMappingConfigurationInterface|null $configuration
-     * @return Grid
+     * @return GridsObjectStorage
      */
     public function convertFrom(
         $source,
@@ -63,7 +64,11 @@ class GridTypeConverter extends AbstractTypeConverter implements TypeConverterIn
         if (is_string($source)) {
             $source = (array) json_decode($source, JSON_OBJECT_AS_ARRAY);
         }
-        return Grid::create($source);
+        $grids = new GridsObjectStorage();
+        foreach ($source as $grid) {
+            $grids->attach(Grid::create($grid));
+        }
+        return $grids;
     }
 
 }

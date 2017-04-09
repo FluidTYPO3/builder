@@ -30,7 +30,7 @@
                 return JSON.stringify(this.form);
             },
             gridJson: function() {
-                return JSON.stringify(this.grid);
+                return JSON.stringify(this.grids);
             }
         },
         components:{

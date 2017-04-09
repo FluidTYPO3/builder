@@ -23,6 +23,8 @@
             return {
                 typeOptions: [
                     'FluidTYPO3\\Flux\\Form\\Field\\Input',
+                    'FluidTYPO3\\Flux\\Form\\Field\\Text',
+                    'FluidTYPO3\\Flux\\Form\\Field\\None',
                     'FluidTYPO3\\Flux\\Form\\Field\\Select'
                 ]
             }

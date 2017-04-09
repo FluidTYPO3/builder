@@ -29,8 +29,8 @@
 				</div>
 				<div class="group-row-content">
 					<div class="kickstarter-field">
-						<template v-for="field in sheet.children">
-							<field :data="field"/>
+						<template v-for="(field, index) in sheet.children">
+							<field :data="field" :index="index" />
 						</template>
 					</div>
 					<div v-on:click="addField" class="btn btn-default">add Field</div>
@@ -58,7 +58,8 @@
         methods: {
             addField: function () {
                 this.sheet.children.push({
-                    type: 'FluidTYPO3\\Flux\\Form\\Field\\Input'
+                    type: 'FluidTYPO3\\Flux\\Form\\Field\\Input',
+                    name: 'newfield' + this.sheet.children.length.toString()
                 });
             }
         }

@@ -3,6 +3,7 @@ namespace FluidTYPO3\Builder\Service;
 
 use FluidTYPO3\Flux\Core;
 use FluidTYPO3\Flux\Form;
+use FluidTYPO3\Flux\Provider\ProviderInterface;
 use FluidTYPO3\Flux\Service\FluxService;
 use FluidTYPO3\Flux\Utility\ExtensionNamingUtility;
 use FluidTYPO3\Flux\ViewHelpers\Field\CheckboxViewHelper;
@@ -11,6 +12,7 @@ use FluidTYPO3\Flux\ViewHelpers\Field\FileViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\InlineViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\InputViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\MultiRelationViewHelper;
+use FluidTYPO3\Flux\ViewHelpers\Field\NoneViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\RadioViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\RelationViewHelper;
 use FluidTYPO3\Flux\ViewHelpers\Field\SelectViewHelper;
@@ -38,9 +40,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Fluid\Core\ViewHelper\ViewHelperInterface;
-use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3Fluid\Fluid\Core\Parser\Exception;
+use TYPO3Fluid\Fluid\Core\ViewHelper\ViewHelperVariableContainer;
 
 /***************************************************************
  *  Copyright notice
@@ -94,6 +96,7 @@ class FluxFormService implements SingletonInterface
         Form\Container\Object::class => ObjectViewHelper::class,
         Form\Container\Container::class => ContainerViewHelper::class,
         // Fields:
+        Form\Field\None::class => NoneViewHelper::class,
         Form\Field\Input::class => InputViewHelper::class,
         Form\Field\Text::class => TextViewHelper::class,
         Form\Field\Checkbox::class => CheckboxViewHelper::class,
@@ -205,9 +208,11 @@ class FluxFormService implements SingletonInterface
     public function getRegisteredFormAndGridByTemplateName($templatePathAndFilename)
     {
         $allForms = $this->getAllRegisteredForms();
-        foreach ($allForms as $extensionName => $set) {
-            if (isset($set[$templatePathAndFilename])) {
-                return $set[$templatePathAndFilename];
+        foreach ($allForms as $extensionName => $master) {
+            foreach ($master as $controllerName => $set) {
+                if (isset($set[$templatePathAndFilename])) {
+                    return $set[$templatePathAndFilename];
+                }
             }
         }
         return null;
@@ -254,10 +259,10 @@ class FluxFormService implements SingletonInterface
      * variables and grid columns provided by the objects.
      *
      * @param Form $form
-     * @param Form\Container\Grid $grid
+     * @param Form\Container\Grid[] $grids
      * @return string
      */
-    public function generateFluidSnippetsFromFormAndGrid(Form $form, Form\Container\Grid $grid)
+    public function generateFluidSnippetsFromFormAndGrids(Form $form, array $grids)
     {
         $fields = $form->getFields();
         if (!count($fields)) {
@@ -274,17 +279,20 @@ class FluxFormService implements SingletonInterface
                 'snippet' => '{' . $fieldName . '}'
             ];
         }
-        foreach ($grid->getRows() as $row) {
-            foreach ($row->getColumns() as $column) {
-                $columnName = $column->getName();
-                $snippets[] = [
-                    'label' => 'Insert this to output content placed in column ' . $columnName,
-                    'snippet' => '<flux:content.render area="' . $columnName . '" />'
-                ];
-                $snippets[] = [
-                    'label' => 'Insert this to manually render content placed in column ' . $columnName,
-                    'snippet' => '<f:for each="{flux:content.get(area: \'' . $columnName . '\')}" as="element">...<flux:content.render contentUids="{element.uid}" />...</f:for>'
-                ];
+
+        foreach ($grids as $grid) {
+            foreach ($grid->getRows() as $row) {
+                foreach ($row->getColumns() as $column) {
+                    $columnName = $column->getName();
+                    $snippets[] = [
+                        'label' => 'Insert this to output content placed in column ' . $columnName,
+                        'snippet' => '<flux:content.render area="' . $columnName . '" />'
+                    ];
+                    $snippets[] = [
+                        'label' => 'Insert this to manually render content placed in column ' . $columnName,
+                        'snippet' => '<f:for each="{flux:content.get(area: \'' . $columnName . '\')}" as="element">...<flux:content.render contentUids="{element.uid}" />...</f:for>'
+                    ];
+                }
             }
         }
         return $snippets;
@@ -352,47 +360,47 @@ class FluxFormService implements SingletonInterface
                 if ($templatePathAndFilename) {
                     // The Provider returns a template filename - it most likely also can return a ViewContext which
                     // can render the template:
-                    $viewContext = $provider->getViewContext([]);
-                    $form = $this->fluxService->getFormFromTemplateFile($viewContext);
-                    $providerExtensionKey = $form->getExtensionName();
+
+                    $providerExtensionName = $provider->getExtensionKey([]);
+                    $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionName);
+
+                    $viewHelperVariableContainer = $this->getRenderedViewHelperVariableContainer($templatePathAndFilename, $provider);
+                    $form = $viewHelperVariableContainer->get(FormViewHelper::class, 'form');
                     if ($form) {
                         $form->setOption(Form::OPTION_TEMPLATEFILE, $templatePathAndFilename);
                         $form->setOption(Form::OPTION_RECORD, $this->generateDummyRecordData($provider->getFieldName([])));
                         $form->setOption(Form::OPTION_RECORD_FIELD, $provider->getFieldName([]));
-                        $formsAndGrids[$providerExtensionKey][$templatePathAndFilename] = [
+                        $controllerName = pathinfo(dirname($templatePathAndFilename), PATHINFO_BASENAME);
+                        $formsAndGrids[$providerExtensionKey][$controllerName][$templatePathAndFilename] = [
                             'form' => $form,
-                            'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
-                            'paths' => $viewContext->getTemplatePaths()
+                            'grids' => $viewHelperVariableContainer->get(FormViewHelper::class, 'grids') ?? [],
+                            'paths' => $viewHelperVariableContainer->getView()->getRenderingContext()->getTemplatePaths()->toArray()
                         ];
                     }
                 }
+
                 // Provider is NOT able to return a template path and filename. We then check the
                 // class name of the provider which by convention should match a controller name
                 // which we can then scan for template files:
                 $controllerName = $provider->getControllerNameFromRecord([]);
                 foreach (Core::getRegisteredProviderExtensionKeys($controllerName) as $providerExtensionKey) {
-                    $viewContext = $provider->getViewContext([]);
-                    $viewContext->setPackageName($providerExtensionKey);
 
-                    $providerExtensionName = $providerExtensionKey;
                     $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerExtensionKey);
 
-                    /** @var TemplatePaths $templatePaths */
-                    $templatePaths = $this->objectManager->get(TemplatePaths::class);
-                    $templatePaths->fillDefaultsByPackageName($providerExtensionKey);
-                    $viewContext->setControllerName($controllerName);
-                    $viewContext->setTemplatePaths(new \FluidTYPO3\Flux\View\TemplatePaths($providerExtensionKey));
-                    foreach ($templatePaths->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
-                        $viewContext->setTemplatePathAndFilename($templateFile);
-                        $form = $this->fluxService->getFormFromTemplateFile($viewContext);
+                    $view = $this->objectManager->get(TemplateView::class);
+                    $view->getRenderingContext()->getTemplatePaths()->fillDefaultsByPackageName($providerExtensionKey);
+                    foreach ($view->getRenderingContext()->getTemplatePaths()->resolveAvailableTemplateFiles($controllerName) as $templateFile) {
+                        $viewHelperVariableContainer = $this->getRenderedViewHelperVariableContainer($templateFile, $providerExtensionKey);
+                        $view = $viewHelperVariableContainer->getView();
+                        $form = $viewHelperVariableContainer->get(FormViewHelper::class, 'form');
                         if ($form) {
                             $form->setOption(Form::OPTION_TEMPLATEFILE, $templateFile);
                             $form->setOption(Form::OPTION_RECORD, $this->generateDummyRecordData($provider->getFieldName([])));
                             $form->setOption(Form::OPTION_RECORD_FIELD, $provider->getFieldName([]));
-                            $formsAndGrids[$providerExtensionName][$templateFile] = [
+                            $formsAndGrids[$providerExtensionKey][$controllerName][$templateFile] = [
                                 'form' => $form,
-                                'grid' => $this->fluxService->getGridFromTemplateFile($viewContext),
-                                'paths' => $viewContext->getTemplatePaths()
+                                'grids' => $viewHelperVariableContainer->get(FormViewHelper::class, 'grids') ?? [],
+                                'paths' => $view->getRenderingContext()->getTemplatePaths()->toArray()
                             ];
                         }
                     }
@@ -404,6 +412,24 @@ class FluxFormService implements SingletonInterface
         }
 
         return $formsAndGrids;
+    }
+
+    /**
+     * @param string $templatePathAndFilename
+     * @param ProviderInterface|string $providerOrExtensionKey
+     * @return ViewHelperVariableContainer
+     */
+    protected function getRenderedViewHelperVariableContainer($templatePathAndFilename, $providerOrExtensionKey)
+    {
+        if ($providerOrExtensionKey instanceof ProviderInterface) {
+            $providerOrExtensionKey = $providerOrExtensionKey->getExtensionKey([]);
+        }
+        $providerExtensionKey = ExtensionNamingUtility::getExtensionKey($providerOrExtensionKey);
+        $view = $this->objectManager->get(TemplateView::class);
+        $view->getRenderingContext()->getTemplatePaths()->fillDefaultsByPackageName($providerExtensionKey);
+        $view->setTemplatePathAndFilename($templatePathAndFilename);
+        $view->renderSection('Configuration');
+        return $view->getRenderingContext()->getViewHelperVariableContainer();
     }
 
     /**
@@ -450,7 +476,7 @@ class FluxFormService implements SingletonInterface
     public function convertDataToTemplate(array $data, $mainSectionCode, $layoutName = null)
     {
         $form = $data['form'];
-        $grid = $data['grid'];
+        $grids = $data['grids'];
 
         $templateCode = '{namespace flux=FluidTYPO3\\Flux\\ViewHelpers}' . PHP_EOL;
         $templateCode .= '{namespace v=FluidTYPO3\\Vhs\\ViewHelpers}' . PHP_EOL . PHP_EOL;
@@ -458,8 +484,7 @@ class FluxFormService implements SingletonInterface
             $templateCode .= '<f:layout name="' . $layoutName . '" />' . PHP_EOL . PHP_EOL;
         }
 
-        $templateCode .= $this->createConfigurationSectionFromFormAndGridInstances($form, $grid);
-
+        $templateCode .= $this->createConfigurationSectionFromFormAndGridInstances($form, $grids);
         $mainSectionCode = trim($mainSectionCode);
 
         if ($layoutName) {
@@ -490,7 +515,7 @@ class FluxFormService implements SingletonInterface
                 'timestamp' => $timestamp,
                 'date' => $date
             ];
-        }, glob($backupDirectory . '/*'));
+        }, glob($backupDirectory . '/*.' . pathinfo($templatePathAndFilename, PATHINFO_BASENAME)));
     }
 
     /**
@@ -580,7 +605,6 @@ class FluxFormService implements SingletonInterface
      */
     protected function extractPropertiesFromObject($object) {
         $classReflection = new \ReflectionClass(get_class($object));
-        $defaultProperties = $classReflection->getDefaultProperties();
         $properties = [];
         foreach ($classReflection->getProperties() as $propertyReflection) {
             $name = $propertyReflection->getName();
@@ -591,22 +615,12 @@ class FluxFormService implements SingletonInterface
 
             $value = ObjectAccess::getProperty($object, $name, true);
 
-            if (array_key_exists($name, $defaultProperties) && $defaultProperties[$name] === $value) {
-                continue;
-            }
-
             if ($value instanceof \SplObjectStorage) {
                 $value = array_map([$this, 'extractPropertiesFromFormComponent'], iterator_to_array($value));
             } elseif ($value instanceof Form\FormInterface) {
                 $value = $this->extractPropertiesFromFormComponent($value);
             } elseif (is_object($value)) {
                 $value = $this->extractPropertiesFromObject($value);
-            }
-
-            if (is_array($value) && !count($value)) {
-                continue;
-            } elseif (is_null($value)) {
-                continue;
             }
 
             $properties[$name] = $value;
@@ -648,15 +662,17 @@ class FluxFormService implements SingletonInterface
      * will result in a Form instance identical to $form.
      *
      * @param Form $form
-     * @param Form\Container\Grid $grid
+     * @param Form\Container\Grid[] $grids
      * @return string
      */
-    protected function createConfigurationSectionFromFormAndGridInstances(Form $form, Form\Container\Grid $grid)
+    protected function createConfigurationSectionFromFormAndGridInstances(Form $form, array $grids)
     {
         $templateCode = '<f:section name="Configuration">' . PHP_EOL;
         $templateCode .= $this->createFluidNodeFromFormObject($form);
-        if (count($grid->getRows())) {
-            $templateCode .= $this->createFluidNodeFromFormObject($grid);
+        foreach ($grids as $grid) {
+            if (count($grid->getRows())) {
+                $templateCode .= $this->createFluidNodeFromFormObject($grid);
+            }
         }
         $templateCode .= '</f:section>' . PHP_EOL . PHP_EOL;
         return $templateCode;

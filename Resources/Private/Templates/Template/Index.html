@@ -12,7 +12,7 @@
 
 <f:section name="Content">
 	<h1>{f:translate(key: 'header.fluxAdministration')}</h1>
-	<f:for each="{forms}" as="grouped" key="extensionName">
+	<f:for each="{forms}" as="major" key="extensionName">
 		<table class="table table-bordered table-striped">
 			<thead>
 				<th class="col-xs-8">{extensionName}</th>
@@ -20,40 +20,48 @@
 				<th class="col-xs-1">Size</th>
 				<th class="col-xs-1">Options</th>
 			</thead>
-			<f:for each="{grouped}" as="set">
+			<f:for each="{major}" as="grouped" key="controllerName">
 				<tr>
-					<td>
-						<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
-					</td>
-					<td>
-						<f:if condition="{set.grid.rows}">
-							<f:else>No grid</f:else>
-							<f:then>
-								<f:render section="ColumnCounter" arguments="{grid: set.grid}" />
-							</f:then>
-						</f:if>
-					</td>
-					<td>
-						{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
-					</td>
-					<td>
-						<div class="btn-group btn-group-justified">
-							<f:link.action action="analysis" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-info"></span></f:link.action>
-							<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile, extensionName: extensionName}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
-							<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
-						</div>
-					</td>
+					<td colspan="4"><h4>{controllerName}</h4></td>
 				</tr>
-				{set.paths -> v:variable.set(name: 'paths')}
-			</f:for>
-			<tfoot>
+				<f:for each="{grouped}" as="set">
+					<tr>
+						<td>
+							<f:translate id="{set.form.label}" extensionName="{set.form.extensionName}" default="{set.form.label}" />
+						</td>
+						<td>
+							<f:if condition="{set.grid.rows}">
+								<f:else>No grid</f:else>
+								<f:then>
+									<f:render section="ColumnCounter" arguments="{grid: set.grid}" />
+								</f:then>
+							</f:if>
+						</td>
+						<td>
+							{v:media.size(path: set.form.options.templateFile) -> f:format.bytes()}
+						</td>
+						<td>
+							<div class="btn-group btn-group-justified">
+								<f:link.action action="analysis" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-info"></span></f:link.action>
+								<f:link.action action="edit" arguments="{templatePathAndFilename: set.form.options.templateFile, extensionName: extensionName}" class="btn btn-default"><span class="fa fa-edit"></span></f:link.action>
+								<f:link.action action="delete" arguments="{templatePathAndFilename: set.form.options.templateFile}" class="btn btn-default"><span class="fa fa-remove"></span></f:link.action>
+							</div>
+						</td>
+					</tr>
+					{set.paths -> v:variable.set(name: 'paths')}
+					</f:for>
 				<tr>
 					<td colspan="4">
 						<f:form action="new" class="form-inline container row" style="margin-bottom: 0">
 							<div class="form-group">
 								<f:form.hidden name="extensionName" value="{extensionName}" />
+								<f:form.hidden name="controllerName" value="{controllerName}" />
 								<label for="templatePath" class="sr-only col-xs-2 col-form-label">Template path</label>
-								<f:form.select id="templatePath" name="templatePath" class="col-xs-4 form-control" style="max-width: 400px;" options="{paths.templateRootPaths}" />
+								<f:form.select id="templatePath" name="templatePath" class="col-xs-4 form-control" style="max-width: 400px;">
+									<f:for each="{paths.templateRootPaths}" as="templateRootPath">
+										<f:form.select.option value="{templateRootPath}">{templateRootPath}</f:form.select.option>
+									</f:for>
+								</f:form.select>
 								<label for="templateName" class="sr-only col-xs-2 col-form-label">Template name</label>
 								<f:form.textfield id="templateName" name="templateName" class="col-xs-4 form-control" placeholder="Filename.html" />
 								<f:form.submit value="Create" class="btn btn-primary" />
@@ -61,7 +69,7 @@
 						</f:form>
 					</td>
 				</tr>
-			</tfoot>
+			</f:for>
 		</table>
 	</f:for>
 </f:section>

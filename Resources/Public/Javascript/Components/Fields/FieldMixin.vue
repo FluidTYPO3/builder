@@ -1,9 +1,10 @@
 <template>
 	<div class="kickstarter-inputField group">
 		<div class="group-header">
-			<span v-on:click="expanded=!expanded">{{field.name}}</span>
+			<span v-on:click="expanded=!expanded"><span class="label label-primary">{{shortType}}</span> <strong>{{field.name}}</strong></span>
 			<div class="group-actions">
-				<i class="fa fa-cog field-edit" aria-hidden="true" @click="showModal"></i>
+				<i class="fa fa-trash field-action" aria-hidden="true" @click="deleteField"></i>
+				<i class="fa fa-cog field-action" aria-hidden="true" @click="showModal"></i>
 			</div>
 		</div>
 		<modal :show.sync="field.showModal" :on-close="closeModal">
@@ -36,9 +37,15 @@
             },
             showModal: function () {
                 this.field.showModal = true;
+            },
+            deleteField: function () {
+                this.$parent.$parent.sheet.children.splice(this.$parent.index, 1);
             }
         },
         computed: {
+            shortType: function () {
+                return this.field.type.substring(this.field.type.lastIndexOf('\\') + 1);
+            },
             tabsGrouped: function () {
                 var attributes = this.meta.attributes;
                 var tabs = this.tabs;

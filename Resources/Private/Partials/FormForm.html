@@ -2,9 +2,7 @@
 
 <f:form.hidden name="layoutName" value="{layoutName}" />
 <f:form.hidden name="extensionName" value="{extensionName}" />
-<f:form.hidden name="templatePathAndFilename" value="{templatePath}{templateFile}" />
-<f:form.hidden name="templatePath" value="{templatePath}" />
-<f:form.hidden name="templateName" value="{templateName}" />
+<f:form.hidden name="templatePathAndFilename" value="{templatePathAndFilename}" />
 
 <div class="form-group">
     <label class="form-check-label" for="register">
@@ -26,7 +24,7 @@
 <flux-template-form id="kickstarter"
     json='{structure -> v:format.json.encode() -> f:format.raw()}'
     form-field-name="{v:form.fieldName(name: 'form')}"
-    grid-field-name="{v:form.fieldName(name: 'grid')}">
+    grid-field-name="{v:form.fieldName(name: 'grids')}">
 </flux-template-form>
 </div>
 

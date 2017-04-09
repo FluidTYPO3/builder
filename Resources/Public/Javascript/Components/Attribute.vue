@@ -4,7 +4,8 @@
 			<div :is="renderType"
 					 v-bind:value="value"
 					 v-on:input="updateValue($event)"></div>
-			<small v-if="attribute">{{attribute.description}}</small>
+
+			<small v-if="attribute">{{value}} - {{attribute.description}}</small>
 		</group-row>
 	</div>
 </template>

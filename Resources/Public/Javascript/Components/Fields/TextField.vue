@@ -1,11 +1,11 @@
 <script>
     import FieldMixin from './FieldMixin.vue';
-    export default{
-        name: 'NoneField',
+    export default {
+        name: 'TextField',
         mixins: [FieldMixin],
         computed: {
             meta: function () {
-                return fieldTypes['FluidTYPO3\\Flux\\Form\\Field\\None'];
+                return fieldTypes['FluidTYPO3\\Flux\\Form\\Field\\Text'];
             },
             tabs: function () {
                 var attributes = this.attributes;
