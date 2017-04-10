@@ -1,6 +1,7 @@
 <template>
 	<input ref="input"
 				 v-bind:value="value"
+				 class="form-control"
 				 v-on:input="updateValue($event.target.value)" />
 </template>
 

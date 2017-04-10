@@ -1,13 +1,12 @@
 <template>
-	<div>
-		<group-row :label="label">
-			<div :is="renderType"
-					 v-bind:value="value"
-					 v-on:input="updateValue($event)"></div>
-
-			<small v-if="attribute">{{attribute.description}}</small>
-		</group-row>
-	</div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">
+            <label :for="id">{{label}}</label>
+        </div>
+        <div class="col-sm-10" rel="tooltip" :title="attribute.description">
+            <div :is="renderType" v-bind:value="value" v-bind:label="label" v-bind:description="attribute.description" v-on:input="updateValue($event)"></div>
+        </div>
+    </div>
 </template>
 
 <script>

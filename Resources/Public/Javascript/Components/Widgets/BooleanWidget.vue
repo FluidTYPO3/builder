@@ -1,15 +1,19 @@
 <template>
-	<input type="checkbox"
-				 ref="input"
-				 class="checkbox"
-				 v-model="checked"
-				 v-on:change="updateValue($event.target.checked)"/>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox"
+                         ref="input"
+                         v-model="checked"
+                         v-on:change="updateValue($event.target.checked)"/>
+             {{description}}
+         </label>
+     </div>
 </template>
 
 <script>
     export default{
         name: 'boolean-widget',
-        props: ['value'],
+        props: ['value', 'description'],
         data: function () {
             return {
                 checked: this.value

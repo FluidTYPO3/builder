@@ -1,7 +1,5 @@
 <template>
-    <div class="kickstarter-field">
-        <div :is="fieldType" :data="field" />
-    </div>
+    <tr :is="fieldType" :data="field" />
 </template>
 
 <script>
@@ -21,7 +19,6 @@
         props: ['data', 'index'],
         data(){
             var field = this.data;
-            Vue.set(field, 'showModal', false);
             return {
                 field: this.data
             }

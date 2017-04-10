@@ -4,17 +4,45 @@
 <f:form.hidden name="extensionName" value="{extensionName}" />
 <f:form.hidden name="templatePathAndFilename" value="{templatePathAndFilename}" />
 
-<div class="form-group">
-    <label class="form-check-label" for="register">
-        <f:form.checkbox class="form-check-input" name="register" id="register" value="1" checked="{register}" />
-        Register as native CType
-    </label>
-</div>
-
-<div class="form-group">
-    <label class="form-label" for="layoutName">Layout name</label>
-    <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
-</div>
+<fieldset class="alert">
+    <div class="form-group">
+        <div class="col-xs-2">
+            <div class="control-label">
+                <label>Template</label>
+            </div>
+        </div>
+        <div class="col-xs-10">
+            <input type="text" class="form-control" disabled="disabled" value="{relativeTemplateFile}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-2">
+            <div class="control-label">
+                <label for="layoutName">Layout name</label>
+            </div>
+        </div>
+        <div class="col-xs-10">
+            <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-2">
+            <div class="control-label">
+                <label>
+                    Native CType
+                </label>
+            </div>
+        </div>
+        <div class="col-xs-10">
+            <div class="checkbox">
+                <label>
+                    <f:form.checkbox name="register" value="1" checked="{register}" />
+                    Register as native CType
+                </label>
+            </div>
+        </div>
+    </div>
+</fieldset>
 
 <script>
     var fieldTypes = {fieldTypes -> v:format.json.encode() -> f:format.raw()};

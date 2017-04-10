@@ -6,7 +6,7 @@
 								 :options="typeOptions"
 								 :allow-empty="false"
 								 deselect-label=""
-								 :searchable="true"
+								 :searchable="false"
 								 v-on:input="updateValue($event)"></multiselect>
 	</div>
 </template>
@@ -18,9 +18,6 @@
         methods: {
             typeLabel: function (name) {
                 return name.replace('FluidTYPO3\\Flux\\Form\\Field\\', '');
-            },
-            updateValue: function (value) {
-                this.$emit('input', value);
             },
             updateValue: function (value) {
                 this.$emit('input', value);

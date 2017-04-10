@@ -1,50 +1,71 @@
 <template>
-	<div class="kickstarter-inputField group">
-		<div class="group-header">
-			<span v-on:click="expanded=!expanded"><span class="label label-primary">{{shortType}}</span> <strong>{{field.name}}</strong></span>
-			<div class="group-actions">
-				<i class="fa fa-trash field-action" aria-hidden="true" @click="deleteField"></i>
-				<i class="fa fa-cog field-action" aria-hidden="true" @click="showModal"></i>
-			</div>
-		</div>
-		<modal :show.sync="field.showModal" :on-close="closeModal">
-			<div class="modal-header">
-				<div class="modal-actions">
-					<i class="fa fa-times modal-close" aria-hidden="true" @click="closeModal"></i>
-				</div>
-				<h3>{{field.name}}</h3>
-			</div>
-
-			<div class="modal-body">
-				<tabs>
-					<tab v-for="tab in tabsGrouped" :label="tab.label" :selected="tab.selected">
-						<attribute v-for="attribute in tab.attributes"
-											 :attribute="attribute"
-											 v-model="field[attribute.name]"/>
-					</tab>
-				</tabs>
-			</div>
-		</modal>
-	</div>
+	<tr>
+	    <td class="col-xs-1" nowrap="nowrap">
+            <span  v-bind:class="['label', { 'label-default' : isDisabled }, { 'label-success' : !isDisabled }]">{{shortType}}</span>
+	    </td>
+		<td>
+			<strong>{{field.name}}</strong>
+		</td>
+        <td class="col-xs-1 align-right" nowrap="nowrap">
+            <div class="btn-group" role="group">
+                <button type="button" @click="toggleField" class="btn btn-default"><i v-bind:class="['fa field-action', { 'fa-toggle-on' : !isDisabled }, { 'fa-toggle-off' : isDisabled }]"></i></button>
+                <button type="button" @click="deleteField" class="btn btn-default"><i class="fa fa-trash field-action" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-default"><i class="fa fa-pencil field-action" aria-hidden="true"></i></button>
+            </div>
+        </td>
+	    <td colspan="3">
+	        <ul class="nav nav-tabs" role="tablist">
+                <template v-for="(tab, index) in tabsGrouped">
+                    <li role="presentation" :class="tabNavClass(index)"><a @click="activate(index)" href="" :aria-controls="tabIndex(index)" role="tab" data-toggle="tab">{{tab.label}}</a></li>
+                </template>
+            </ul>
+            <div class="tab-content">
+                <template v-for="(tab, index) in tabsGrouped">
+                    <div role="tabpanel" :class="tabClass(index)" :id="tabIndex(index)">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <attribute v-for="attribute in tab.attributes" :attribute="attribute" v-model="field[attribute.name]" />
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+	    </td>
+	</tr>
 </template>
 
 <script>
     export default {
-        props: ['data', 'modalVisible'],
+        props: ['data'],
+
         methods: {
-            closeModal: function () {
-                this.field.showModal = false;
-            },
-            showModal: function () {
-                this.field.showModal = true;
-            },
             deleteField: function () {
                 this.$parent.$parent.sheet.children.splice(this.$parent.index, 1);
+            },
+            toggleField: function () {
+                this.field.enabled = !this.field.enabled;
+            },
+            activate: function (index) {
+                this.activeTab = index;
+                $('#' + this.tabIndex(index)).tab('show');
+            },
+            tabIndex: function (index) {
+                //console.log(this.data.name);
+                return 'tab' + this.data.name.replace('.', '') + index.toString();
+            },
+            tabClass: function(index) {
+                return index == this.activeTab ? 'tab-pane fade in active' : 'tab-pane fade';
+            },
+            tabNavClass: function(index) {
+                return index == this.activeTab ? 'active' : '';
             }
         },
         computed: {
             shortType: function () {
                 return this.field.type.substring(this.field.type.lastIndexOf('\\') + 1);
+            },
+            isDisabled: function() {
+                return !this.field.enabled;
             },
             tabsGrouped: function () {
                 var encountered = [];
@@ -129,7 +150,8 @@
         data: function () {
             return {
                 field: this.data,
-                id: Math.random().toString(36).substr(2, 10)
+                id: Math.random().toString(36).substr(2, 10),
+                activeTab: 0
             }
         }
     }

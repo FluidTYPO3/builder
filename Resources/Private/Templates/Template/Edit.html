@@ -17,9 +17,7 @@
 
 	<div class="row">
 		<div class="col-xs-12 col-lg-9">
-			<h2>Editing {relativeTemplateFile}</h2>
-
-			<f:form class="form" name="form" id="formform" action="update">
+			<f:form class="form form-horizontal" name="form" id="formform" action="update">
 				<f:render partial="FormForm" arguments="{_all}" />
 
 				<div class="form-group">
@@ -29,6 +27,7 @@
 		</div>
 
 		<div class="col-xs-12 col-lg-3">
+
 			<h2>Backups</h2>
 
 			<div class="panel-default">
@@ -48,14 +47,15 @@
 					</f:then>
 				</f:if>
 			</div>
+
 		</div>
-
-		<h2>Preview</h2>
-		<f:if condition="{form.sheets -> f:count()}">
-			<flux:form.render form="{form}" />
-		</f:if>
-
 	</div>
+
+	<h2>Preview</h2>
+	<f:if condition="{form.sheets -> f:count()}">
+		<flux:form.render form="{form}" />
+	</f:if>
+
 
 
 	<script src="../../{f:uri.resource(path: 'Javascript/Main.compiled.js')}"></script>
