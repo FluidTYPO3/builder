@@ -4,61 +4,118 @@
 <f:form.hidden name="extensionName" value="{extensionName}" />
 <f:form.hidden name="templatePathAndFilename" value="{templatePathAndFilename}" />
 
-<fieldset class="alert">
-    <div class="form-group">
-        <div class="col-xs-2">
-            <div class="control-label">
-                <label>Template</label>
-            </div>
-        </div>
-        <div class="col-xs-10">
-            <input type="text" class="form-control" disabled="disabled" value="{relativeTemplateFile}" />
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-2">
-            <div class="control-label">
-                <label for="layoutName">Layout name</label>
-            </div>
-        </div>
-        <div class="col-xs-10">
-            <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-xs-2">
-            <div class="control-label">
-                <label>
-                    Native CType
-                </label>
-            </div>
-        </div>
-        <div class="col-xs-10">
-            <div class="checkbox">
-                <label>
-                    <f:form.checkbox name="register" value="1" checked="{register}" />
-                    Register as native CType
-                </label>
-            </div>
-        </div>
-    </div>
-</fieldset>
-
 <script>
     var fieldTypes = {fieldTypes -> v:format.json.encode() -> f:format.raw()};
 </script>
 
-<div class="flux-template-form">
-<flux-template-form id="kickstarter"
-    json='{structure -> v:format.json.encode() -> f:format.raw()}'
-    form-field-name="{v:form.fieldName(name: 'form')}"
-    grid-field-name="{v:form.fieldName(name: 'grids')}">
-</flux-template-form>
+<ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#template-form" aria-controls="template-form" role="tab" data-toggle="tab">Template</a></li>
+    <li role="presentation"><a href="#template-settings" aria-controls="template-settings" role="tab" data-toggle="tab">Settings</a></li>
+    <li role="presentation"><a href="#template-sheets" aria-controls="template-sheets" role="tab" data-toggle="tab">Sheets and fields</a></li>
+    <li role="presentation"><a href="#template-grids" aria-controls="template-grids" role="tab" data-toggle="tab">Grids</a></li>
+    <li role="presentation"><a href="#template-code" aria-controls="template-code" role="tab" data-toggle="tab">Fluid code</a></li>
+    <li role="presentation"><a href="#template-backups" aria-controls="template-backups" role="tab" data-toggle="tab">Backup/restore</a></li>
+    <li role="presentation"><a href="#template-preview" aria-controls="template-preview" role="tab" data-toggle="tab">Preview</a></li>
+</ul>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active" id="template-form">
+        <fieldset class="alert">
+            <div class="form-group">
+                <div class="col-xs-2">
+                    <div class="control-label">
+                        <label>Template</label>
+                    </div>
+                </div>
+                <div class="col-xs-10">
+                    <input type="text" class="form-control" disabled="disabled" value="{relativeTemplateFile}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2">
+                    <div class="control-label">
+                        <label for="layoutName">Layout name</label>
+                    </div>
+                </div>
+                <div class="col-xs-10">
+                    <f:form.select class="form-control" name="layoutName" id="layoutName" options="{layoutNames}" value="{layoutName}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2">
+                    <div class="control-label">
+                        <label>
+                            Native CType
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-10">
+                    <div class="checkbox">
+                        <label>
+                            <f:form.checkbox name="register" value="1" checked="{register}" />
+                            Register as native CType
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <flux-template-form class="flux-template-form tab-pane fade in" role="tabpanel" id="template-settings"
+        json='{structure -> v:format.json.encode() -> f:format.raw()}'
+        form-field-name="{v:form.fieldName(name: 'form')}">
+    </flux-template-form>
+
+    <flux-template-sheets class="flux-template-sheets tab-pane fade in" role="tabpanel" id="template-sheets"
+        json='{structure -> v:format.json.encode() -> f:format.raw()}'>
+    </flux-template-sheets>
+
+    <flux-template-grids class="flux-template-grids tab-pane fade in" role="tabpanel" id="template-grids"
+        grid-field-name="{v:form.fieldName(name: 'grids')}"
+      json='{structure -> v:format.json.encode() -> f:format.raw()}'>
+    </flux-template-grids>
+
+    <div class="tab-pane fade in" role="tabpanel" id="template-code">
+        <div class="alert">
+            <div class="form-group container">
+                <label class="form-label" for="mainContent">Main section Fluid code</label>
+                <f:form.textarea class="form-control" rows="12" name="mainContent" value="{mainContent}" />
+            </div>
+            <f:render partial="Snippets" arguments="{snippets: snippets}" />
+        </div>
+    </div>
+
+    <div class="tab-pane fade in" role="tabpanel" id="template-backups">
+        <div class="alert">
+            <h2>Backups</h2>
+
+            <div class="panel-default">
+                <f:if condition="{backups}">
+                    <f:else>
+                        No backups yet
+                    </f:else>
+                    <f:then>
+                        <div class="btn-group-vertical">
+                            <f:for each="{backups}" as="backup">
+                                <f:link.action action="restore" arguments="{templatePathAndFilename: templateFile, extensionName: extensionName, backupTimestamp: backup.timestamp}"
+                                               class="btn btn-default btn-block btn-secondary" additionalAttributes="{data-toggle: 'tooltip'}" title="Restore from {backup.date}">
+                                    <span class="fa fa-refresh"></span> {backup.date}
+                                </f:link.action>
+                            </f:for>
+                        </div>
+                    </f:then>
+                </f:if>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade in" role="tabpanel" id="template-preview">
+        <div class="alert">
+            <h2>Preview</h2>
+            <f:if condition="{form.sheets -> f:count()}">
+                <flux:form.render form="{form}" />
+            </f:if>
+        </div>
+    </div>
 </div>
 
-<div class="form-group">
-    <label class="form-label" for="mainContent">Main section Fluid code</label>
-    <f:form.textarea class="form-control" rows="12" name="mainContent" value="{mainContent}" />
-</div>
-
-<f:render partial="Snippets" arguments="{snippets: snippets}" />
