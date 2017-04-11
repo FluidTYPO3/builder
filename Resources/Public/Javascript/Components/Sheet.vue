@@ -8,11 +8,9 @@
         <attribute v-for="attribute in attributes" :attribute="attribute" v-model="attributes[attribute.name]" v-bind:value="data[attribute.name]" />
 
         <table class="table table-bordered table-striped table-hover">
-            <tbody>
-                <template v-for="(field, index) in sheet.children">
-                    <field :data="field" :index="index" />
-                </template>
-            </tbody>
+            <template v-for="(field, index) in sheet.children">
+                <field :data="field" :index="index" />
+            </template>
         </table>
 
         <div v-on:click="addField" class="btn btn-default">add Field</div>

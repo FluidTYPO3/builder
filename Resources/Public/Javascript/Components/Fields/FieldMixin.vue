@@ -1,37 +1,41 @@
 <template>
-	<tr>
-	    <td class="col-xs-1" nowrap="nowrap">
-            <span  v-bind:class="['label', { 'label-default' : isDisabled }, { 'label-success' : !isDisabled }]">{{shortType}}</span>
-	    </td>
-		<td>
-			<strong>{{field.name}}</strong>
-		</td>
-        <td class="col-xs-1 align-right" nowrap="nowrap">
-            <div class="btn-group" role="group">
-                <button type="button" @click="toggleField" class="btn btn-default"><i v-bind:class="['fa field-action', { 'fa-toggle-on' : !isDisabled }, { 'fa-toggle-off' : isDisabled }]"></i></button>
-                <button type="button" @click="deleteField" class="btn btn-default"><i class="fa fa-trash field-action" aria-hidden="true"></i></button>
-                <button type="button" class="btn btn-default"><i class="fa fa-pencil field-action" aria-hidden="true"></i></button>
-            </div>
-        </td>
-	    <td colspan="3">
-	        <ul class="nav nav-tabs" role="tablist">
-                <template v-for="(tab, index) in tabsGrouped">
-                    <li role="presentation" :class="tabNavClass(index)"><a @click="activate(index)" href="" :aria-controls="tabIndex(index)" role="tab" data-toggle="tab">{{tab.label}}</a></li>
-                </template>
-            </ul>
-            <div class="tab-content">
-                <template v-for="(tab, index) in tabsGrouped">
-                    <div role="tabpanel" :class="tabClass(index)" :id="tabIndex(index)">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <attribute v-for="attribute in tab.attributes" :attribute="attribute" v-model="field[attribute.name]" />
+	<tbody>
+	    <tr>
+            <td class="col-xs-1" nowrap="nowrap">
+                <span v-bind:class="['label', { 'label-default' : isDisabled }, { 'label-success' : !isDisabled }]">{{shortType}}</span>
+            </td>
+            <td>
+                <strong>{{field.name}}</strong>
+            </td>
+            <td class="col-xs-1 align-right" nowrap="nowrap">
+                <div class="btn-group" role="group">
+                    <button type="button" @click="toggleField" class="btn btn-default"><i v-bind:class="['fa field-action', { 'fa-toggle-on' : !isDisabled }, { 'fa-toggle-off' : isDisabled }]"></i></button>
+                    <button type="button" @click="deleteField" class="btn btn-default"><i class="fa fa-trash field-action" aria-hidden="true"></i></button>
+                    <button type="button" @click="toggleEdit" class="btn btn-default"><i class="fa fa-pencil field-action" aria-hidden="true"></i></button>
+                </div>
+            </td>
+        </tr>
+        <tr :id="id" v-if="showEdit">
+            <td colspan="3">
+                <ul class="nav nav-tabs" role="tablist">
+                    <template v-for="(tab, index) in tabsGrouped">
+                        <li role="presentation" :class="tabNavClass(index)"><a @click="activate(index)" href="" :aria-controls="tabIndex(index)" role="tab" data-toggle="tab">{{tab.label}}</a></li>
+                    </template>
+                </ul>
+                <div class="tab-content">
+                    <template v-for="(tab, index) in tabsGrouped">
+                        <div role="tabpanel" :class="tabClass(index)" :id="tabIndex(index)">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <attribute v-for="attribute in tab.attributes" :attribute="attribute" v-model="field[attribute.name]" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </template>
-            </div>
-	    </td>
-	</tr>
+                    </template>
+                </div>
+            </td>
+        </tr>
+	</tbody>
 </template>
 
 <script>
@@ -53,11 +57,14 @@
                 //console.log(this.data.name);
                 return 'tab' + this.data.name.replace('.', '') + index.toString();
             },
-            tabClass: function(index) {
+            tabClass: function (index) {
                 return index == this.activeTab ? 'tab-pane fade in active' : 'tab-pane fade';
             },
-            tabNavClass: function(index) {
+            tabNavClass: function (index) {
                 return index == this.activeTab ? 'active' : '';
+            },
+            toggleEdit: function (status) {
+                this.showEdit = typeof status == 'boolean' ? status : !this.showEdit;
             }
         },
         computed: {
@@ -150,8 +157,9 @@
         data: function () {
             return {
                 field: this.data,
-                id: Math.random().toString(36).substr(2, 10),
-                activeTab: 0
+                id: 'a' + Math.random().toString(36).substr(2, 10),
+                activeTab: 0,
+                showEdit: this.showEdit
             }
         }
     }

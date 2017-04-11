@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="alert">
-            <h2>Sheets and fields</h2>
             <ul class="nav nav-tabs" role="tablist" id="sheets">
                 <template v-for="(sheet, index) in form.children">
                     <li role="presentation" :class="tabNavClass(index)"><a @click="activate(index)" href="" :aria-controls="tabIndex(index)" role="tab" data-toggle="tab">{{sheet.name}}</a></li>

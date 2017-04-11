@@ -2,8 +2,7 @@
     <div>
         <div class="alert">
             <input type="hidden" v-model="formJson" :name="formFieldName" />
-            <h2>Settings</h2>
-            <fieldset class="alert">
+            <fieldset>
                 <attribute v-for="attribute in attributes" :attribute="attribute" v-model="attributes[attribute.name]" v-bind:value="form[attribute.name]" />
             </fieldset>
         </div>

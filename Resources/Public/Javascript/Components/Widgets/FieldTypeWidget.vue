@@ -1,13 +1,14 @@
 <template>
 	<div class="kickstarter-fieldTypeSelector">
 		<multiselect :value="value"
-								 placeholder="Choose a type"
-								 :custom-label="typeLabel"
-								 :options="typeOptions"
-								 :allow-empty="false"
-								 deselect-label=""
-								 :searchable="false"
-								 v-on:input="updateValue($event)"></multiselect>
+            placeholder="Choose a type"
+            :custom-label="typeLabel"
+            :options="typeOptions"
+            :allow-empty="false"
+            deselect-label=""
+            :searchable="false"
+            v-on:input="updateValue($event)">
+        </multiselect>
 	</div>
 </template>
 
@@ -21,6 +22,7 @@
             },
             updateValue: function (value) {
                 this.$emit('input', value);
+                this.$parent.$parent.toggleEdit(true);
             }
         },
         data(){
