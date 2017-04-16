@@ -6,7 +6,7 @@
 	<f:layout name="###layout###" />
 
 	<f:section name="###configurationSectionName###">
-		<flux:form id="###formId###" options="{group: 'FCE'}">
+		<flux:form id="###formId###" options="{group: 'FCE', icon: '{f:uri.resource(path: \'Icons/Content/Example.gif\')}'}">
 			<!-- Insert fields, sheets, grid, form section objects etc. here, in this flux:flexform tag -->
 			<flux:field.input name="settings.helloWorld" required="true" />
 		</flux:form>
