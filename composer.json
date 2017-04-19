@@ -2,6 +2,10 @@
     "name": "fluidtypo3/builder",
     "description": "The builder package from FluidTYPO3",
     "type": "typo3-cms-extension",
+    "replace": {
+        "builder": "self.version",
+        "typo3-ter/builder": "self.version"
+    },
     "require": {
         "php": ">=5.5.0",
         "fluidtypo3/vhs": ">=2.2.0"
