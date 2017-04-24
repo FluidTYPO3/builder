@@ -1,13 +1,10 @@
 <?php
 namespace FluidTYPO3\Builder\Tests\Unit\Parser;
 
-use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
-
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2017 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,10 +24,13 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
+use FluidTYPO3\Development\AbstractTestCase;
+
 /**
  * Class ExposedTemplateParserTest
  */
-class ExposedTemplateParserTest extends UnitTestCase
+class ExposedTemplateParserTest extends AbstractTestCase
 {
 
     /**

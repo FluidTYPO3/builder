@@ -4,7 +4,7 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2017 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -25,13 +25,13 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis;
  ***************************************************************/
 
 use FluidTYPO3\Builder\Analysis\Metric;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use FluidTYPO3\Development\AbstractTestCase;
 use TYPO3\CMS\Extbase\Error\Message;
 
 /**
  * Class MetricTest
  */
-class MetricTest extends UnitTestCase
+class MetricTest extends AbstractTestCase
 {
 
     /**

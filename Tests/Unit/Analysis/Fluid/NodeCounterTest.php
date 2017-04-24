@@ -4,7 +4,7 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis\Fluid;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2017 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,14 +27,14 @@ namespace FluidTYPO3\Builder\Tests\Unit\Analysis\Fluid;
 use FluidTYPO3\Builder\Analysis\Fluid\NodeCounter;
 use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use FluidTYPO3\Development\AbstractTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class NodeCounterTest
  */
-class NodeCounterTest extends UnitTestCase
+class NodeCounterTest extends AbstractTestCase
 {
 
     /**

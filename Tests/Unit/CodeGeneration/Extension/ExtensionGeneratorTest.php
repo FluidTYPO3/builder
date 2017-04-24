@@ -4,7 +4,7 @@ namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration\Extension;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2014 Claus Due <claus@namelesscoder.net>
+ *  (c) 2017 Claus Due <claus@namelesscoder.net>
  *  All rights reserved
  *
  *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -24,19 +24,18 @@ namespace FluidTYPO3\Builder\Tests\Unit\CodeGeneration\Extension;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use FluidTYPO3\Builder\CodeGeneration\CodeTemplate;
 use FluidTYPO3\Builder\CodeGeneration\Extension\ExtensionGenerator;
+use FluidTYPO3\Development\AbstractTestCase;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamWrapper;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class ExtensionGeneratorTest
  */
-class ExtensionGeneratorTest extends UnitTestCase
+class ExtensionGeneratorTest extends AbstractTestCase
 {
 
     /**
