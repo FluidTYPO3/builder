@@ -113,7 +113,9 @@ class ExtensionService implements SingletonInterface
         $companyName = addslashes($companyName);
         $description = addslashes($description);
         $title = addslashes($title);
-        $minimumVersion = 4.5;
+        $baseVersion = substr(TYPO3_version, 0, strrpos(TYPO3_version, '.'));
+        $minimumVersion = $baseVersion . '.0';
+        $maximumVersion = $baseVersion . '.99';
         $extensionVariables = [
             'extensionKey' => $extensionKey,
             'title' => $title,
@@ -123,6 +125,7 @@ class ExtensionService implements SingletonInterface
             'email' => $email,
             'company' => $companyName,
             'coreMinor' => $minimumVersion,
+            'coreMajor' => $maximumVersion,
             'controllers' => $controllers,
             'dependencies' => $dependencies,
             'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
