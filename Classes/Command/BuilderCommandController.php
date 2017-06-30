@@ -91,12 +91,6 @@ class BuilderCommandController extends CommandController
             $files = GlobUtility::getFilesRecursive($path, $extensions);
         } else {
             // no extension key given, let's lint it all
-            if (6 > substr(TYPO3_version, 0, 1)) {
-                throw new \RuntimeException(
-                    'Listing extensions via core API only works on 6.0+. Won\'t fix.',
-                    1376379122
-                );
-            }
             $files = [];
             /** @var ExtensionService $extensionService */
             $extensionService = $this->objectManager->get('FluidTYPO3\Builder\Service\ExtensionService');
@@ -194,10 +188,6 @@ class BuilderCommandController extends CommandController
      */
     public function listCommand($detail = false, $active = null, $inactive = false, $json = false)
     {
-        if (6 > substr(TYPO3_version, 0, 1)) {
-            throw new \Exception('Listing extensions via core API only works on 6.0+. Won\'t fix.', 1376379122);
-        }
-
         $detail = (boolean) $detail;
         $active = (boolean) $active;
         $inactive = (boolean) $inactive;
