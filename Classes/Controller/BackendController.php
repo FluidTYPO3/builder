@@ -121,9 +121,7 @@ class BackendController extends ActionController
      * @param boolean $controllers
      * @param boolean $pages
      * @param boolean $content
-     * @param boolean $backend
      * @param boolean $vhs
-     * @param boolean $fluidcontentCore
      * @param boolean $dry
      * @param boolean $verbose
      * @return void
@@ -136,9 +134,7 @@ class BackendController extends ActionController
         $controllers,
         $pages,
         $content,
-        $backend,
         $vhs,
-        $fluidcontentCore,
         $dry,
         $verbose
     ) {
@@ -150,9 +146,7 @@ class BackendController extends ActionController
             $controllers,
             $pages,
             $content,
-            $backend,
-            $vhs,
-            $fluidcontentCore
+            $vhs
         );
         $generator->setVerbose($verbose);
         $generator->setDry($dry);

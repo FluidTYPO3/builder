@@ -5,4 +5,4 @@ if (!defined('TYPO3_MODE')) {
 
 ###pages###
 ###content###
-###backend###
+###configuration###

@@ -225,10 +225,8 @@ class BuilderCommandController extends CommandController
      * @param string $title Title of the resulting extension, by default "Provider extension for $enabledFeaturesList"
      * @param string $description Description for extension, by default "Provider extension for $enabledFeaturesList"
      * @param boolean $useVhs If TRUE, adds the VHS extension as dependency - recommended, on by default
-     * @param boolean $useFluidcontentCore If TRUE adds FluidcontentCore as dependency - recommended, on by default
      * @param boolean $pages If TRUE, generates basic files for implementing Fluid Page templates
      * @param boolean $content IF TRUE, generates basic files for implementing Fluid Content templates
-     * @param boolean $backend If TRUE, generates basic files for implementing Fluid Backend modules
      * @param boolean $controllers If TRUE, generates controllers for each enabled feature. Enabling $backend will
      *                             always generate a controller regardless of this toggle.
      * @param boolean $dry If TRUE performs a dry run without writing files;reports which files would have been written
@@ -241,19 +239,15 @@ class BuilderCommandController extends CommandController
         $title = null,
         $description = null,
         $useVhs = true,
-        $useFluidcontentCore = true,
         $pages = true,
         $content = true,
-        $backend = false,
         $controllers = true,
         $dry = false,
         $verbose = true
     ) {
         $useVhs = (boolean) $useVhs;
-        $useFluidcontentCore = (boolean) $useFluidcontentCore;
         $pages = (boolean) $pages;
         $content = (boolean) $content;
-        $backend = (boolean) $backend;
         $controllers = (boolean) $controllers;
         $verbose = (boolean) $verbose;
         $dry = (boolean) $dry;
@@ -265,9 +259,7 @@ class BuilderCommandController extends CommandController
             $controllers,
             $pages,
             $content,
-            $backend,
-            $useVhs,
-            $useFluidcontentCore
+            $useVhs
         );
         $extensionGenerator->setDry($dry);
         $extensionGenerator->setVerbose($verbose);

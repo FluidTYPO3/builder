@@ -80,14 +80,11 @@ class ExtensionService implements SingletonInterface
         $controllers = false,
         $pages = true,
         $content = true,
-        $backend = false,
-        $useVhs = true,
-        $useFluidcontentCore = true
+        $useVhs = true
     ) {
         $defaultTitle = 'Provider extension for ' .
             (true === $pages ? 'pages ' : '') .
-            (true === $content ? 'content ' : '') .
-            (true === $backend ? 'backend' : '');
+            (true === $content ? 'content ' : '');
         ;
         if (null === $title) {
             $title = $defaultTitle;
@@ -102,14 +99,8 @@ class ExtensionService implements SingletonInterface
         if (true === $content) {
             array_push($dependencies, 'fluidcontent');
         }
-        if (true === $backend) {
-            array_push($dependencies, 'fluidbackend');
-        }
         if (true === $useVhs) {
             array_push($dependencies, 'vhs');
-        }
-        if (true === $useFluidcontentCore) {
-            array_push($dependencies, 'fluidcontent_core');
         }
         $dependenciesArrayString = '';
         foreach ($dependencies as $dependency) {

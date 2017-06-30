@@ -37,12 +37,9 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
 {
 
     const TEMPLATE_CONTROLLER = 'Controller/Controller';
-    const TEMPLATE_EXTTABLES = 'Extension/ext_tables';
     const TEMPLATE_EXTLOCALCONF = 'Extension/ext_localconf';
     const TEMPLATE_EMCONF = 'Extension/ext_emconf';
     const TEMPLATE_LAYOUT = 'Fluid/Layout';
-    const TEMPLATE_CONTENT_CORE_LAYOUT = 'Fluid/ContentCoreLayout';
-    const TEMPLATE_BACKEND_LAYOUT = 'Fluid/BackendLayout';
     const TEMPLATE_CONTENT = 'Fluid/Content';
     const TEMPLATE_PAGE = 'Fluid/Page';
     const TEMPLATE_FLUXFORM = 'Fluid/Form';
@@ -128,7 +125,6 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         $foldersToBeCreated = [$this->targetFolder];
         $hasFluidpages = true === in_array('fluidpages', $this->configuration['dependencies']);
         $hasFluidcontent = true === in_array('fluidcontent', $this->configuration['dependencies']);
-        $hasFluidbackend = true === in_array('fluidbackend', $this->configuration['dependencies']);
         $hasVhs = true === in_array('vhs', $this->configuration['dependencies']);
         if (true === $hasFluidpages) {
             $this->appendPageFiles($filesToBeWritten);
@@ -138,9 +134,6 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         }
         if (true === $hasFluidpages || true === $hasFluidcontent) {
             $this->appendLanguageFile($filesToBeWritten);
-        }
-        if (true === $hasFluidbackend) {
-            $this->appendBackendFiles($filesToBeWritten);
         }
         $controllerFolder = $this->targetFolder . '/Classes/Controller/';
         if (true === $this->configuration['controllers'] || true === $hasFluidbackend) {
@@ -164,17 +157,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
                 );
             }
         }
-        // backend-module always needs a BackendController
-        if (true === $hasFluidbackend) {
-            $this->appendControllerClassFile(
-                $filesToBeWritten,
-                'Backend',
-                'FluidTYPO3\\Fluidbackend\\Controller\\BackendController',
-                $controllerFolder
-            );
-        }
         $this->appendTypoScriptConfiguration($filesToBeWritten);
-        $this->appendExtensionTablesFile($filesToBeWritten);
         $this->appendExtensionLocalconfFile($filesToBeWritten);
         if (true === $hasFluidcontent || true === $hasFluidpages) {
             array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Private/Language');
@@ -246,32 +229,17 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
      * @param array $files
      * @return void
      */
-    protected function appendExtensionTablesFile(&$files)
+    protected function appendExtensionLocalconfFile(&$files)
     {
         $title = trim($this->configuration['title']);
         $templateVariables = [
+            'pages' => '',
+            'content' => '',
             'configuration' => sprintf(
                 '%s::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'%s\');',
                 ExtensionManagementUtility::class,
                 $title
             )
-        ];
-        $files[$this->targetFolder . '/ext_tables.php'] = $this->getPreparedCodeTemplate(
-            self::TEMPLATE_EXTTABLES,
-            $templateVariables
-        )->render();
-    }
-
-    /**
-     * @param array $files
-     * @return void
-     */
-    protected function appendExtensionLocalconfFile(&$files)
-    {
-        $templateVariables = [
-            'pages' => '',
-            'content' => '',
-            'backend' => ''
         ];
 
         // note: the following code uses the provided "extensionKey" *directly* because
@@ -285,36 +253,10 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             $templateVariables['content'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
                 $this->configuration['extensionKey'] . '\', \'Content\');';
         }
-        if (true === in_array('fluidbackend', $this->configuration['dependencies'])) {
-            $templateVariables['backend'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
-                $this->configuration['extensionKey'] . '\', \'Backend\');';
-        }
         $files[$this->targetFolder . '/ext_localconf.php'] = $this->getPreparedCodeTemplate(
             self::TEMPLATE_EXTLOCALCONF,
             $templateVariables
         )->render();
-    }
-
-    /**
-     * @param array $files
-     * @return void
-     */
-    protected function appendBackendFiles(&$files)
-    {
-        $layoutName = 'Backend';
-        $sectionName = 'Main';
-        $variables = [
-            'formId' => 'module'
-        ];
-        $this->appendLayoutFile($files, 'Backend', 'Main', self::TEMPLATE_BACKEND_LAYOUT);
-        $this->appendTemplateFile(
-            $files,
-            self::TEMPLATE_FLUXFORM,
-            $layoutName,
-            $sectionName,
-            'Backend/Module.html',
-            $variables
-        );
     }
 
     /**
@@ -350,7 +292,6 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         if (true === $hasVhs) {
             $variables['vhs'] = 'xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers"';
             $layoutName = 'Content';
-            $this->appendLayoutFile($files, 'ContentCore', 'Main', self::TEMPLATE_CONTENT_CORE_LAYOUT);
         }
         $this->appendTemplateFile(
             $files,
