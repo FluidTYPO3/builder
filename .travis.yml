@@ -2,6 +2,8 @@ language: php
 
 sudo: false
 
+env: COVERAGE="YES" TYPO3_VERSION="^8"
+
 php:
   - "7.0"
   - "7.1"
