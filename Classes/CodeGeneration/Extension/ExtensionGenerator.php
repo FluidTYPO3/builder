@@ -236,7 +236,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             'pages' => '',
             'content' => '',
             'configuration' => sprintf(
-                '%s::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'%s\');',
+                '\\%s::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'%s\');',
                 ExtensionManagementUtility::class,
                 $title
             )
