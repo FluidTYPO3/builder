@@ -136,7 +136,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             $this->appendLanguageFile($filesToBeWritten);
         }
         $controllerFolder = $this->targetFolder . '/Classes/Controller/';
-        if (true === $this->configuration['controllers'] || true === $hasFluidbackend) {
+        if (true === $this->configuration['controllers']) {
             array_push($foldersToBeCreated, $controllerFolder);
         }
         if (true === $this->configuration['controllers']) {
