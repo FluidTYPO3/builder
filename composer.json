@@ -8,7 +8,8 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "fluidtypo3/vhs": ">=2.2.0"
+        "fluidtypo3/vhs": ">=2.2.0",
+        "typo3/cms": "^8.7"
     },
     "require-dev": {
         "fluidtypo3/development": "^3.0"

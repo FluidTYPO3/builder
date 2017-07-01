@@ -41,8 +41,8 @@ class ExposedTemplateParserTest extends AbstractTestCase
     public function testParseThrowsExceptionOnInvalidTemplateString($input)
     {
         $parser = new ExposedTemplateParser();
-        $this->setExpectedException('TYPO3\\CMS\\Fluid\\Core\\Parser\\Exception');
-        $parser->parse($input);
+        $this->setExpectedException('TYPO3Fluid\\Fluid\\Core\\Parser\\Exception');
+        $parser->parse($input, 'xyz');
     }
 
     /**

@@ -24,22 +24,21 @@ namespace FluidTYPO3\Builder\Parser;
  *  This copyright notice MUST APPEAR in all copies of the script!
  * ************************************************************* */
 
-use TYPO3\CMS\Fluid\Core\Parser\InterceptorInterface;
-use TYPO3\CMS\Fluid\Core\Parser\ParsingState;
-use TYPO3\CMS\Fluid\Core\Parser\Exception;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
-use TYPO3\CMS\Fluid\Core\Parser\TemplateParser;
-use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\ChildNodeAccessInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Facets\PostParseInterface;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use TYPO3Fluid\Fluid\Core\Parser\ParsingState;
+use TYPO3Fluid\Fluid\Core\Parser\Exception;
+use TYPO3Fluid\Fluid\Core\Parser\TemplateParser;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
  * Class ExposedTemplateParser
  */
 class ExposedTemplateParser extends TemplateParser
 {
-
     /**
      * @var array
      */
@@ -49,6 +48,14 @@ class ExposedTemplateParser extends TemplateParser
      * @var array
      */
     protected $viewHelpersUsed = [];
+
+    /**
+     * @return void
+     */
+    public function initializeObject()
+    {
+        $this->setRenderingContext(GeneralUtility::makeInstance(ObjectManager::class)->get(RenderingContext::class));
+    }
 
     /**
      * @return array
@@ -75,30 +82,36 @@ class ExposedTemplateParser extends TemplateParser
      * TemplateParser directly.
      *
      * @param string $templateString The template to parse as a string
-     * @return ParsedTemplateInterface Parsed template
+     * @param string|null $templateIdentifier If the template has an identifying string it can be passed here to improve error reporting.
+     * @return ParsingState Parsed template
      * @throws Exception
      */
-    public function parse($templateString)
+    public function parse($templateString, $templateIdentifier = null)
     {
         if (!is_string($templateString)) {
-            throw new Exception(
-                'Parse requires a template string as argument, ' . gettype($templateString) . ' given.',
-                1224237899
-            );
+            throw new Exception('Parse requires a template string as argument, ' . gettype($templateString) . ' given.', 1224237899);
         }
-        $this->reset();
+        try {
+            $this->reset();
 
-        $templateString = $this->extractNamespaceDefinitions($templateString);
-        $this->splitTemplate = $this->splitTemplateAtDynamicTags($templateString);
+            $templateString = $this->extractEscapingModifier($templateString);
+            $templateString = $this->preProcessTemplateSource($templateString);
 
-        $parsingState = $this->buildObjectTree($this->splitTemplate, self::CONTEXT_OUTSIDE_VIEWHELPER_ARGUMENTS);
-
-        $variableContainer = $parsingState->getVariableContainer();
-        if ($variableContainer !== null && $variableContainer->exists('layoutName')) {
-            $parsingState->setLayoutNameNode($variableContainer->get('layoutName'));
+            $splitTemplate = $this->splitTemplate = $this->splitTemplateAtDynamicTags($templateString);
+            $parsingState = $this->buildObjectTree($splitTemplate, self::CONTEXT_OUTSIDE_VIEWHELPER_ARGUMENTS);
+        } catch (Exception $error) {
+            throw $this->createParsingRelatedExceptionWithContext($error, $templateIdentifier);
         }
-
+        $this->parsedTemplates[$templateIdentifier] = $parsingState;
         return $parsingState;
+    }
+
+    /**
+     * @return RenderingContextInterface
+     */
+    public function getRenderingContext()
+    {
+        return $this->renderingContext;
     }
 
     /**
@@ -109,7 +122,7 @@ class ExposedTemplateParser extends TemplateParser
      * @param string $namespaceIdentifier Namespace identifier - being looked up in $this->namespaces
      * @param string $methodIdentifier Method identifier
      * @param array $argumentsObjectTree Arguments object tree
-     * @return void
+     * @return ViewHelperNode]null
      * @throws Exception
      */
     protected function initializeViewHelperAndAddItToStack(
@@ -118,48 +131,11 @@ class ExposedTemplateParser extends TemplateParser
         $methodIdentifier,
         $argumentsObjectTree
     ) {
-        if (!array_key_exists($namespaceIdentifier, $this->namespaces)) {
-            throw new Exception('Namespace could not be resolved. This exception should never be thrown!', 1224254792);
-        }
-        $viewHelper = $this->objectManager->get($this->resolveViewHelperName($namespaceIdentifier, $methodIdentifier));
-        $this->viewHelperNameToImplementationClassNameRuntimeCache[$namespaceIdentifier][$methodIdentifier]
-            = get_class($viewHelper);
-
-        // Following three checks are only done *in an uncached template*, and not needed anymore in the cached version
-        $expectedViewHelperArguments = $viewHelper->prepareArguments();
-        $this->abortIfUnregisteredArgumentsExist($expectedViewHelperArguments, $argumentsObjectTree);
-        $this->abortIfRequiredArgumentsAreMissing($expectedViewHelperArguments, $argumentsObjectTree);
-        $this->rewriteBooleanNodesInArgumentsObjectTree($expectedViewHelperArguments, $argumentsObjectTree);
-
-        /** @var ViewHelperNode $currentViewHelperNode */
-        $currentViewHelperNode = $this->objectManager->get(ViewHelperNode::class, $viewHelper, $argumentsObjectTree);
-
-        $state->getNodeFromStack()->addChildNode($currentViewHelperNode);
-
-        if ($viewHelper instanceof ChildNodeAccessInterface && !($viewHelper instanceof CompilableInterface)) {
-            $state->setCompilable(false);
-        }
-
-        // PostParse Facet
-        if ($viewHelper instanceof PostParseInterface) {
-            // Don't just use $viewHelper::postParseEvent(...),
-            // as this will break with PHP < 5.3.
-            // @TODO: replace with static call, no more php <5.3 support needed
-            call_user_func(
-                [$viewHelper, 'postParseEvent'],
-                $currentViewHelperNode,
-                $argumentsObjectTree,
-                $state->getVariableContainer()
-            );
-        }
-
-        $this->callInterceptor($currentViewHelperNode, InterceptorInterface::INTERCEPT_OPENING_VIEWHELPER, $state);
-
-        $state->pushNodeToStack($currentViewHelperNode);
         $this->viewHelpersUsed[] = [
             'namespace' => $namespaceIdentifier,
             'viewhelper' => $methodIdentifier
         ];
+        return parent::initializeViewHelperAndAddItToStack($state, $namespaceIdentifier, $methodIdentifier, $argumentsObjectTree);
     }
 
     /**
@@ -167,7 +143,7 @@ class ExposedTemplateParser extends TemplateParser
      * @param integer $context
      * @return ParsingState
      */
-    public function buildObjectTree($splitTemplate, $context = self::CONTEXT_OUTSIDE_VIEWHELPER_ARGUMENTS)
+    public function buildObjectTree(array $splitTemplate, $context)
     {
         return parent::buildObjectTree($splitTemplate, $context);
     }

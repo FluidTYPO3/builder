@@ -25,7 +25,6 @@ namespace FluidTYPO3\Builder\Service;
  * ************************************************************* */
 
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use FluidTYPO3\Builder\Parser\ExposedTemplateParserLegacy;
 use FluidTYPO3\Builder\Result\FluidParserResult;
 use FluidTYPO3\Builder\Utility\GlobUtility;
 use FluidTYPO3\Flux\Utility\VersionUtility;
@@ -48,7 +47,7 @@ class SyntaxService implements SingletonInterface
     protected $objectManager;
 
     /**
-     * @var TemplateParser
+     * @var ExposedTemplateParser
      */
     protected $templateParser;
 
@@ -80,13 +79,12 @@ class SyntaxService implements SingletonInterface
     {
         /** @var FluidParserResult $result */
         $result = $this->objectManager->get('FluidTYPO3\Builder\Result\FluidParserResult');
-        /** @var RenderingContext $context */
-        $context = $this->objectManager->get('TYPO3\CMS\Fluid\Core\Rendering\RenderingContext');
         try {
-            $parser = $this->getTemplateParser($context);
+            $parser = $this->objectManager->get(ExposedTemplateParser::class);
+            $context = $parser->getRenderingContext();
             $parsedTemplate = $parser->parse(file_get_contents($filePathAndFilename));
             $result->setLayoutName($parsedTemplate->getLayoutName($context));
-            $result->setNamespaces($parser->getNamespaces());
+            $result->setNamespaces($context->getViewHelperResolver()->getNamespaces());
             $result->setCompilable($parsedTemplate->isCompilable());
         } catch (\Exception $error) {
             $result->setError($error);

@@ -42,13 +42,12 @@ class NodeCounterTest extends AbstractTestCase
      */
     protected $expectedMetricValues = array(
         NodeCounter::METRIC_TOTAL_SPLITS => 8,
-        NodeCounter::METRIC_TOTAL_NODES => 12,
-        NodeCounter::METRIC_VIEWHELPERS => 3,
+        NodeCounter::METRIC_TOTAL_NODES => 11,
+        NodeCounter::METRIC_VIEWHELPERS => 2,
         NodeCounter::METRIC_SECTIONS => 1,
         NodeCounter::METRIC_CONDITION_NODES => 1,
         NodeCounter::METRIC_NODES_PER_SECTION_AVERAGE => 3,
         NodeCounter::METRIC_NODES_PER_SECTION_MAXIMUM => 3,
-        NodeCounter::METRIC_CACHED_SIZE => 3.1,
         NodeCounter::METRIC_MAXIMUM_ARGUMENT_COUNT => 3,
         NodeCounter::METRIC_MAXIMUM_NESTING_LEVEL => 2
     );
@@ -73,9 +72,10 @@ class NodeCounterTest extends AbstractTestCase
      */
     public function testNodeCounterAgainstKnownFixture()
     {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['f'] = ['TYPO3\\CMS\\Fluid\\ViewHelpers', 'TYPO3Fluid\\Fluid\\ViewHelpers'];
         /** @var NodeCounter $nodeCounter */
-        list ($nodeCounter, $template, $parsedTemplate) = $this->getPreparedFixtures();
-        $result = $nodeCounter->count($template, $parsedTemplate);
+        list ($nodeCounter, $parser, $parsedTemplate) = $this->getPreparedFixtures();
+        $result = $nodeCounter->count($parser, $parsedTemplate);
         $expectedValues = $this->expectedMetricValues;
         /** @var Metric $metric */
         foreach ($result as $metric) {

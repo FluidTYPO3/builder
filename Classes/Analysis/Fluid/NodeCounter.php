@@ -27,17 +27,15 @@ namespace FluidTYPO3\Builder\Analysis\Fluid;
 use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Analysis\MessageInterface;
 use FluidTYPO3\Builder\Analysis\Fluid\Message\UncompilableMessage;
-use FluidTYPO3\Builder\Parser\ExposedTemplateCompiler;
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use TYPO3\CMS\Fluid\Core\Parser\ParsedTemplateInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\NodeInterface;
 use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
-use TYPO3\CMS\Fluid\ViewHelpers\SectionViewHelper;
-use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Compiler\StopCompilingException;
+use TYPO3Fluid\Fluid\Core\Parser\ParsedTemplateInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractConditionViewHelper;
+use TYPO3Fluid\Fluid\ViewHelpers\SectionViewHelper;
 
 /**
  * Metrics: Fluid Template Node Counter
@@ -184,10 +182,10 @@ class NodeCounter
 
     /**
      * @param ExposedTemplateParser $parser
-     * @param mixed $parsedTemplate
+     * @param ParsedTemplateInterface $parsedTemplate
      * @return Metric[]
      */
-    public function count(ExposedTemplateParser $parser, $parsedTemplate)
+    public function count(ExposedTemplateParser $parser, ParsedTemplateInterface $parsedTemplate)
     {
         $method = new \ReflectionMethod($parser, 'buildObjectTree');
         $method->setAccessible(true);
@@ -198,16 +196,11 @@ class NodeCounter
             if (false === $parsedTemplate->isCompilable()) {
                 $this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
             } else {
-                /** @var ExposedTemplateCompiler $compiler */
-                $compiler = $this->getTemplateCompiler();
-                if (method_exists($compiler, 'store')) {
-                    $code = $compiler->store('testcompile_' . sha1(microtime(true)), $parsingState);
-                } else {
-                    $code = $compiler->compile($parsingState);
-                }
+                $compiler = $parser->getRenderingContext()->getTemplateCompiler();
+                $code = $compiler->store('testcompile_' . sha1(microtime(true)), $parsingState);
                 $this->set(self::METRIC_CACHED_SIZE, round(mb_strlen($code) / 1024, 1));
             }
-        } catch (\TYPO3Fluid\Fluid\Core\StopCompilingException $error) {
+        } catch (StopCompilingException $error) {
             $this->get(self::METRIC_CACHED_SIZE)->setValue(0)->addMessage(new UncompilableMessage());
         }
         // traversals, cumulatively increments $this->nodeCounter values.
@@ -219,19 +212,6 @@ class NodeCounter
         $this->set(self::METRIC_TOTAL_SPLITS, count($splitTemplate));
         $this->evaluate();
         return $this->metrics;
-    }
-
-    /**
-     * @return ExposedTemplateCompiler
-     */
-    protected function getTemplateCompiler()
-    {
-        if ($this->assertCoreVersionAtLeast(8)) {
-            $compiler = new TemplateCompiler();
-            $compiler->setRenderingContext(new RenderingContext());
-            return $compiler;
-        }
-        return $this->objectManager->get('FluidTYPO3\Builder\Parser\ExposedTemplateCompiler');
     }
 
     /**

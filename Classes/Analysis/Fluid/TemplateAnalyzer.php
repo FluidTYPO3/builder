@@ -97,12 +97,8 @@ class TemplateAnalyzer
      */
     protected function getTemplateParser()
     {
-        if (VersionUtility::assertExtensionVersionIsAtLeastVersion('core', 8)) {
-            $exposedTemplateParser = new ExposedTemplateParser();
-            $exposedTemplateParser->setRenderingContext(new RenderingContext());
-        } else {
-            $exposedTemplateParser = new ExposedTemplateParserLegacy();
-        }
+        $exposedTemplateParser = new ExposedTemplateParser();
+        $exposedTemplateParser->setRenderingContext(new RenderingContext());
         return $exposedTemplateParser;
     }
 }
