@@ -20,5 +20,6 @@
         "psr-4": {
             "FluidTYPO3\\Builder\\": "Classes/"
         }
-    }
+    },
+    "non-feature-branches": ["development", "staging"]
 }
