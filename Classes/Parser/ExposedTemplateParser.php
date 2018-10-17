@@ -94,7 +94,6 @@ class ExposedTemplateParser extends TemplateParser
         try {
             $this->reset();
 
-            $templateString = $this->extractEscapingModifier($templateString);
             $templateString = $this->preProcessTemplateSource($templateString);
 
             $splitTemplate = $this->splitTemplate = $this->splitTemplateAtDynamicTags($templateString);
