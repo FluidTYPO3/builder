@@ -96,9 +96,6 @@ class ExtensionService implements SingletonInterface
         if (true === $pages) {
             array_push($dependencies, 'fluidpages');
         }
-        if (true === $content) {
-            array_push($dependencies, 'fluidcontent');
-        }
         if (true === $useVhs) {
             array_push($dependencies, 'vhs');
         }
@@ -127,6 +124,8 @@ class ExtensionService implements SingletonInterface
             'coreMinor' => $minimumVersion,
             'coreMajor' => $maximumVersion,
             'controllers' => $controllers,
+            'content' => $content,
+            'pages' => $pages,
             'dependencies' => $dependencies,
             'dependenciesCsv' => 0 === count($dependencies) ? '' : ',' . implode(',', $dependencies),
             'dependenciesArray' => $dependenciesArrayString

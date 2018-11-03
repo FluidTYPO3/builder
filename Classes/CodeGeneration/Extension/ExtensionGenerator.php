@@ -124,15 +124,17 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         ];
         $foldersToBeCreated = [$this->targetFolder];
         $hasFluidpages = true === in_array('fluidpages', $this->configuration['dependencies']);
-        $hasFluidcontent = true === in_array('fluidcontent', $this->configuration['dependencies']);
         $hasVhs = true === in_array('vhs', $this->configuration['dependencies']);
+        $appendLanguageFile = false;
         if (true === $hasFluidpages) {
             $this->appendPageFiles($filesToBeWritten);
+            $appendLanguageFile = true;
         }
-        if (true === $hasFluidcontent) {
+        if ($this->configuration['content'] ?? false) {
             $this->appendContentFiles($filesToBeWritten, $hasVhs);
+            $appendLanguageFile = true;
         }
-        if (true === $hasFluidpages || true === $hasFluidcontent) {
+        if ($appendLanguageFile) {
             $this->appendLanguageFile($filesToBeWritten);
         }
         $controllerFolder = $this->targetFolder . '/Classes/Controller/';
@@ -140,11 +142,11 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             array_push($foldersToBeCreated, $controllerFolder);
         }
         if (true === $this->configuration['controllers']) {
-            if (true === $hasFluidcontent) {
+            if ($this->configuration['content'] ?? false) {
                 $this->appendControllerClassFile(
                     $filesToBeWritten,
                     'Content',
-                    'FluidTYPO3\\Fluidcontent\\Controller\\ContentController',
+                    'FluidTYPO3\\Flux\\Controller\\ContentController',
                     $controllerFolder
                 );
             }
@@ -249,7 +251,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             $templateVariables['pages'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
                 $this->configuration['extensionKey'] . '\', \'Page\');';
         }
-        if (true === in_array('fluidcontent', $this->configuration['dependencies'])) {
+        if ($this->configuration['content'] ?? false) {
             $templateVariables['content'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
                 $this->configuration['extensionKey'] . '\', \'Content\');';
         }
