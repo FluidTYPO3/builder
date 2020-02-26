@@ -25,13 +25,13 @@
 		<f:for each="{extensions}" as="extensionName">
 			<f:form.hidden name="extensions[]" value="{extensionName}" />
 		</f:for>
-		<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
+		<f:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
 			<f:for each="{files}" as="filterFile">
-				<v:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}" class="form-control">
+				<f:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}" class="form-control">
 					{filterFile -> v:format.substring(start: basePathLength)}
-				</v:form.select.option>
+				</f:form.select.option>
 			</f:for>
-		</v:form.select><br />
+		</f:form.select><br />
 		<button name="go" class="btn btn-primary">
 			<span class="t3-icon fa fa-refresh"> </span>
 			{f:translate(key: 'rerun')}

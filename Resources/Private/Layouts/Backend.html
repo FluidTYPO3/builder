@@ -6,10 +6,10 @@
 				<div class="left">
 					<f:render section="FunctionsLeft" />
 					<f:form style="display: inline-block">
-						<v:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}">
-							<v:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'Index\'', then: '1', else: '0')}">Syntax</v:form.select.option>
-							<v:form.select.option value="{f:uri.action(action: 'buildForm')}" selected="{f:if(condition: '{view}==\'BuildForm\'', then: '1', else: '0')}">Build provider</v:form.select.option>
-						</v:form.select>
+						<f:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}">
+							<f:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'Index\'', then: '1', else: '0')}">Syntax</f:form.select.option>
+							<f:form.select.option value="{f:uri.action(action: 'buildForm')}" selected="{f:if(condition: '{view}==\'BuildForm\'', then: '1', else: '0')}">Build provider</f:form.select.option>
+						</f:form.select>
 					 </f:form>
 				</div>
 				<div class="right"></div>
@@ -27,7 +27,13 @@
 
 		<div id="typo3-docbody">
 			<div id="typo3-inner-docbody">
-				<f:flashMessages />
+				<f:flashMessages as="flashMessages">
+					<ul class="tx-extbase-flash-message">
+						<f:for each="{flashMessages}" as="flashMessage">
+							<li>{flashMessage.message}</li>
+						</f:for>
+					</ul>
+				</f:flashMessages>
 				<f:render section="Content" />
 			</div>
 		</div>
