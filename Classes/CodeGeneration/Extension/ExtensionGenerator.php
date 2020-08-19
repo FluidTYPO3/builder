@@ -167,6 +167,18 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         foreach ($filesToBeWritten as $fileToBeWritten => $fileContentToBeWritten) {
             $this->createFile($fileToBeWritten, $fileContentToBeWritten);
         }
+        if ($this->configuration['pages'] ?? false) {
+            $this->copyFile(
+                'Resources/Public/Icons/Example.svg',
+                $this->targetFolder . '/Resources/Public/Icons/Page/Standard.svg'
+            );
+        }
+        if ($this->configuration['content'] ?? false) {
+            $this->copyFile(
+                'Resources/Public/Icons/Example.svg',
+                $this->targetFolder . '/Resources/Public/Icons/Content/Example.svg'
+            );
+        }
         $this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
         return 'Built extension "' . $extensionKey . '"';
     }
