@@ -93,9 +93,6 @@ class ExtensionService implements SingletonInterface
             $description = $defaultTitle;
         }
         $dependencies = [];
-        if (true === $pages) {
-            array_push($dependencies, 'fluidpages');
-        }
         if (true === $useVhs) {
             array_push($dependencies, 'vhs');
         }

@@ -123,10 +123,9 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             )->render()
         ];
         $foldersToBeCreated = [$this->targetFolder];
-        $hasFluidpages = true === in_array('fluidpages', $this->configuration['dependencies']);
         $hasVhs = true === in_array('vhs', $this->configuration['dependencies']);
         $appendLanguageFile = false;
-        if (true === $hasFluidpages) {
+        if ($this->configuration['pages'] ?? false) {
             $this->appendPageFiles($filesToBeWritten);
             $appendLanguageFile = true;
         }
@@ -150,20 +149,17 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
                     $controllerFolder
                 );
             }
-            if (true === $hasFluidpages) {
+            if ($this->configuration['pages'] ?? false) {
                 $this->appendControllerClassFile(
                     $filesToBeWritten,
                     'Page',
-                    'FluidTYPO3\\Fluidpages\\Controller\\PageController',
+                    'FluidTYPO3\\Flux\\Controller\\PageController',
                     $controllerFolder
                 );
             }
         }
         $this->appendTypoScriptConfiguration($filesToBeWritten);
         $this->appendExtensionLocalconfFile($filesToBeWritten);
-        if (true === $hasFluidcontent || true === $hasFluidpages) {
-            array_push($foldersToBeCreated, $this->targetFolder . '/Resources/Private/Language');
-        }
         $foldersToBeCreated = array_unique($foldersToBeCreated);
         foreach ($foldersToBeCreated as $folderPathToBeCreated) {
             $this->createFolder($folderPathToBeCreated);
@@ -171,13 +167,13 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         foreach ($filesToBeWritten as $fileToBeWritten => $fileContentToBeWritten) {
             $this->createFile($fileToBeWritten, $fileContentToBeWritten);
         }
-        if (true === $hasFluidpages) {
+        if ($this->configuration['pages'] ?? false) {
             $this->copyFile(
                 'Resources/Public/Icons/Example.svg',
                 $this->targetFolder . '/Resources/Public/Icons/Page/Standard.svg'
             );
         }
-        if (true === $hasFluidcontent) {
+        if ($this->configuration['content'] ?? false) {
             $this->copyFile(
                 'Resources/Public/Icons/Example.svg',
                 $this->targetFolder . '/Resources/Public/Icons/Content/Example.svg'
@@ -247,7 +243,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         // note: the following code uses the provided "extensionKey" *directly* because
         // for these registrations, we require the full Vendor.ExtensionName if that
         // is the format used. Otherwise, legacy class names would be expected.
-        if (true === in_array('fluidpages', $this->configuration['dependencies'])) {
+        if ($this->configuration['pages'] ?? false) {
             $templateVariables['pages'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
                 $this->configuration['extensionKey'] . '\', \'Page\');';
         }
