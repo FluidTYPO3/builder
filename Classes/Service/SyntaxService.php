@@ -4,12 +4,10 @@ namespace FluidTYPO3\Builder\Service;
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
 use FluidTYPO3\Builder\Result\FluidParserResult;
 use FluidTYPO3\Builder\Utility\GlobUtility;
-use FluidTYPO3\Flux\Utility\VersionUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
-use TYPO3Fluid\Fluid\Exception;
 
 class SyntaxService implements SingletonInterface
 {
@@ -162,7 +160,7 @@ class SyntaxService implements SingletonInterface
      */
     protected function getTemplateParser(RenderingContextInterface $renderingContext)
     {
-        if (VersionUtility::assertExtensionVersionIsAtLeastVersion('core', 8)) {
+        if (version_compare(ExtensionManagementUtility::getExtensionVersion('core'), 8, '>')) {
             $exposedTemplateParser = new ExposedTemplateParser();
             $exposedTemplateParser->setRenderingContext($renderingContext);
         } else {
