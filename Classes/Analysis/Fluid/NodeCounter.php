@@ -1,36 +1,19 @@
 <?php
 namespace FluidTYPO3\Builder\Analysis\Fluid;
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2016 Claus Due <claus@namelesscoder.net>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
-
 use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Analysis\MessageInterface;
 use FluidTYPO3\Builder\Analysis\Fluid\Message\UncompilableMessage;
+use FluidTYPO3\Builder\Analysis\NoticeMessage;
+use FluidTYPO3\Builder\Analysis\OkMessage;
+use FluidTYPO3\Builder\Analysis\WarningMessage;
 use FluidTYPO3\Builder\Parser\ExposedTemplateParser;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManagerInterface;
-use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\NodeInterface;
-use TYPO3\CMS\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\Expression\ExpressionNodeInterface;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\NodeInterface;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ObjectAccessorNode;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Compiler\StopCompilingException;
 use TYPO3Fluid\Fluid\Core\Parser\ParsedTemplateInterface;
@@ -129,6 +112,8 @@ class NodeCounter
     const METRIC_CACHED_SIZE = 'CachedSize';
     const METRIC_SECTIONS = 'SectionNodes';
     const METRIC_VIEWHELPERS = 'ViewHelperNodes';
+    const METRIC_OBJECTACCESSORS = 'ObjectAccessors';
+    const METRIC_EXPRESSIONS = 'ExpressionNodes';
     const METRIC_MAXIMUM_NESTING_LEVEL = 'MaxNestingLevel';
 
     /**
@@ -160,6 +145,8 @@ class NodeCounter
         self::METRIC_TOTAL_SPLITS => [150, 300],
         self::METRIC_TOTAL_NODES => [100, 250],
         self::METRIC_VIEWHELPERS => [50, 100],
+        self::METRIC_OBJECTACCESSORS => [50, 100],
+        self::METRIC_EXPRESSIONS => [25, 50],
         self::METRIC_SECTIONS => [8, 15],
         self::METRIC_CONDITION_NODES => [10, 25],
         self::METRIC_NODES_PER_SECTION_AVERAGE => [8, 15],
@@ -296,18 +283,22 @@ class NodeCounter
             $numberOfChildNodes = $this->determineTotalNodeCount($node->getChildNodes());
             // increment: count this node and its child nodes
             $this->get(self::METRIC_TOTAL_NODES)->increment(1 + $numberOfChildNodes);
-            if (true === $node instanceof ViewHelperNode) {
+            if ($node instanceof ViewHelperNode) {
                 /** @var ViewHelperNode $node */
                 $this->get(self::METRIC_VIEWHELPERS)->increment();
                 $instance = $node->getUninitializedViewHelper();
-                if (true === $instance instanceof AbstractConditionViewHelper) {
+                if ($instance instanceof AbstractConditionViewHelper) {
                     $this->get(self::METRIC_CONDITION_NODES)->increment();
-                } elseif (true === $instance instanceof SectionViewHelper) {
+                } elseif ($instance instanceof SectionViewHelper) {
                     $this->get(self::METRIC_SECTIONS)->increment();
                 }
                 $arguments = $node->getArguments();
                 $numberOfArgumentNodes = $this->determineTotalNodeCount($arguments);
                 $this->get(self::METRIC_TOTAL_NODES)->increment($numberOfArgumentNodes);
+            } elseif ($node instanceof ObjectAccessorNode) {
+                $this->get(self::METRIC_OBJECTACCESSORS)->increment();
+            } elseif ($node instanceof ExpressionNodeInterface) {
+                $this->get(self::METRIC_EXPRESSIONS)->increment();
             }
         }
     }
@@ -355,11 +346,11 @@ class NodeCounter
             list ($notice, $warning) = $this->thresholds[$metricName];
             $value = $metric->getValue();
             if ($value <= $notice) {
-                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\OkMessage');
+                $message = $this->objectManager->get(OkMessage::class);
             } elseif ($value <= $warning) {
-                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\NoticeMessage');
+                $message = $this->objectManager->get(NoticeMessage::class);
             } else {
-                $message = $this->objectManager->get('FluidTYPO3\Builder\Analysis\WarningMessage');
+                $message = $this->objectManager->get(WarningMessage::class);
             }
             $message->setPayload(array_merge([$value], $this->thresholds[$metricName]));
             $metric->addMessage($message);
@@ -373,7 +364,7 @@ class NodeCounter
      */
     protected function assertCoreVersionAtLeast($majorVersion, $minorVersion = 0)
     {
-        list ($major, $minor, ) = explode('.', TYPO3_version);
+        list ($major, $minor, ) = ExtensionManagementUtility::getExtensionVersion('core');
         return ($major >= $majorVersion && $minor >= $minorVersion);
     }
 }

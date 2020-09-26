@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 }
 
 if (!(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
-    (function($config) {
+    (function() {
         if ('BE' === TYPO3_MODE) {
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
                 'FluidTYPO3.Builder',
@@ -28,5 +28,5 @@ if (!(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
             );
         }
 
-    })($_EXTCONF);
+    })();
 }

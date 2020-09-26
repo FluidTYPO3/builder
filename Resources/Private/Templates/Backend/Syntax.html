@@ -1,5 +1,3 @@
-{namespace v=FluidTYPO3\Vhs\ViewHelpers}
-
 <f:layout name="Backend" />
 
 <f:section name="ButtonsLeft">
@@ -10,35 +8,26 @@
 	{csh -> f:format.raw()}
 </f:section>
 
+<f:section name="TableHead">
+	<thead>
+		<tr>
+			<td>File</td>
+			<td>ViewHelpers</td>
+			<td>Cached Size</td>
+			<td>Sections</td>
+			<td>Conditions</td>
+			<td>Splits</td>
+			<td>Nodes</td>
+			<td>Var Reads</td>
+			<td>Expressions</td>
+			<td>Max Nesting</td>
+		</tr>
+	</thead>
+</f:section>
+
 <f:section name="Content">
-	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/jqplot.min.css')}" />
-	<link rel="stylesheet" href="../../{f:uri.resource(path: 'Stylesheet/plotter.css')}" />
-	<h1>{f:translate(key: 'header.syntax')}</h1>
-	<h2>{f:translate(key: 'header.reports')}</h2>
-	<f:form action="syntax" class="re-run">
-		<f:for each="{syntax}" as="syntaxName">
-			<f:form.hidden name="syntax[]" value="{syntaxName}" />
-		</f:for>
-		<f:for each="{formats}" as="formatName">
-			<f:form.hidden name="formats[]" value="{formatName}" />
-		</f:for>
-		<f:for each="{extensions}" as="extensionName">
-			<f:form.hidden name="extensions[]" value="{extensionName}" />
-		</f:for>
-		<v:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
-			<f:for each="{files}" as="filterFile">
-				<v:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}" class="form-control">
-					{filterFile -> v:format.substring(start: basePathLength)}
-				</v:form.select.option>
-			</f:for>
-		</v:form.select><br />
-		<button name="go" class="btn btn-primary">
-			<span class="t3-icon fa fa-refresh"> </span>
-			{f:translate(key: 'rerun')}
-		</button>
-	</f:form>
+	<v:variable.set name="map" value="{0: 'success', 1: 'danger', -2: 'warning'}" />
 	<f:for each="{reports}" as="extensionReports" key="extensionKey">
-		<h2>{extensionKey}</h2>
 		<f:if condition="{extensionReports}">
 			<f:else>
 				<f:translate key="noreports" />
@@ -46,15 +35,8 @@
 			<f:then>
 				<f:for each="{extensionReports}" as="formatReports" key="format">
 					<h3>{format -> v:format.case(case: 'ucfirst')}</h3>
-					<f:if condition="{formatReports.json}">
-						<div class="storage storage-{format}">
-							{formatReports.json -> f:format.raw()}
-						</div>
-						<div class="graph"></div>
-					</f:if>
-					<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename">
-						<f:render section="Payload{result.payloadType}" arguments="{_all}" />
-					</f:for>
+					{formatReports.reports -> v:iterator.first() -> f:variable(name: 'first')}
+					<f:render section="Payload{first.payloadType}" arguments="{_all}" />
 				</f:for>
 			</f:then>
 		</f:if>
@@ -62,23 +44,90 @@
 </f:section>
 
 <f:section name="PayloadMetrics">
-	<v:variable.set name="map" value="{0: 'success', 1: 'danger', -2: 'warning'}" />
-	<h3>{filePathAndFilename}</h3>
-	<f:for each="{result.payload}" as="metric" key="metricName">
-		<f:for each="{metric.messages}" as="message">
-			{metricName -> v:variable.set(name: 'title')}
-			{v:variable.get(name: 'map.{message.severity}') -> v:variable.set(name: 'class')}
-			{message.payload -> v:variable.convert(type: 'array') -> v:variable.set(name: 'payload')}
-			{message.message -> f:format.printf(arguments: payload) -> v:variable.set(name: 'body')}
-			<f:render section="FlashMessage" arguments="{_all}" />
+	<table class="table table-vertical-top">
+		<tr>
+			<td>
+				<f:form action="syntax" class="re-run">
+					<f:for each="{syntax}" as="syntaxName">
+						<f:form.hidden name="syntax[]" value="{syntaxName}" />
+					</f:for>
+					<f:for each="{formats}" as="formatName">
+						<f:form.hidden name="formats[]" value="{formatName}" />
+					</f:for>
+					<f:for each="{extensions}" as="extensionName">
+						<f:form.hidden name="extensions[]" value="{extensionName}" />
+					</f:for>
+					<f:form.select name="filteredFiles" size="{files -> f:count()}" multiple="multiple">
+						<f:for each="{files}" as="filterFile">
+							<f:form.select.option value="{filterFile}" selected="{v:condition.iterator.contains(needle: filterFile, haystack: filteredFiles, then: 'selected')}" class="form-control">
+								{filterFile -> v:format.substring(start: basePathLength)}
+							</f:form.select.option>
+						</f:for>
+					</f:form.select><br />
+					<button name="go" class="btn btn-primary">
+						<span class="t3-icon fa fa-refresh"> </span>
+						{f:translate(key: 'rerun')}
+					</button>
+				</f:form>
+			</td>
+			<td>
+				<f:if condition="{formatReports.json}">
+					<div class="storage storage-{format}">
+						{formatReports.json -> f:format.raw()}
+					</div>
+					<div class="graph"></div>
+				</f:if>
+			</td>
+		</tr>
+	</table>
+	<table class="table table-bordered table-vertical-top">
+		<f:render section="TableHead" />
+		<tbody>
+		<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename" iteration="iteration">
+			<f:if condition="{iteration.cycle} % 6 === 0">
+				<f:render section="TableHead" />
+			</f:if>
+			<tr>
+				<td class="{f:if(condition: result.valid, then: 'success', else: 'danger')}">
+					{filePathAndFilename}
+				</td>
+				<td class="{map.{result.payload.ViewHelperNodes.messages.0.severity}}">
+					<ul>
+						<f:for each="{result.viewHelpers}" as="viewHelper">
+							<li>{viewHelper}</li>
+						</f:for>
+					</ul>
+					<em>Total: {result.viewHelpers -> f:count()}</em>
+				</td>
+				<f:for each="{
+					0: 'CachedSize',
+					1: 'SectionNodes',
+					2: 'ConditionsTotal',
+					3: 'SplitsTotal',
+					4: 'NodesTotal',
+					5: 'ObjectAccessors',
+					6: 'ExpressionNodes',
+					7: 'MaxNestingLevel'
+				}" as="metric">
+					<td class="{map.{result.payload.{metric}.messages.0.severity}}">
+						{result.payload.{metric}.value}
+					</td>
+				</f:for>
+			</tr>
 		</f:for>
-	</f:for>
+		</tbody>
+	</table>
 </f:section>
 
 <f:section name="PayloadFlashMessage">
-	{f:if(condition: result.valid, then: 'success', else: 'danger') -> v:variable.set(name: 'class')}
-	{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:variable.set(name: 'body')}
-	<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
+	<f:for each="{formatReports.reports}" as="result" key="filePathAndFilename" iteration="iteration">
+		{f:if(condition: result.valid, then: 'success', else: 'danger') -> v:variable.set(name: 'class')}
+		{f:if(condition: result.valid, then: 'All is well', else: result.error) -> v:variable.set(name: 'body')}
+		<f:render section="FlashMessage" arguments="{class: class, body: body, title: filePathAndFilename}" />
+	</f:for>
+</f:section>
+
+<f:section name="Payload">
 </f:section>
 
 <f:section name="FlashMessage">

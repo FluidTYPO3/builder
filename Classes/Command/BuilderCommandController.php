@@ -1,40 +1,13 @@
 <?php
 namespace FluidTYPO3\Builder\Command;
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2016 Claus Due <claus@namelesscoder.net>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
-
+use FluidTYPO3\Builder\Service\CommandService;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
-use FluidTYPO3\Builder\Utility\GlobUtility;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-/**
- * Class BuilderCommandController
- * @package FluidTYPO3\Builder\Command
- */
 class BuilderCommandController extends CommandController
 {
 
@@ -47,6 +20,16 @@ class BuilderCommandController extends CommandController
      * @var ExtensionService
      */
     protected $extensionService;
+
+    /**
+     * @var CommandService
+     */
+    private $commandService;
+
+    public function __construct(?CommandService $commandService = null)
+    {
+        $this->commandService = $commandService ?? GeneralUtility::makeInstance(ObjectManager::class)->get(CommandService::class);
+    }
 
     /**
      * @param SyntaxService $syntaxService
@@ -84,62 +67,8 @@ class BuilderCommandController extends CommandController
      */
     public function fluidSyntaxCommand($extension = null, $path = null, $extensions = 'html,xml,txt', $verbose = false)
     {
-        $verbose = (boolean) $verbose;
-        if (null !== $extension) {
-            $this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-            $path = GlobUtility::getRealPathFromExtensionKeyAndPath($extension, $path);
-            $files = GlobUtility::getFilesRecursive($path, $extensions);
-        } else {
-            // no extension key given, let's lint it all
-            $files = [];
-            /** @var ExtensionService $extensionService */
-            $extensionService = $this->objectManager->get('FluidTYPO3\Builder\Service\ExtensionService');
-            $extensionInformation = $extensionService->getComputableInformation();
-            foreach ($extensionInformation as $extensionName => $extensionInfo) {
-                // Syntax service declines linting of inactive extensions
-                if (0 === intval($extensionInfo['installed']) || 'System' === $extensionInfo['type']) {
-                    continue;
-                }
-                $path = GlobUtility::getRealPathFromExtensionKeyAndPath($extensionName, null);
-                $files = array_merge($files, GlobUtility::getFilesRecursive($path, $extensions));
-            }
-        }
-        $files = array_values($files);
-        $errors = false;
-        $this->response->setContent(
-            'Performing a syntax check on fluid templates (types: ' . $extensions . '; path: ' . $path . ')' . LF
-        );
-        $this->response->send();
-        foreach ($files as $filePathAndFilename) {
-            $basePath = str_replace(PATH_site, '', $filePathAndFilename);
-            $result = $this->syntaxService->syntaxCheckFluidTemplateFile($filePathAndFilename);
-            if (null !== $result->getError()) {
-                $this->response->appendContent('[ERROR] File ' . $basePath . ' has an error: ' . LF);
-                $this->response->appendContent(
-                    $result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF
-                );
-                $this->response->send();
-                $errors = true;
-            } elseif (true === $verbose) {
-                $namespaces = $result->getNamespaces();
-                $this->response->appendContent(
-                    'File is compilable: ' . ($result->getCompilable() ? 'YES' : 'NO (WARNING)') . LF
-                );
-                if ($result->getLayoutName()) {
-                    $this->response->appendContent('File has layout (' . $result->getLayoutName() . ')' . LF);
-                } else {
-                    $this->response->appendContent('File DOES NOT reference a Layout' . LF);
-                }
-                $this->response->appendContent(
-                    'File has ' . count($namespaces) . ' namespace(s)' .
-                    (0 < count($namespaces) ? ': ' . $result->getNamespacesFlattened() : '') . LF
-                );
-                $this->response->appendContent('[OK] File  ' . $basePath . ' is valid.' . LF);
-                $this->response->send();
-            }
-            $this->response->setContent(LF);
-        }
-        $this->stop($files, $errors, $verbose);
+        $this->commandService->setResponse($this->response);
+        $this->commandService->checkFluidSyntax($extension, $path, $extensions, $verbose);
     }
 
     /**
@@ -156,24 +85,8 @@ class BuilderCommandController extends CommandController
      */
     public function phpsyntaxCommand($extension = null, $path = null, $verbose = false)
     {
-        $verbose = (boolean) $verbose;
-        $this->assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path);
-        if (null !== $extension) {
-            $results = $this->syntaxService->syntaxCheckPhpFilesInExtension($extension);
-        } else {
-            $results = $this->syntaxService->syntaxCheckPhpFilesInPath($path);
-        }
-        $errors = false;
-        foreach ($results as $filePathAndFilename => $result) {
-            $result = $this->syntaxService->syntaxCheckPhpFile($filePathAndFilename);
-            if (null !== $result->getError()) {
-                $errors = true;
-                $this->response->setContent(
-                    '[ERROR] ' . $result->getError()->getMessage() . ' (' . $result->getError()->getCode() . ')' . LF
-                );
-            }
-        }
-        $this->stop($results, $errors, $verbose);
+        $this->commandService->setResponse($this->response);
+        $this->commandService->checkPhpSyntax($extension, $path, $verbose);
     }
 
     /**
@@ -193,21 +106,8 @@ class BuilderCommandController extends CommandController
         $inactive = (boolean) $inactive;
         $json = (boolean) $json;
 
-        $format = 'text';
-        if (true === $json) {
-            $format = 'json';
-        }
-        if ($active) {
-            $state = ExtensionService::STATE_ACTIVE;
-        } elseif ($inactive) {
-            $state = ExtensionService::STATE_INACTIVE;
-        } else {
-            $state = ExtensionService::STATE_ALL;
-        }
-
-        $this->response->setContent(
-            $this->extensionService->getPrintableInformation($format, $detail, $state)
-        );
+        $this->commandService->setResponse($this->response);
+        $this->commandService->listExtensions($detail, $active, $inactive, $json);
     }
 
     /**
@@ -219,7 +119,7 @@ class BuilderCommandController extends CommandController
      * generation of source code and configuration for
      * that particular feature.
      *
-     * @param string $extensionKey The extension key which should be generated. Must not exist.
+     * @param string $extensionKey The extension identity which should be generated. Must not exist. Must be in the format "VendorName.ExtensionName".
      * @param string $author The author of the extension, in the format "Name Lastname <name@example.com>" with optional
      *                       company name, in which case form is "Name Lastname <name@example.com>, Company Name"
      * @param string $title Title of the resulting extension, by default "Provider extension for $enabledFeaturesList"
@@ -251,7 +151,8 @@ class BuilderCommandController extends CommandController
         $controllers = (boolean) $controllers;
         $verbose = (boolean) $verbose;
         $dry = (boolean) $dry;
-        $extensionGenerator = $this->extensionService->buildProviderExtensionGenerator(
+        $this->commandService->setResponse($this->response);
+        $this->commandService->generateProviderExtension(
             $extensionKey,
             $author,
             $title,
@@ -259,11 +160,10 @@ class BuilderCommandController extends CommandController
             $controllers,
             $pages,
             $content,
-            $useVhs
+            $useVhs,
+            $dry,
+            $verbose
         );
-        $extensionGenerator->setDry($dry);
-        $extensionGenerator->setVerbose($verbose);
-        $extensionGenerator->generate();
     }
 
     /**
@@ -273,144 +173,5 @@ class BuilderCommandController extends CommandController
      */
     protected function errorCommand()
     {
-    }
-
-    /**
-     * @param string $extension
-     * @param string $path
-     * @return void
-     */
-    private function assertEitherExtensionKeyOrPathOrBothAreProvidedOrExit($extension, $path)
-    {
-        if (null === $extension && null === $path) {
-            $this->response->setContent('Either "extension" or "path" or both must be specified' . LF);
-            $this->response->send();
-            $this->response->setExitCode(128);
-            $this->forward('error');
-        }
-    }
-
-    /**
-     * @param array $files
-     * @param boolean $errors
-     * @param boolean $verbose
-     */
-    protected function stop($files, $errors, $verbose)
-    {
-        if (true === (boolean) $verbose) {
-            if (false === $errors) {
-                $this->response->setContent('No errors encountered - ' . count($files) . ' file(s) are all okay' . LF);
-            } else {
-                $this->response->setContent('Errors were detected - review the summary above' . LF);
-                $this->response->setExitCode(1);
-            }
-        }
-        $this->response->send();
-    }
-
-    /**
-     * Get all class names inside this namespace and return them as array.
-     *
-     * @param string $combinedExtensionKey Extension Key with (possibly) leading Vendor Prefix
-     * @return array
-     */
-    protected function getClassNamesInExtension($combinedExtensionKey)
-    {
-        $allViewHelperClassNames = [];
-        list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey(
-            $combinedExtensionKey
-        );
-        $path = ExtensionManagementUtility::extPath($extensionKey, 'Classes/ViewHelpers/');
-        $filesInPath = GeneralUtility::getAllFilesAndFoldersInPath([], $path, 'php');
-        foreach ($filesInPath as $filePathAndFilename) {
-            $className = $this->getRealClassNameBasedOnExtensionAndFilenameAndExistence(
-                $combinedExtensionKey,
-                $filePathAndFilename
-            );
-            if (class_exists($className)) {
-                $parent = $className;
-                while ($parent = get_parent_class($parent)) {
-                    if ($parent === 'TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper'
-                        || $parent === 'TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper') {
-                        array_push($allViewHelperClassNames, $className);
-                    }
-                }
-            }
-        }
-        $affectedViewHelperClassNames = [];
-        foreach ($allViewHelperClassNames as $viewHelperClassName) {
-            $classReflection = new \ReflectionClass($viewHelperClassName);
-            if ($classReflection->isAbstract() === true) {
-                continue;
-            }
-            $namespace = $classReflection->getNamespaceName();
-            if (strncmp($namespace, $viewHelperClassName, strlen($namespace)) === 0) {
-                $affectedViewHelperClassNames[] = $viewHelperClassName;
-            }
-        }
-        sort($affectedViewHelperClassNames);
-        return $affectedViewHelperClassNames;
-    }
-
-    /**
-     * Returns the true class name of the ViewHelper as defined
-     * by the extensionKey (which may be vendorname.extensionkey)
-     * and the class name. If vendorname is used, namespaced
-     * classes are assumed. If no vendorname is used a namespaced
-     * class is first attempted, if this does not exist the old
-     * Tx_ prefixed class name is tried. If this too does not exist,
-     * an Exception is thrown.
-     *
-     * @param string $combinedExtensionKey
-     * @param string $filename
-     * @return string
-     * @throws \Exception
-     */
-    protected function getRealClassNameBasedOnExtensionAndFilenameAndExistence($combinedExtensionKey, $filename)
-    {
-        list ($vendor, $extensionKey) = $this->getRealExtensionKeyAndVendorFromCombinedExtensionKey(
-            $combinedExtensionKey
-        );
-        $filename = str_replace(
-            ExtensionManagementUtility::extPath($extensionKey, 'Classes/ViewHelpers/'),
-            '',
-            $filename
-        );
-        $stripped = substr($filename, 0, -4);
-        if ($vendor) {
-            $classNamePart = str_replace('/', '\\', $stripped);
-            $className = sprintf(
-                '%s\\%s\\ViewHelpers\\%s',
-                $vendor,
-                ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)),
-                $classNamePart
-            );
-        } else {
-            $classNamePart = str_replace('/', '_', $stripped);
-            $className = sprintf(
-                '%s\\ViewHelpers\\%s',
-                ucfirst(GeneralUtility::underscoredToLowerCamelCase($extensionKey)),
-                $classNamePart
-            );
-        }
-        return $className;
-    }
-
-    /**
-     * @param string $extensionKey
-     * @return array
-     */
-    protected function getRealExtensionKeyAndVendorFromCombinedExtensionKey($extensionKey)
-    {
-        if (false !== strpos($extensionKey, '.')) {
-            list ($vendor, $extensionKey) = explode('.', $extensionKey);
-            if ('TYPO3' === $vendor) {
-                $vendor = 'TYPO3\CMS';
-            }
-        } else {
-            $vendor = null;
-        }
-        $extensionKey = strtolower($extensionKey);
-        return [$vendor, $extensionKey];
     }
 }

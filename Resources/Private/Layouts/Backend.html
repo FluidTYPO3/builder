@@ -1,35 +1,11 @@
-{namespace v=FluidTYPO3\Vhs\ViewHelpers}
 <f:be.container>
-	<div class="typo3-fullDoc">
-		<div id="typo3-docheader">
-			<div class="typo3-docheader-functions">
-				<div class="left">
-					<f:render section="FunctionsLeft" />
-					<f:form style="display: inline-block">
-						<v:form.select additionalAttributes='{onchange: "jumpToUrl(this.options[this.selectedIndex].value,this);"}' selectAllByDefault="{f:uri.action(action: 'index')}">
-							<v:form.select.option value="{f:uri.action(action: 'index')}" selected="{f:if(condition: '{view}==\'Index\'', then: '1', else: '0')}">Syntax</v:form.select.option>
-							<v:form.select.option value="{f:uri.action(action: 'buildForm')}" selected="{f:if(condition: '{view}==\'BuildForm\'', then: '1', else: '0')}">Build provider</v:form.select.option>
-						</v:form.select>
-					 </f:form>
-				</div>
-				<div class="right"></div>
-			</div>
-			<div class="typo3-docheader-buttons">
-				<div class="left"><f:render section="ButtonsLeft" /></div>
-				<div class="right">
-					<div class="buttongroup">
-						<f:link.page><span class="t3-icon fa fa-refresh"> </span></f:link.page>
-						<f:be.buttons.shortcut />
-					</div>
-				</div>
-			</div>
+	<div style="padding: 24px;">
+		<div class="btn-group">
+			<f:link.action action="index" class="btn btn-{f:if(condition: '{view} == \'Index\'', then: 'primary', else: 'default')}">Syntax Check</f:link.action>
+			<f:link.action action="buildForm" class="btn btn-{f:if(condition: '{view} == \'BuildForm\'', then: 'primary', else: 'default')}">Generate Provider Extension</f:link.action>
 		</div>
-
-		<div id="typo3-docbody">
-			<div id="typo3-inner-docbody">
-				<f:flashMessages />
-				<f:render section="Content" />
-			</div>
-		</div>
+		<p>&nbsp;</p>
+		<f:flashMessages />
+		<f:render section="Content" />
 	</div>
 </f:be.container>

@@ -1,41 +1,16 @@
 <?php
 namespace FluidTYPO3\Builder\CodeGeneration\Extension;
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2016 Claus Due <claus@namelesscoder.net>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
-
 use FluidTYPO3\Builder\CodeGeneration\AbstractCodeGenerator;
 use FluidTYPO3\Builder\CodeGeneration\CodeGeneratorInterface;
+use FluidTYPO3\Flux\Controller\ContentController;
+use FluidTYPO3\Flux\Controller\PageController;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ExtensionGenerator
- * @package FluidTYPO3\Builder\CodeGeneration\Extension
- */
 class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorInterface
 {
-
     const TEMPLATE_CONTROLLER = 'Controller/Controller';
     const TEMPLATE_EXTLOCALCONF = 'Extension/ext_localconf';
     const TEMPLATE_EMCONF = 'Extension/ext_emconf';
@@ -92,12 +67,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
      */
     protected function getExtensionNamespaceFromSettings()
     {
-        $extensionKey = $this->configuration['extensionKey'];
-        if (false !== strpos($extensionKey, '.')) {
-            list ($vendor, $extensionName) = explode('.', $extensionKey);
-            return $vendor . '\\' . $extensionName . '\\';
-        }
-        return GeneralUtility::underscoredToUpperCamelCase($extensionKey) . '\\';
+        return $this->configuration['extensionNamespace'];
     }
 
     /**
@@ -108,7 +78,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
     {
         $extensionKey = $this->getExtensionKeyFromSettings();
         if (null === $this->targetFolder) {
-            $this->setTargetFolder(PATH_typo3conf . 'ext/' . $extensionKey);
+            $this->setTargetFolder((defined('PATH_site') ? constant('PATH_typo3conf') . 'ext/' : Environment::getPublicPath() . '/typo3conf/ext/') . $extensionKey);
         }
         if (true === is_dir($this->targetFolder)) {
             throw new \RuntimeException(
@@ -145,7 +115,7 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
                 $this->appendControllerClassFile(
                     $filesToBeWritten,
                     'Content',
-                    'FluidTYPO3\\Flux\\Controller\\ContentController',
+                    ContentController::class,
                     $controllerFolder
                 );
             }
@@ -153,13 +123,14 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
                 $this->appendControllerClassFile(
                     $filesToBeWritten,
                     'Page',
-                    'FluidTYPO3\\Flux\\Controller\\PageController',
+                    PageController::class,
                     $controllerFolder
                 );
             }
         }
         $this->appendTypoScriptConfiguration($filesToBeWritten);
         $this->appendExtensionLocalconfFile($filesToBeWritten);
+        $this->appendTypoScriptIntegrationFile($filesToBeWritten);
         $foldersToBeCreated = array_unique($foldersToBeCreated);
         foreach ($foldersToBeCreated as $folderPathToBeCreated) {
             $this->createFolder($folderPathToBeCreated);
@@ -179,7 +150,10 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
                 $this->targetFolder . '/Resources/Public/Icons/Content/Example.svg'
             );
         }
-        $this->copyFile('ext_icon.gif', $this->targetFolder . '/ext_icon.gif');
+        $this->copyFile(
+            'Resources/Public/Icons/Example.svg',
+            $this->targetFolder . '/Resources/Public/Icons/Extension.svg'
+        );
         return 'Built extension "' . $extensionKey . '"';
     }
 
@@ -229,15 +203,10 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
      */
     protected function appendExtensionLocalconfFile(&$files)
     {
-        $title = trim($this->configuration['title']);
         $templateVariables = [
             'pages' => '',
             'content' => '',
-            'configuration' => sprintf(
-                '\\%s::addStaticFile($_EXTKEY, \'Configuration/TypoScript\', \'%s\');',
-                ExtensionManagementUtility::class,
-                $title
-            )
+            'configuration' => '',
         ];
 
         // note: the following code uses the provided "extensionKey" *directly* because
@@ -245,13 +214,37 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
         // is the format used. Otherwise, legacy class names would be expected.
         if ($this->configuration['pages'] ?? false) {
             $templateVariables['pages'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
-                $this->configuration['extensionKey'] . '\', \'Page\');';
+                $this->configuration['extensionName'] . '\', \'Page\');';
         }
         if ($this->configuration['content'] ?? false) {
             $templateVariables['content'] = '\FluidTYPO3\Flux\Core::registerProviderExtensionKey(\'' .
-                $this->configuration['extensionKey'] . '\', \'Content\');';
+                $this->configuration['extensionName'] . '\', \'Content\');';
         }
         $files[$this->targetFolder . '/ext_localconf.php'] = $this->getPreparedCodeTemplate(
+            self::TEMPLATE_EXTLOCALCONF,
+            $templateVariables
+        )->render();
+    }
+
+    /**
+     * @param array $files
+     * @return void
+     */
+    protected function appendTypoScriptIntegrationFile(&$files)
+    {
+        $title = trim($this->configuration['title']);
+        $templateVariables = [
+            'pages' => '',
+            'content' => '',
+            'configuration' => sprintf(
+                '\\%s::addStaticFile(\'%s\', \'Configuration/TypoScript\', \'%s\');',
+                ExtensionManagementUtility::class,
+                $this->configuration['extensionKey'],
+                $title
+            )
+        ];
+
+        $files[$this->targetFolder . '/Configuration/TCA/Overrides/sys_template.php'] = $this->getPreparedCodeTemplate(
             self::TEMPLATE_EXTLOCALCONF,
             $templateVariables
         )->render();

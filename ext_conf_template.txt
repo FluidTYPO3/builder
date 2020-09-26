@@ -1,5 +1,0 @@
-  # cat=basic/enable; type=boolean; label=Doodle Plugin: Allow use of the Fluid Doodling plugin - a frontend plugin to try out and very roughly analyse Fluid syntax. WARNING! There is no reasonable use case for this plugin on any production site as it absolutely constitutes a potential security issue to allow any user to execute Fluid. If you do use the plugin you are STRONGLY RECOMMENDED to place the rendering slave on a completely different host that you additionally protect and frequently reset!
-enableDoodlePlugin = 0
-
-  # cat=basic/enable; type=boolean; label=Frontend Plugin: Allow generating provider extensions through FE web requests. Though enabling this does not constitute any immediately security risk, there is very little chance that you actually need the features it provides. Instead, use the backend plugin or CLI command to generate your provider extension.
-enableFrontendPlugin = 0

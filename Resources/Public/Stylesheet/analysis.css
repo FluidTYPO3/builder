@@ -1,0 +1,10 @@
+td.warning {
+	background-color: orange;
+}
+td.danger {
+	background-color: orangered;
+}
+
+td.success {
+	background-color: lightgreen;
+}

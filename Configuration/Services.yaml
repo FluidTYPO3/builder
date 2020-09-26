@@ -1,0 +1,29 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  FluidTYPO3\Builder\:
+    resource: '../Classes/*'
+
+  FluidTYPO3\Builder\Command\BuildCommand:
+    tags:
+      - name: 'console.command'
+        command: 'builder:build'
+        schedulable: false
+  FluidTYPO3\Builder\Command\FluidSyntaxCommand:
+    tags:
+      - name: 'console.command'
+        command: 'builder:fluidsyntax'
+        schedulable: false
+  FluidTYPO3\Builder\Command\PhpSyntaxCommand:
+    tags:
+      - name: 'console.command'
+        command: 'builder:phpsyntax'
+        schedulable: false
+  FluidTYPO3\Builder\Command\ListCommand:
+    tags:
+      - name: 'console.command'
+        command: 'builder:list'
+        schedulable: false

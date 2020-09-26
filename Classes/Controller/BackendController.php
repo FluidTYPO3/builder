@@ -1,35 +1,14 @@
 <?php
 namespace FluidTYPO3\Builder\Controller;
 
-/***************************************************************
- *  Copyright notice
- *
- *  (c) 2016 Claus Due <claus@namelesscoder.net>
- *  All rights reserved
- *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
- *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  This copyright notice MUST APPEAR in all copies of the script!
- * ************************************************************* */
-
 use FluidTYPO3\Builder\Analysis\Fluid\TemplateAnalyzer;
 use FluidTYPO3\Builder\Analysis\Metric;
 use FluidTYPO3\Builder\Result\ParserResult;
 use FluidTYPO3\Builder\Service\ExtensionService;
 use FluidTYPO3\Builder\Service\SyntaxService;
 use FluidTYPO3\Builder\Utility\ExtensionUtility;
+use FluidTYPO3\Builder\Utility\GlobUtility;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,10 +16,6 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Backend\Template\DocumentTemplate;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 
-/**
- * Class BackendController
- * @package FluidTYPO3\Builder\Controller
- */
 class BackendController extends ActionController
 {
 
@@ -159,10 +134,6 @@ class BackendController extends ActionController
     }
 
     /**
-     * @validate $syntax NotEmpty
-     * @validate $extensions NotEmpty
-     * @validate $formats NotEmpty
-     * @ignorevalidation $filteredFiles
      * @param array $syntax
      * @param array $extensions
      * @param array $formats
@@ -170,10 +141,14 @@ class BackendController extends ActionController
      */
     public function syntaxAction(array $syntax, array $extensions, array $formats, array $filteredFiles = [])
     {
-        /** @var DocumentTemplate $document */
-        $document = &$GLOBALS['TBE_TEMPLATE'];
-        $resourcePath = $document->backPath . ExtensionManagementUtility::extRelPath('builder') . 'Resources/Public/';
-        $pageRenderer = new PageRenderer();
+        if (class_exists(Environment::class)) {
+            $resourcePath = substr(ExtensionManagementUtility::extPath('builder', 'Resources/Public/'), strlen(Environment::getPublicPath()));
+        } else {
+            /** @var DocumentTemplate $document */
+            $document = &$GLOBALS['TBE_TEMPLATE'];
+            $resourcePath = $document->backPath . ExtensionManagementUtility::extRelPath('builder') . 'Resources/Public/';
+        }
+        $pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
         $pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.min.js');
         $pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasTextRenderer.min.js');
         $pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.canvasAxisTickRenderer.min.js');
@@ -182,13 +157,16 @@ class BackendController extends ActionController
         $pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.barRenderer.min.js');
         $pageRenderer->addJsFile($resourcePath . 'Javascript/jqplot.pointLabels.min.js');
         $pageRenderer->addJsFile($resourcePath . 'Javascript/plotter.js');
+        $pageRenderer->addCssFile($resourcePath . 'Stylesheet/analysis.css');
+        $pageRenderer->addCssFile($resourcePath . 'Stylesheet/jqplot.min.css');
+        $pageRenderer->addCssFile($resourcePath . 'Stylesheet/plotter.css');
         $reports = [];
         $csvFormats = trim(implode(',', $formats), ',');
         foreach ($extensions as $extensionKey) {
             if (true === empty($extensionKey)) {
                 continue;
             }
-            $extensionFolder = ExtensionManagementUtility::extPath($extensionKey);
+            $extensionFolder = realpath(ExtensionManagementUtility::extPath($extensionKey));
             $reports[$extensionKey] = [];
             foreach ($syntax as $syntaxName) {
                 if (true === empty($syntaxName)) {
@@ -199,25 +177,20 @@ class BackendController extends ActionController
                     $reportsForSyntaxName = $this->syntaxService->syntaxCheckPhpFilesInPath(
                         $extensionFolder . '/Classes'
                     );
-                } elseif ('fluid' === $syntaxName) {
-                    $reportsForSyntaxName = $this->syntaxService->syntaxCheckFluidTemplateFilesInPath(
-                        $extensionFolder . '/Resources',
-                        $csvFormats
-                    );
                 } elseif ('profile' === $syntaxName) {
-                    $files = GeneralUtility::getAllFilesAndFoldersInPath([], $extensionFolder, $csvFormats);
+                    $files = GlobUtility::getFilesRecursive($extensionFolder, $csvFormats);
                     if (0 === count($filteredFiles)) {
                         $filteredFiles = $files;
                     }
                     $this->view->assign('files', $files);
-                    $this->view->assign('basePathLength', strlen($extensionFolder . '/Resources/Private'));
+                    $this->view->assign('basePathLength', strlen($extensionFolder));
                     foreach ($files as $file) {
                         if (0 < count($filteredFiles) && false === in_array($file, $filteredFiles)) {
                             continue;
                         }
-                        $shortFilename = substr($file, strlen($extensionFolder . '/Resources/Private'));
                         /** @var TemplateAnalyzer $templateAnalyzer */
                         $templateAnalyzer = $this->objectManager->get(TemplateAnalyzer::class);
+                        $shortFilename = substr($file, strpos($file, '/' . $extensionKey . '/') + strlen($extensionKey) + 2);
                         $reportsForSyntaxName[$shortFilename] = $templateAnalyzer->analyzePathAndFilename($file);
                     }
                     $reports[$extensionKey][$syntaxName]['json'] = $this->encodeMetricsToJson($reportsForSyntaxName);

@@ -7,7 +7,7 @@
         "typo3-ter/builder": "self.version"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2.0",
         "fluidtypo3/vhs": ">=2.2.0||dev-development",
         "typo3/cms-core": "^8.7||^9||^10||dev-master",
         "typo3/cms-backend": "^8.7||^9||^10||dev-master",

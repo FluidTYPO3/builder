@@ -1,5 +1,5 @@
 <?php
-$EM_CONF[$_EXTKEY] = array (
+$EM_CONF['builder'] = array (
   'title' => 'Builder: FluidTYPO3 Development Support',
   'description' => 'Various development supports for building and working with Fluid templates and Extbase extensions',
   'category' => 'misc',

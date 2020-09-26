@@ -1,5 +1,3 @@
-{namespace v=FluidTYPO3\Vhs\ViewHelpers}
-
 <f:layout name="Backend" />
 
 <f:section name="ButtonsLeft">
@@ -11,15 +9,6 @@
 </f:section>
 
 <f:section name="Content">
-	<f:render section="{view}" arguments="{_all}" />
-</f:section>
-
-<f:section name="Index">
-	<h1>{f:translate(key: 'header.syntax')}</h1>
-	<f:render section="SyntaxChecker" arguments="{_all}" />
-</f:section>
-
-<f:section name="SyntaxChecker">
 	<f:form action="syntax">
 		<fieldset>
 			<legend>{f:translate(key: 'header.validators')}</legend>
@@ -32,11 +21,7 @@
 			</div>
 			<div class="form-group">
 				<label>{f:translate(key: 'syntax.php')}</label>
-				<f:form.checkbox name="syntax[{formats -> f:count()}]" value="php" checked="checked" class="checkbox" />
-			</div>
-			<div class="form-group">
-				<label>{f:translate(key: 'syntax.fluid')}</label>
-				<f:form.checkbox name="syntax[fluid]" value="fluid" checked="checked" class="checkbox" />
+				<f:form.checkbox name="syntax[{formats -> f:count()}]" value="php" class="checkbox" />
 			</div>
 			<div class="form-group">
 				<label>{f:translate(key: 'syntax.profile')}</label>
@@ -52,7 +37,7 @@
 </f:section>
 
 <f:section name="ExtensionSelector">
-	<f:form.select name="extensions[]" options="{extensionSelectorOptions}" value="{extensionSelectorOptions}" class="form-control"/>
+	<f:form.select name="extensions[]" options="{extensionSelectorOptions}" class="form-control"/>
 </f:section>
 
 <f:section name="FormatSelector">
