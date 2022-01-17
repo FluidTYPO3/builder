@@ -187,11 +187,11 @@ class ExtensionGenerator extends AbstractCodeGenerator implements CodeGeneratorI
             'signature' => ExtensionManagementUtility::getCN($extensionKey)
         ];
         $folder = $this->targetFolder . '/Configuration/TypoScript';
-        $files[$folder . '/constants.txt'] = $this->getPreparedCodeTemplate(
+        $files[$folder . '/constants.typoscript'] = $this->getPreparedCodeTemplate(
             self::TEMPLATE_TYPOSCRIPTCONSTANTS,
             $templateVariables
         )->render();
-        $files[$folder . '/setup.txt'] = $this->getPreparedCodeTemplate(
+        $files[$folder . '/setup.typoscript'] = $this->getPreparedCodeTemplate(
             self::TEMPLATE_TYPOSCRIPTSETUP,
             $templateVariables
         )->render();
